@@ -3,8 +3,7 @@
   <groupId>alize</groupId>
   <artifactId>nau</artifactId>
   <version>1.0</version>
-  <name>AliZe</name>
-  <description>Aide à l'optimisation d'un réseau de transport</description>
+  <name>Nau</name>
   <packaging>war</packaging>
   
   <build>
@@ -21,4 +20,5 @@
     </plugins>
   </build>
   
+  <description>Définit le domaine applicatif en décrivant le réseau et ses contraintes et envoie un fichier XML représentant la modélisation de ce réseau au module Eole.</description>
 </project>
