@@ -6,6 +6,14 @@
   <packaging>war</packaging>
   <name>Eole</name>
   <description>Recherche opérationnelle d'une solution à l'optimisation d'un réseau de transport. </description>
+  <dependencies>
+ 	 <dependency>
+		  <groupId>org.testng</groupId>
+		  <artifactId>testng</artifactId>
+		  <version>6.1.1</version>
+		  <scope>test</scope>
+	 </dependency>
+  </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
