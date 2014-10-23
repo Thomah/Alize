@@ -4,7 +4,7 @@
   <artifactId>nau</artifactId>
   <version>1.0</version>
   <name>Nau</name>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   
   <build>
     <sourceDirectory>src</sourceDirectory>
