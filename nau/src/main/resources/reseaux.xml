@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<Reseau>
+	<intervalles>
+		<Intervalle identifiant="immo-arret-foch-maison-bleue">
+			<pref>00:01:00</pref>
+		</Intervalle>
+		<Intervalle identifiant="immo-depot-1">
+			<min>00:30:00</min>
+			<pref>10:00:00</pref>
+		</Intervalle>
+		<Intervalle identifiant="immo-term-A-1">
+			<min>00:10:00</min>
+			<pref>00:15:00</pref>
+			<max>00:45:00</max>
+		</Intervalle>
+	</intervalles>
+	
+	<lignes>
+		<Ligne identifiant="A">
+			<depots>
+				<Depot tempsImmobilisation="immo-depot-1"/>
+			</depots>
+			<voies>
+				<Voie direction="Avrillé">
+					<arrets>
+						<Arret nom="Foch Haras" estCommercial="true" estEntreeSortieDepot="false" tempsImmobilisation="immo-arret-a-foch-maison-bleue" estLieuEchangeConducteur="true">
+							<transitionsPrecedentes>
+								<Transition reference="trans-angers-roseraie-foch-haras"/>
+							</transitionsPrecedentes>
+							<transitionsSuivantes>
+								<Transition reference="trans-foch-haras-foch-maison-bleue"/>
+							</transitionsSuivantes>
+						</Arret>
+						<Arret nom="Foch Maison Bleue" estCommercial="true" estEntreeSortieDepot="false" tempsImmobilisation="immo-arret-a-foch-maison-bleue" estLieuEchangeConducteur="true">
+							<transitionsPrecedentes>
+								<Transition reference="trans-foch-haras-foch-maison-bleue"/>
+							</transitionsPrecedentes>
+							<transitionsSuivantes>
+								<Transition reference="trans-foch-maison-bleue-avrille-ardenne"/>
+							</transitionsSuivantes>
+						</Arret>
+					</arrets>
+					<terminus>
+						<Terminus nom="Angers Roseraie" estCommercial="true" estEntreeSortieDepot="false" tempsImmobilisation="immo-term-A-1" estLieuEchangeConducteur="true">
+							<transitionsSuivantes>
+								<Transition reference="trans-angers-roseraie-foch-haras"/>
+							</transitionsSuivantes>
+						</Terminus>
+						<Terminus nom="Avrillé Ardenne" estCommercial="true" estEntreeSortieDepot="false" tempsImmobilisation="immo-term-A-1" estLieuEchangeConducteur="true">
+							<transitionsPrecedentes>
+								<Transition reference="trans-foch-maison-bleue-avrille-ardenne"/>
+							</transitionsPrecedentes>
+						</Terminus>
+					</terminus>
+					<transitions>
+						<Transition identifiant="trans-angers-roseraie-foch-haras" tempsTransition="00:20:00"/>
+						<Transition identifiant="trans-foch-haras-foch-maison-bleue" tempsTransition="00:01:00"/>
+						<Transition identifiant="trans-foch-maison-bleue-avrille-ardenne" tempsTransition="00:25:00"/>
+					</transitions>
+				</Voie>
+			</voies>
+		</Ligne>
+	</lignes>
+</Reseau>
