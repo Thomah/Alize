@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE xml>
 
-<Reseau>
+<Reseau xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="reseaux.xsd">
 	<intervalles>
 		<Intervalle identifiant="immo-arret-foch-maison-bleue">
 			<pref>00:01:00</pref>
