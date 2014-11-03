@@ -5,8 +5,68 @@
 		
 	</xsd:element>
 	
+	<xsd:complexType name="Reference">
+		<xsd:attribute name="ref" type="xsd:NCName" />
+	</xsd:complexType>
+	
 	<xsd:complexType name="Reseau">
-		
+		<xsd:sequence>
+			<xsd:element name="intervalles">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Intervalle" type="Intervalle" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="lignes">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Ligne" type="Ligne" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="transitions">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Transition" type="Transition" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Intervalle">
+		<xsd:choice minOccurs="1" maxOccurs="3">
+			<xsd:element name="min" type="xsd:time"/>
+			<xsd:element name="pref" type="xsd:time"/>
+			<xsd:element name="max" type="xsd:time"/>
+		</xsd:choice>
+		<xsd:attribute name="id" type="xsd:NCName" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="Ligne">
+		<xsd:attribute name="id" type="xsd:NCName" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Transition">
+		<xsd:sequence>
+			<xsd:element name="arretPrecedent">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Arret" type="Reference"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="arretSuivant">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Arret" type="Reference"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:NCName" use="required"/>
+		<xsd:attribute name="duree" type="xsd:time" use="required"/>
 	</xsd:complexType>
 	
 </xsd:schema>
