@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:element name="Reseau" type="Reseau">
+		
+	</xsd:element>
+	
+	<xsd:complexType name="Reference">
+		<xsd:attribute name="ref" type="xsd:NCName" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="Reseau">
+		<xsd:sequence>
+			<xsd:element name="intervalles">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Intervalle" type="Intervalle" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="arrets">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Arret" type="Arret" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="depots">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Depot" type="Reference" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="lignes">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Ligne" type="Ligne" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="transitions">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Transition" type="Transition" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Intervalle">
+		<xsd:choice minOccurs="1" maxOccurs="3">
+			<xsd:element name="min" type="xsd:time"/>
+			<xsd:element name="pref" type="xsd:time"/>
+			<xsd:element name="max" type="xsd:time"/>
+		</xsd:choice>
+		<xsd:attribute name="id" type="xsd:NCName" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="Arret">
+		<xsd:attribute name="id" type="xsd:NCName" use="required" />
+		<xsd:attribute name="nom" type="xsd:string" use="required" />
+		<xsd:attribute name="estCommercial" type="xsd:boolean" use="optional" default="true" />
+		<xsd:attribute name="estEntreeSortieDepot" type="xsd:boolean" use="optional" default="false" />
+		<xsd:attribute name="estLieuEchangeConducteur" type="xsd:boolean" use="optional" default="false" />
+		<xsd:attribute name="tempsImmobilisation" type="xsd:NCName" use="required" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="Ligne">
+		<xsd:sequence>
+			<xsd:element name="voies">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="1" maxOccurs="unbounded">
+						<xsd:element name="Voie" type="Voie" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:NCName" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Voie">
+		<xsd:sequence>
+			<xsd:element name="arrets">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Arret" type="Reference" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="terminusDepart">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Terminus" type="Reference" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="terminusArrivee">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Terminus" type="Reference" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="direction" />
+	</xsd:complexType>
+	
+	<xsd:complexType name="Transition">
+		<xsd:sequence>
+			<xsd:element name="arretPrecedent">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Arret" type="Reference"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="arretSuivant">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="Arret" type="Reference"/>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="id" type="xsd:NCName" use="required"/>
+		<xsd:attribute name="duree" type="xsd:time" use="required"/>
+	</xsd:complexType>
+	
+</xsd:schema>
