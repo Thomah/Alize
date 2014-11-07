@@ -7,7 +7,7 @@
 	
 	<context-param>
       <param-name>contextConfigLocation</param-name>
-      <param-value>WEB-INF/applicationContext.xml</param-value>
+      <param-value>/WEB-INF/alize-servlet.xml</param-value>
    </context-param>
  
    <listener>
@@ -34,7 +34,7 @@
 	
 	<servlet-mapping>
 		<servlet-name>alize</servlet-name>
-		<url-pattern>*.html</url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
     <servlet-mapping>

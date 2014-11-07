@@ -12,7 +12,8 @@ public class AliZeControlleur {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView index(ModelMap model) {
-		return new ModelAndView("index.jsp");
+		return new ModelAndView("index");
 	}
+	
 	
 }

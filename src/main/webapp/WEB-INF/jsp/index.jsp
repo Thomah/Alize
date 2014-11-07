@@ -1,3 +1,4 @@
 <%@ include file="/WEB-INF/jsp/common/include.jsp" %>
 
-<jsp:forward page="index.html" />
+<h1>Home page</h1>
+<p>This is a Home Page.</p>
