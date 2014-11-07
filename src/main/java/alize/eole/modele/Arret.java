@@ -71,7 +71,7 @@ public class Arret {
 
 	/**
 	 * @name setNom
-	 * @param nom le nom à mettre à jour
+	 * @param nom le nom Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -93,7 +93,7 @@ public class Arret {
 
 	/**
 	 * @name setEstCommercial
-	 * @param estCommercial le estCommercial à mettre à jour
+	 * @param estCommercial le estCommercial Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -115,7 +115,7 @@ public class Arret {
 
 	/**
 	 * @name setEstEntreeSortieDepot
-	 * @param estEntreeSortieDepot le estEntreeSortieDepot à mettre à jour
+	 * @param estEntreeSortieDepot le estEntreeSortieDepot Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -138,7 +138,7 @@ public class Arret {
 
 	/**
 	 * @name setEstOccupe
-	 * @param estOccupe le estOccupe à mettre à jour
+	 * @param estOccupe le estOccupe Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -160,7 +160,7 @@ public class Arret {
 
 	/**
 	 * @name setEstLieuEchangeConducteur
-	 * @param estLieuEchangeConducteur le estLieuEchangeConducteur à mettre à jour
+	 * @param estLieuEchangeConducteur le estLieuEchangeConducteur Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -183,7 +183,7 @@ public class Arret {
 
 	/**
 	 * @name setTempsImmobilisation
-	 * @param tempsImmobilisation le tempsImmobilisation à mettre à jour
+	 * @param tempsImmobilisation le tempsImmobilisation Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1

@@ -73,7 +73,7 @@ public class PeriodeDeConduite {
 
 	/**
 	 * @name setHeureDeDebut
-	 * @param heureDeDebut le heureDeDebut à mettre à jour
+	 * @param heureDeDebut le heureDeDebut Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -97,7 +97,7 @@ public class PeriodeDeConduite {
 
 	/**
 	 * @name setHeureDeFin
-	 * @param heureDeFin le heureDeFin à mettre à jour
+	 * @param heureDeFin le heureDeFin Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -109,7 +109,7 @@ public class PeriodeDeConduite {
 
 	/**
 	 * @name setNumeroVehicule
-	 * @param numeroVehicule le numeroVehicule à mettre à jour
+	 * @param numeroVehicule le numeroVehicule Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -133,7 +133,7 @@ public class PeriodeDeConduite {
 
 	/**
 	 * @name setArretEchangeConducteurDebut
-	 * @param arretEchangeConducteurDebut le arretEchangeConducteurDebut à mettre à jour
+	 * @param arretEchangeConducteurDebut le arretEchangeConducteurDebut Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -157,7 +157,7 @@ public class PeriodeDeConduite {
 
 	/**
 	 * @name setArretEchangeConducteurFin
-	 * @param arretEchangeConducteurFin le arretEchangeConducteurFin à mettre à jour
+	 * @param arretEchangeConducteurFin le arretEchangeConducteurFin Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1

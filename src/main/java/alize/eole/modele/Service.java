@@ -30,7 +30,7 @@ public class Service {
 	
 
 	/***********************************************************************************************************************
-	 * Méthodes
+	 * MÃ©thodes
 	 */ 
 	
 	public void ajouterPeriodeDeConduite(PeriodeDeConduite pdc){
@@ -65,7 +65,7 @@ public class Service {
 
 	/**
 	 * @name setNumero
-	 * @param numero le numero à mettre à jour
+	 * @param numero le numero Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -87,7 +87,7 @@ public class Service {
 
 	/**
 	 * @name setNbTroncon
-	 * @param nbTroncon le nbTroncon à mettre à jour
+	 * @param nbTroncon le nbTroncon Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1
@@ -109,7 +109,7 @@ public class Service {
 
 	/**
 	 * @name setEnsemblePeriodesDeConduite
-	 * @param ensemblePeriodesDeConduite le ensemblePeriodesDeConduite à mettre à jour
+	 * @param ensemblePeriodesDeConduite le ensemblePeriodesDeConduite Ã  mettre Ã  jour
 	 * @author Cyril [CS]
 	 * @date 23 oct. 2014
 	 * @version 1

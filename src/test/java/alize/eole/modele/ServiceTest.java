@@ -12,8 +12,8 @@ public class ServiceTest {
   @Test
   public void ajouterPeriodeDeConduite() {
 		 
-	 PeriodeDeConduite pdc1 = new PeriodeDeConduite( new Heure(12,58), new Heure(15,02), 12, new Arret("Capucin"), new Arret("Moliere"));
-	 PeriodeDeConduite pdc2 = new PeriodeDeConduite( new Heure(15,38), new Heure(18,29), 15, new Arret("Jean XXIII"), new Arret("Moli�re"));
+	 PeriodeDeConduite pdc1 = new PeriodeDeConduite( new Heure(12,58), new Heure(15,02), 12, new Arret("Capucin"), new Arret("Molière"));
+	 PeriodeDeConduite pdc2 = new PeriodeDeConduite( new Heure(15,38), new Heure(18,29), 15, new Arret("Jean XXIII"), new Arret("Molière"));
 	 
 	 Service s1 = new Service(512);
 	 s1.ajouterPeriodeDeConduite(pdc1);
