@@ -2,7 +2,6 @@ package alize.commun;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
 
 /**
  * @name Constantes
@@ -12,9 +11,10 @@ import java.time.format.DateTimeFormatter;
  */
 public class Constantes {
 	
-	static public NumberFormat formatter = new DecimalFormat("00");
+	public static final NumberFormat formatter = new DecimalFormat("00");
 
+	public static final String URL_MODULE_CLE = "URL_MODULE";
 	
-	}
+	public static final String SLASH = "/";
 	
-
+}
