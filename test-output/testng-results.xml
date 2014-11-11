@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="1" passed="1">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="3086" started-at="2014-11-11T17:26:35Z" finished-at="2014-11-11T17:26:38Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="3086" started-at="2014-11-11T17:26:35Z" finished-at="2014-11-11T17:26:38Z">
+      <class name="alize.TestDAO">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:alize.TestDAO@7080dc]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="10" started-at="2014-11-11T18:26:35Z" finished-at="2014-11-11T18:26:35Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestClass -->
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:alize.TestDAO@7080dc]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="2444" started-at="2014-11-11T18:26:35Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2014-11-11T18:26:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextPrepareTestInstance -->
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:alize.TestDAO@7080dc]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="2" started-at="2014-11-11T18:26:38Z" finished-at="2014-11-11T18:26:38Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void alize.TestDAO.testFetch()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextBeforeTestMethod -->
+        <test-method status="PASS" signature="testFetch()[pri:0, instance:alize.TestDAO@7080dc]" name="testFetch" duration-ms="610" started-at="2014-11-11T18:26:38Z" finished-at="2014-11-11T18:26:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testFetch -->
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:alize.TestDAO@7080dc]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="3" started-at="2014-11-11T18:26:38Z" finished-at="2014-11-11T18:26:38Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[public void alize.TestDAO.testFetch()]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestMethod -->
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:alize.TestDAO@7080dc]" name="springTestContextAfterTestClass" is-config="true" duration-ms="0" started-at="2014-11-11T18:26:38Z" finished-at="2014-11-11T18:26:38Z">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- springTestContextAfterTestClass -->
+      </class> <!-- alize.TestDAO -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
