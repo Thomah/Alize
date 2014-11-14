@@ -1,13 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.4
+-- version 3.4.11.1deb2+deb7u1
 -- http://www.phpmyadmin.net
 --
--- Client :  127.0.0.1
--- Généré le :  Ven 07 Novembre 2014 à 17:31
--- Version du serveur :  5.6.15-log
--- Version de PHP :  5.5.8
+-- Client: localhost
+-- Généré le: Ven 14 Novembre 2014 à 16:14
+-- Version du serveur: 5.5.40
+-- Version de PHP: 5.4.34-0+deb7u1
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Base de données :  `alize`
+-- Base de données: `alize`
 --
 
 -- --------------------------------------------------------
@@ -27,7 +27,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `arret` (
-  `id` varchar(100) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `nom` int(11) DEFAULT NULL,
   `estCommercial` tinyint(1) DEFAULT NULL,
   `estEntreeSortieDepot` tinyint(1) DEFAULT NULL,
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `arret` (
   `tempsImmobilisation` int(11) DEFAULT NULL,
   `estLieuEchangeConducteur` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Designe un lieu d''arret du véhicule';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Designe un lieu d''arret du véhicule' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -46,6 +46,8 @@ CREATE TABLE IF NOT EXISTS `arret` (
 CREATE TABLE IF NOT EXISTS `associationconducteurservice` (
   `id` int(11) NOT NULL DEFAULT '0',
   `date` date DEFAULT NULL,
+  `service_id` int(11) NOT NULL,
+  `conducteur_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Assure l''association entre un conducteur et un service';
 
@@ -96,11 +98,18 @@ CREATE TABLE IF NOT EXISTS `feuilledeservice` (
 
 CREATE TABLE IF NOT EXISTS `intervalle` (
   `id` int(11) NOT NULL DEFAULT '0',
-  `min` date DEFAULT NULL,
-  `pref` date DEFAULT NULL,
-  `max` date DEFAULT NULL,
+  `min` time DEFAULT NULL,
+  `pref` time DEFAULT NULL,
+  `max` time DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Donne le domaine de définition d''une variable';
+
+--
+-- Contenu de la table `intervalle`
+--
+
+INSERT INTO `intervalle` (`id`, `min`, `pref`, `max`) VALUES
+(0, '00:20:14', '00:20:14', '00:20:14');
 
 -- --------------------------------------------------------
 
@@ -109,9 +118,23 @@ CREATE TABLE IF NOT EXISTS `intervalle` (
 --
 
 CREATE TABLE IF NOT EXISTS `ligne` (
-  `id` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `typeVehicule` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='La ligne est la représentation de la route qu''emprunte les véhicules. ';
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `typeVehicule` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='La ligne est la représentation de la route qu''emprunte les véhicules. ' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `ligne_voie`
+--
+
+CREATE TABLE IF NOT EXISTS `ligne_voie` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ligne_id` int(11) NOT NULL,
+  `voie_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -124,6 +147,10 @@ CREATE TABLE IF NOT EXISTS `periodedeconduite` (
   `heureDebut` date DEFAULT NULL,
   `heureFin` date DEFAULT NULL,
   `numeroVehicule` int(11) DEFAULT NULL,
+  `arretEchangeConducteurDebut_id` int(11) NOT NULL,
+  `arretEchangeConducteurFin_id` int(11) NOT NULL,
+  `vehicule_id` int(11) NOT NULL,
+  `service_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Segment d''un service de conduite';
 
@@ -138,6 +165,7 @@ CREATE TABLE IF NOT EXISTS `phase` (
   `debut` date DEFAULT NULL,
   `fin` date DEFAULT NULL,
   `periodicite` date DEFAULT NULL,
+  `phase_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Description journalière du régime d''exploitation du réseau';
 
@@ -148,10 +176,10 @@ CREATE TABLE IF NOT EXISTS `phase` (
 --
 
 CREATE TABLE IF NOT EXISTS `reseau` (
-  `id` int(11) NOT NULL DEFAULT '0',
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `nom` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Description d''un réseau de transport ';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Description d''un réseau de transport ' AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -160,9 +188,10 @@ CREATE TABLE IF NOT EXISTS `reseau` (
 --
 
 CREATE TABLE IF NOT EXISTS `service` (
-  `numero` int(11) NOT NULL DEFAULT '0',
+  `id` int(11) NOT NULL COMMENT 'Numéro de service',
   `nbPeriodeDeConduite` int(11) DEFAULT NULL,
-  PRIMARY KEY (`numero`)
+  `feuilledeservice_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Constitue un planning journalier d''un employé';
 
 -- --------------------------------------------------------
@@ -186,6 +215,8 @@ CREATE TABLE IF NOT EXISTS `terminus` (
 CREATE TABLE IF NOT EXISTS `transition` (
   `id` int(11) NOT NULL DEFAULT '0',
   `duree` date DEFAULT NULL,
+  `arretPrecedent_id` int(11) NOT NULL,
+  `arretSuivant_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Troncon entre deux arrêts';
 
@@ -196,11 +227,11 @@ CREATE TABLE IF NOT EXISTS `transition` (
 --
 
 CREATE TABLE IF NOT EXISTS `vehicule` (
-  `numeroSerie` int(11) NOT NULL DEFAULT '0',
+  `id` int(11) NOT NULL COMMENT 'Numéro de série du véhicule',
   `kilometrage` decimal(10,0) DEFAULT NULL,
   `estEnService` tinyint(1) DEFAULT NULL,
   `typeVehicule` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`numeroSerie`)
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Matériel roulant du réseau';
 
 -- --------------------------------------------------------
@@ -212,6 +243,8 @@ CREATE TABLE IF NOT EXISTS `vehicule` (
 CREATE TABLE IF NOT EXISTS `voie` (
   `id` int(11) NOT NULL DEFAULT '0',
   `direction` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `terminusDepart_id` int(11) NOT NULL,
+  `terminusArrivee_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='Partie de la ligne marqué par un sens de circulation';
 
