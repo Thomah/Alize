@@ -2,6 +2,8 @@ package alize.nau.service;
 
 import java.io.File;
 
+import org.jooq.DSLContext;
+
 public interface DOMService {
 
 	/**
@@ -18,5 +20,18 @@ public interface DOMService {
 	 * @version 1
 	 */
 	public void importerReseau(File fichier);
+
+	/* GETTERS & SETTERS */
+	
+	/**
+	 * Remplace la valeur de dsl
+	 * @name setDsl
+	 * @description Remplace la valeur de dsl
+	 * @param dsl Le DSLContext à remplacer
+	 * @author Thomas [TH]
+	 * @date 16 nov. 2014
+	 * @version 1
+	 */
+	void setDsl(DSLContext dsl);
 
 }

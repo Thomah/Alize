@@ -13,7 +13,7 @@ import alize.commun.modele.tables.daos.IntervalleDao;
 import alize.commun.modele.tables.pojos.Intervalle;
 
 @Test
-@ContextConfiguration(locations = {"classpath:**/WEB-INF/alize-servlet.xml"})
+@ContextConfiguration(locations = {"/test-context.xml"})
 public class TestDAO extends AbstractTestNGSpringContextTests  {
 	
 	@Autowired

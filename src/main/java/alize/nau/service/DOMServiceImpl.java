@@ -1,5 +1,7 @@
 package alize.nau.service;
 
+import static alize.commun.modele.tables.Intervalle.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.sql.Time;
@@ -21,7 +23,7 @@ import alize.commun.modele.tables.records.IntervalleRecord;
 public class DOMServiceImpl implements DOMService {
 	
 	@Autowired
-	private DSLContext context;
+	private DSLContext dsl;
 	
 	@Override
 	public void importerReseau(File fichier) {
@@ -41,7 +43,8 @@ public class DOMServiceImpl implements DOMService {
 			// On crée un Iterator sur notre liste
 			Iterator<Element> i = listElements.iterator();
 			Element courant, filsCourant;
-			IntervalleRecord intervalle = new IntervalleRecord();
+			System.out.println("dsl : " + dsl);
+			IntervalleRecord intervalle = dsl.newRecord(INTERVALLE);
 
 			while (i.hasNext()) {
 				courant = (Element) i.next();
@@ -82,6 +85,11 @@ public class DOMServiceImpl implements DOMService {
 			e.printStackTrace();
 		}
 
+	}
+	
+	@Override
+	public void setDsl(DSLContext dsl) {
+		this.dsl = dsl;
 	}
 
 }
