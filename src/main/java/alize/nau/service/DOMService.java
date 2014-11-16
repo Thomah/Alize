@@ -2,6 +2,7 @@ package alize.nau.service;
 
 import java.io.File;
 
+import org.jdom2.Element;
 import org.jooq.DSLContext;
 
 public interface DOMService {
@@ -21,6 +22,10 @@ public interface DOMService {
 	 */
 	public void importerReseau(File fichier);
 
+	public void importerIntervalles(Element racine);
+	
+	public void importerArrets(Element racine);
+
 	/* GETTERS & SETTERS */
 	
 	/**
@@ -33,5 +38,6 @@ public interface DOMService {
 	 * @version 1
 	 */
 	void setDsl(DSLContext dsl);
+
 
 }

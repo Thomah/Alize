@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS arret (
   id int(11) NOT NULL AUTO_INCREMENT,
-  nom int(11) DEFAULT NULL,
+  nom int(11) varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
   estCommercial tinyint(1) DEFAULT NULL,
   estEntreeSortieDepot tinyint(1) DEFAULT NULL,
   estOccupe tinyint(1) DEFAULT NULL,

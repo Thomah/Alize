@@ -5,14 +5,14 @@
 	xsi:noNamespaceSchemaLocation="reseaux.xsd">
 
 	<intervalles>
-		<Intervalle id="immo-arret-foch-maison-bleue">
+		<Intervalle id="1">
 			<pref>00:01:00</pref>
 		</Intervalle>
-		<Intervalle id="immo-depot-1">
+		<Intervalle id="2">
 			<min>00:30:00</min>
 			<pref>10:00:00</pref>
 		</Intervalle>
-		<Intervalle id="immo-term-A-1">
+		<Intervalle id="3">
 			<min>00:10:00</min>
 			<pref>00:15:00</pref>
 			<max>00:45:00</max>
@@ -20,42 +20,42 @@
 	</intervalles>
 
 	<arrets>
-		<Arret id="foch-haras" nom="Foch Haras" estCommercial="true"
-			estEntreeSortieDepot="false" tempsImmobilisation="immo-arret-a-foch-maison-bleue"
+		<Arret id="1" nom="Foch Haras" estCommercial="true"
+			estEntreeSortieDepot="false" tempsImmobilisation="1"
 			estLieuEchangeConducteur="true" />
-		<Arret id="foch-maison-bleue" nom="Foch Maison Bleue"
+		<Arret id="2" nom="Foch Maison Bleue"
 			estCommercial="true" estEntreeSortieDepot="false"
-			tempsImmobilisation="immo-arret-a-foch-maison-bleue"
+			tempsImmobilisation="1"
 			estLieuEchangeConducteur="true" />
-		<Arret id="angers-roseraie" nom="Angers Roseraie"
+		<Arret id="3" nom="Angers Roseraie"
 			estCommercial="true" estEntreeSortieDepot="false"
-			tempsImmobilisation="immo-term-A-1" estLieuEchangeConducteur="true" />
-		<Arret id="avrille-ardenne" nom="Avrillé Ardenne"
+			tempsImmobilisation="3" estLieuEchangeConducteur="true" />
+		<Arret id="4" nom="Avrillé Ardenne"
 			estCommercial="true" estEntreeSortieDepot="false"
-			tempsImmobilisation="immo-term-A-1" estLieuEchangeConducteur="true" />
-		<Arret id="ctt" nom="CTT"
+			tempsImmobilisation="3" estLieuEchangeConducteur="true" />
+		<Arret id="5" nom="CTT"
 			estCommercial="false" estEntreeSortieDepot="false"
-			tempsImmobilisation="immo-depot-1" estLieuEchangeConducteur="true" />
+			tempsImmobilisation="2" estLieuEchangeConducteur="true" />
 	</arrets>
 	
 	<depots>
-		<Depot ref="ctt" />
+		<Depot ref="5" />
 	</depots>
 	
 	<lignes>
-		<Ligne id="A">
+		<Ligne id="1">
 
 			<voies>
 				<Voie direction="Avrillé">
 					<arrets>
-						<Arret ref="foch-haras" />
-						<Arret ref="foch-maison-bleue" />
+						<Arret ref="1" />
+						<Arret ref="2" />
 					</arrets>
 					<terminusDepart>
-						<Terminus ref="angers-roseraie" />
+						<Terminus ref="3" />
 					</terminusDepart>
 					<terminusArrivee>
-						<Terminus ref="avrille-ardenne" />
+						<Terminus ref="4" />
 					</terminusArrivee>
 				</Voie>
 			</voies>
@@ -64,29 +64,29 @@
 	</lignes>
 
 	<transitions>
-		<Transition id="trans-angers-roseraie-foch-haras" duree="00:20:00">
+		<Transition id="1" duree="00:20:00">
 			<arretPrecedent>
-				<Arret ref="angers-roseraie" />
+				<Arret ref="3" />
 			</arretPrecedent>
 			<arretSuivant>
-				<Arret ref="foch-haras" />
+				<Arret ref="1" />
 			</arretSuivant>
 		</Transition>
-		<Transition id="trans-foch-haras-foch-maison-bleue" duree="00:01:00">
+		<Transition id="2" duree="00:01:00">
 			<arretPrecedent>
-				<Arret ref="foch-haras" />
+				<Arret ref="1" />
 			</arretPrecedent>
 			<arretSuivant>
-				<Arret ref="foch-maison-bleue" />
+				<Arret ref="2" />
 			</arretSuivant>
 		</Transition>
-		<Transition id="trans-foch-maison-bleue-avrille-ardenne"
+		<Transition id="3"
 			duree="00:25:00">
 			<arretPrecedent>
-				<Arret ref="foch-maison-bleue" />
+				<Arret ref="2" />
 			</arretPrecedent>
 			<arretSuivant>
-				<Arret ref="avrille-ardenne" />
+				<Arret ref="4" />
 			</arretSuivant>
 		</Transition>
 	</transitions>
