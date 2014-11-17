@@ -1,7 +1,13 @@
 package alize.nau.service;
 
 import static alize.commun.modele.tables.Arret.*;
+import static alize.commun.modele.tables.Depot.*;
 import static alize.commun.modele.tables.Intervalle.*;
+import static alize.commun.modele.tables.Ligne.*;
+import static alize.commun.modele.tables.LigneVoie.*;
+import static alize.commun.modele.tables.Voie.*;
+import static alize.commun.modele.tables.VoieArret.*;
+import static alize.commun.modele.tables.Transition.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +26,13 @@ import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import alize.commun.modele.tables.records.ArretRecord;
+import alize.commun.modele.tables.records.DepotRecord;
 import alize.commun.modele.tables.records.IntervalleRecord;
+import alize.commun.modele.tables.records.LigneRecord;
+import alize.commun.modele.tables.records.LigneVoieRecord;
+import alize.commun.modele.tables.records.TransitionRecord;
+import alize.commun.modele.tables.records.VoieArretRecord;
+import alize.commun.modele.tables.records.VoieRecord;
 
 public class DOMServiceImpl implements DOMService {
 
@@ -56,17 +68,15 @@ public class DOMServiceImpl implements DOMService {
 
 		List<Element> listElements = racine.getChild("intervalles").getChildren();
 
-		// On crée un Iterator sur notre liste
 		Iterator<Element> i = listElements.iterator();
 		Element courant, filsCourant;
 		IntervalleRecord intervalle = dsl.newRecord(INTERVALLE);
 
 		while (i.hasNext()) {
 			courant = (Element) i.next();
-			intervalle.setId(null);
+			intervalle.setId(Integer.valueOf(courant.getAttributeValue("id")));
 
-			SimpleDateFormat formater = null;
-			formater = new SimpleDateFormat("hh:mm:ss");
+			SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
 
 			try {
 				filsCourant = courant.getChild("min");
@@ -100,14 +110,13 @@ public class DOMServiceImpl implements DOMService {
 
 		List<Element> listElements = racine.getChild("arrets").getChildren();
 
-		// On crée un Iterator sur notre liste
 		Iterator<Element> i = listElements.iterator();
 		Element courant;
 		ArretRecord arret = dsl.newRecord(ARRET);
 
 		while (i.hasNext()) {
 			courant = (Element) i.next();
-			arret.setId(null);
+			arret.setId(Integer.valueOf(courant.getAttributeValue("id")));
 			arret.setNom(courant.getAttributeValue("nom"));
 			arret.setEstcommercial((byte) courant.getAttributeValue("estCommercial").compareTo("true"));
 			arret.setEstentreesortiedepot((byte) courant.getAttributeValue("estEntreeSortieDepot").compareTo("true"));
@@ -116,6 +125,99 @@ public class DOMServiceImpl implements DOMService {
 			arret.setTempsimmobilisation(Integer.valueOf(courant.getAttributeValue("tempsImmobilisation")));
 			arret.store();
 		}
+	}
+	
+	@Override
+	public void importerDepots(Element racine) {
+		
+		List<Element> listElements = racine.getChild("depots").getChildren();
+
+		Iterator<Element> i = listElements.iterator();
+		Element courant;
+		DepotRecord depot = dsl.newRecord(DEPOT);
+
+		while (i.hasNext()) {
+			courant = (Element) i.next();
+			depot.setId(null);
+			depot.setArretId(Integer.valueOf(courant.getAttributeValue("ref")));
+			depot.store();
+		}
+		
+	}
+	
+	@Override
+	public void importerLignes(Element racine) {
+		
+		List<Element> listElements = racine.getChild("lignes").getChildren();
+		List<Element> listElementsArrets;
+
+		Iterator<Element> i = listElements.iterator();
+		Iterator<Element> i2;
+		Element courant, enfant;
+		LigneRecord ligne = dsl.newRecord(LIGNE);
+		LigneVoieRecord ligneVoie = dsl.newRecord(LIGNE_VOIE);
+		VoieRecord voie = dsl.newRecord(VOIE);
+		VoieArretRecord voieArret = dsl.newRecord(VOIE_ARRET);
+
+		while (i.hasNext()) {
+			courant = (Element) i.next();
+			ligne.setId(Integer.valueOf(courant.getAttributeValue("id")));
+			ligne.store();
+			
+			ligneVoie.setId(null);
+			ligneVoie.setLigneId(ligne.getId());
+			
+			while (i.hasNext()) {
+				courant = (Element) i.next();
+				voie.setId(null);
+				voie.setDirection(courant.getAttributeValue("direction"));
+				voie.setTerminusdepartId(Integer.valueOf(courant.getChild("terminusDepart").getChild("Terminus").getAttributeValue("ref")));
+				voie.setTerminusarriveeId(Integer.valueOf(courant.getChild("terminusArrivee").getChild("Terminus").getAttributeValue("ref")));
+				voie.store();
+
+				ligneVoie.setVoieId(voie.getId());
+				
+				listElementsArrets = courant.getChild("arrets").getChildren();
+				i2 = listElementsArrets.iterator();
+				while(i2.hasNext()) {
+					enfant = (Element) i2.next();
+					voieArret.setId(null);
+					voieArret.setArretId(Integer.valueOf(enfant.getAttributeValue("ref")));
+					voieArret.setVoieId(voie.getId());
+				}
+			}
+		}
+		
+	}
+	
+	@Override
+	public void importerTransitions(Element racine) {
+		
+		List<Element> listElements = racine.getChild("transition").getChildren();
+
+		Iterator<Element> i = listElements.iterator();
+		Element courant;
+		TransitionRecord transition = dsl.newRecord(TRANSITION);
+		
+		SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+
+		while (i.hasNext()) {
+			courant = (Element) i.next();
+			transition.setId(Integer.valueOf(courant.getAttributeValue("id")));
+			
+			try {
+				Date dureeDate = formater.parse(courant.getAttributeValue("duree"));
+				java.sql.Date dureeSQLDate = new java.sql.Date(dureeDate.getTime());
+				transition.setDuree(dureeSQLDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+			transition.setArretprecedentId(Integer.valueOf(courant.getChild("arretPrecedent").getChild("Arret").getAttributeValue("ref")));
+			transition.setArretsuivantId(Integer.valueOf(courant.getChild("arretSuivant").getChild("Arret").getAttributeValue("ref")));
+			transition.store();
+		}
+		
 	}
 
 	@Override

@@ -25,6 +25,12 @@ public interface DOMService {
 	public void importerIntervalles(Element racine);
 	
 	public void importerArrets(Element racine);
+	
+	public void importerDepots(Element racine);
+	
+	public void importerLignes(Element racine);
+
+	public void importerTransitions(Element racine);
 
 	/* GETTERS & SETTERS */
 	
@@ -37,7 +43,6 @@ public interface DOMService {
 	 * @date 16 nov. 2014
 	 * @version 1
 	 */
-	void setDsl(DSLContext dsl);
-
+	public void setDsl(DSLContext dsl);
 
 }
