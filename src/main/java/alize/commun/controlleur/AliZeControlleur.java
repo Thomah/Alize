@@ -14,6 +14,5 @@ public class AliZeControlleur {
 	public ModelAndView index(ModelMap model) {
 		return new ModelAndView("index");
 	}
-	
-	
+
 }

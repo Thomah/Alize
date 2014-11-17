@@ -41,7 +41,7 @@ public class NauControlleur {
 	@RequestMapping(value = URL_IMPORTER, method = POST)
 	public ModelAndView traiterImporter(
 			@RequestParam("fichierImporte") MultipartFile fichier) {
-		String chemin = System.getProperty("catalina.home") + File.separator + "webapps" + File.separator + servletContext.getContextPath().substring(1);
+		String chemin = RACINE + servletContext.getContextPath().substring(1);
 		File fichierSauve = new File(chemin + File.separator + "fichierImporte.xml");
 		try {
 			FileUtils.writeByteArrayToFile(fichierSauve, fichier.getBytes());
