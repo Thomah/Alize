@@ -15,8 +15,8 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Dashboard</h1>
-					<% request.getAttribute(URL_MODULE_CLE); %>
+					<h1 class="page-header">Test</h1>
+					 <% request.getAttribute(URL_MODULE_CLE); %>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
