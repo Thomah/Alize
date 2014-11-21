@@ -1,5 +1,6 @@
 package alize.nau.service;
 
+import static alize.commun.modele.tables.Reseau.*;
 import static org.testng.Assert.*;
 
 import java.io.File;
@@ -11,6 +12,8 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import alize.commun.modele.tables.records.ReseauRecord;
 
 @Test
 @ContextConfiguration(locations = {"/test-context.xml"})
@@ -26,16 +29,25 @@ public class DOMServiceImplTest extends AbstractTestNGSpringContextTests {
 	public void setup() {
 		domService = new DOMServiceImpl();
 		domService.setDsl(dsl);
+		viderBDD();
 	}
 
 	@Test
 	public void testImporterReseau() {
 		assertNotNull(getClass().getResource("/reseaux.xml"), "Test file missing");
 		domService.importerReseau(new File(getClass().getResource("/reseaux.xml").getFile()));
+		
+		ReseauRecord result = (ReseauRecord) dsl.select().from(RESEAU).where(RESEAU.ID.equal(1)).fetchOne();
+		assertNotNull(result, "Aucun réseau enregistré");
+		
 	}
 	
 	@AfterClass
 	public void destroy() {
+		viderBDD();
+	}
+	
+	private void viderBDD() {
 		dsl.execute("SET FOREIGN_KEY_CHECKS=0;");
 		dsl.truncate(alize.commun.modele.tables.Transition.TRANSITION).execute();
 		dsl.truncate(alize.commun.modele.tables.Periodedeconduite.PERIODEDECONDUITE).execute();

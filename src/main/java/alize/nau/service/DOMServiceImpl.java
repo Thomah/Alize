@@ -5,8 +5,10 @@ import static alize.commun.modele.tables.Depot.*;
 import static alize.commun.modele.tables.Intervalle.*;
 import static alize.commun.modele.tables.Ligne.*;
 import static alize.commun.modele.tables.LigneVoie.*;
+import static alize.commun.modele.tables.Reseau.*;
 import static alize.commun.modele.tables.Voie.*;
 import static alize.commun.modele.tables.VoieArret.*;
+import static alize.commun.modele.tables.Terminus.*;
 import static alize.commun.modele.tables.Transition.*;
 
 import java.io.File;
@@ -30,6 +32,8 @@ import alize.commun.modele.tables.records.DepotRecord;
 import alize.commun.modele.tables.records.IntervalleRecord;
 import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.LigneVoieRecord;
+import alize.commun.modele.tables.records.ReseauRecord;
+import alize.commun.modele.tables.records.TerminusRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
 import alize.commun.modele.tables.records.VoieArretRecord;
 import alize.commun.modele.tables.records.VoieRecord;
@@ -51,9 +55,17 @@ public class DOMServiceImpl implements DOMService {
 
 			// On initialise un nouvel élément racine
 			racine = document.getRootElement();
+			
+			ReseauRecord reseau = dsl.newRecord(RESEAU);
+			reseau.setId(1);
+			reseau.setNom(null);
+			reseau.store();
 
 			importerIntervalles(racine);
 			importerArrets(racine);
+			importerDepots(racine);
+			importerLignes(racine);
+			importerTransitions(racine);
 
 		} catch (JDOMException e) {
 			e.printStackTrace();
@@ -122,7 +134,7 @@ public class DOMServiceImpl implements DOMService {
 			arret.setEstentreesortiedepot((byte) courant.getAttributeValue("estEntreeSortieDepot").compareTo("true"));
 			arret.setEstlieuechangeconducteur((byte) courant.getAttributeValue("estLieuEchangeConducteur").compareTo("true"));
 			arret.setEstoccupe((byte)0);
-			arret.setTempsimmobilisation(Integer.valueOf(courant.getAttributeValue("tempsImmobilisation")));
+			arret.setTempsimmobilisationId(Integer.valueOf(courant.getAttributeValue("tempsImmobilisation")));
 			arret.store();
 		}
 	}
@@ -149,15 +161,18 @@ public class DOMServiceImpl implements DOMService {
 	public void importerLignes(Element racine) {
 		
 		List<Element> listElements = racine.getChild("lignes").getChildren();
+		List<Element> listElementsVoies;
 		List<Element> listElementsArrets;
 
 		Iterator<Element> i = listElements.iterator();
-		Iterator<Element> i2;
+		Iterator<Element> i2, i3;
 		Element courant, enfant;
 		LigneRecord ligne = dsl.newRecord(LIGNE);
 		LigneVoieRecord ligneVoie = dsl.newRecord(LIGNE_VOIE);
 		VoieRecord voie = dsl.newRecord(VOIE);
 		VoieArretRecord voieArret = dsl.newRecord(VOIE_ARRET);
+		TerminusRecord terminus;
+		int terminusDepartArretId, terminusArriveeArretId;
 
 		while (i.hasNext()) {
 			courant = (Element) i.next();
@@ -166,24 +181,45 @@ public class DOMServiceImpl implements DOMService {
 			
 			ligneVoie.setId(null);
 			ligneVoie.setLigneId(ligne.getId());
-			
-			while (i.hasNext()) {
-				courant = (Element) i.next();
+
+			listElementsVoies = courant.getChild("voies").getChildren();
+			i2 = listElementsVoies.iterator();
+			while (i2.hasNext()) {
+				courant = (Element) i2.next();
+				
+				terminusDepartArretId = Integer.valueOf(courant.getChild("terminusDepart").getChild("Terminus").getAttributeValue("ref"));
+				terminus = (TerminusRecord) dsl.select().from(TERMINUS).where(TERMINUS.ARRET_ID.equal(terminusDepartArretId)).fetchOne();
+				if(terminus == null) {
+					terminus = dsl.newRecord(TERMINUS);
+					terminus.setArretId(terminusDepartArretId);
+					terminus.store();
+				}
+				
+				terminusArriveeArretId = Integer.valueOf(courant.getChild("terminusArrivee").getChild("Terminus").getAttributeValue("ref"));
+				terminus = (TerminusRecord) dsl.select().from(TERMINUS).where(TERMINUS.ARRET_ID.equal(terminusArriveeArretId)).fetchOne();
+				if(terminus == null) {
+					terminus = dsl.newRecord(TERMINUS);
+					terminus.setArretId(terminusArriveeArretId);
+					terminus.store();
+				}
+				
 				voie.setId(null);
 				voie.setDirection(courant.getAttributeValue("direction"));
-				voie.setTerminusdepartId(Integer.valueOf(courant.getChild("terminusDepart").getChild("Terminus").getAttributeValue("ref")));
+				voie.setTerminusdepartId(terminusDepartArretId);
 				voie.setTerminusarriveeId(Integer.valueOf(courant.getChild("terminusArrivee").getChild("Terminus").getAttributeValue("ref")));
 				voie.store();
 
 				ligneVoie.setVoieId(voie.getId());
+				ligneVoie.store();
 				
 				listElementsArrets = courant.getChild("arrets").getChildren();
-				i2 = listElementsArrets.iterator();
-				while(i2.hasNext()) {
-					enfant = (Element) i2.next();
+				i3 = listElementsArrets.iterator();
+				while(i3.hasNext()) {
+					enfant = (Element) i3.next();
 					voieArret.setId(null);
 					voieArret.setArretId(Integer.valueOf(enfant.getAttributeValue("ref")));
 					voieArret.setVoieId(voie.getId());
+					voieArret.store();
 				}
 			}
 		}
@@ -193,7 +229,7 @@ public class DOMServiceImpl implements DOMService {
 	@Override
 	public void importerTransitions(Element racine) {
 		
-		List<Element> listElements = racine.getChild("transition").getChildren();
+		List<Element> listElements = racine.getChild("transitions").getChildren();
 
 		Iterator<Element> i = listElements.iterator();
 		Element courant;
