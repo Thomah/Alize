@@ -52,6 +52,7 @@ public class DOMServiceImplTest extends AbstractTestNGSpringContextTests {
 		dsl.truncate(alize.commun.modele.tables.Transition.TRANSITION).execute();
 		dsl.truncate(alize.commun.modele.tables.Periodedeconduite.PERIODEDECONDUITE).execute();
 		dsl.truncate(alize.commun.modele.tables.LigneVoie.LIGNE_VOIE).execute();
+		dsl.truncate(alize.commun.modele.tables.VoieArret.VOIE_ARRET).execute();
 		dsl.truncate(alize.commun.modele.tables.Voie.VOIE).execute();
 		dsl.truncate(alize.commun.modele.tables.Terminus.TERMINUS).execute();
 		dsl.truncate(alize.commun.modele.tables.Depot.DEPOT).execute();

@@ -2,24 +2,24 @@
 <testng-results skipped="0" failed="0" total="1" passed="1">
   <reporter-output>
   </reporter-output>
-  <suite name="Default suite" duration-ms="3202" started-at="2014-11-21T07:43:43Z" finished-at="2014-11-21T07:43:46Z">
+  <suite name="Default suite" duration-ms="3005" started-at="2014-11-21T07:48:40Z" finished-at="2014-11-21T07:48:43Z">
     <groups>
     </groups>
-    <test name="Default test" duration-ms="3202" started-at="2014-11-21T07:43:43Z" finished-at="2014-11-21T07:43:46Z">
+    <test name="Default test" duration-ms="3005" started-at="2014-11-21T07:48:40Z" finished-at="2014-11-21T07:48:43Z">
       <class name="alize.nau.service.DOMServiceImplTest">
-        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="5" started-at="2014-11-21T08:43:43Z" finished-at="2014-11-21T08:43:43Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestClass()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextBeforeTestClass" is-config="true" duration-ms="5" started-at="2014-11-21T08:48:40Z" finished-at="2014-11-21T08:48:40Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestClass -->
-        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="1484" started-at="2014-11-21T08:43:43Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2014-11-21T08:43:45Z">
+        <test-method status="PASS" signature="springTestContextPrepareTestInstance()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextPrepareTestInstance" is-config="true" duration-ms="1493" started-at="2014-11-21T08:48:40Z" depends-on-methods="org.springframework.test.context.testng.AbstractTestNGSpringContextTests.springTestContextBeforeTestClass" finished-at="2014-11-21T08:48:41Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextPrepareTestInstance -->
-        <test-method status="PASS" signature="setup()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="setup" is-config="true" duration-ms="778" started-at="2014-11-21T08:43:45Z" finished-at="2014-11-21T08:43:46Z">
+        <test-method status="PASS" signature="setup()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="setup" is-config="true" duration-ms="580" started-at="2014-11-21T08:48:41Z" finished-at="2014-11-21T08:48:42Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- setup -->
-        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2014-11-21T08:43:46Z" finished-at="2014-11-21T08:43:46Z">
+        <test-method status="PASS" signature="springTestContextBeforeTestMethod(java.lang.reflect.Method)[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextBeforeTestMethod" is-config="true" duration-ms="1" started-at="2014-11-21T08:48:42Z" finished-at="2014-11-21T08:48:42Z">
           <params>
             <param index="0">
               <value>
@@ -30,11 +30,11 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextBeforeTestMethod -->
-        <test-method status="PASS" signature="testImporterReseau()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="testImporterReseau" duration-ms="161" started-at="2014-11-21T08:43:46Z" finished-at="2014-11-21T08:43:46Z">
+        <test-method status="PASS" signature="testImporterReseau()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="testImporterReseau" duration-ms="180" started-at="2014-11-21T08:48:42Z" finished-at="2014-11-21T08:48:42Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- testImporterReseau -->
-        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2014-11-21T08:43:46Z" finished-at="2014-11-21T08:43:46Z">
+        <test-method status="PASS" signature="springTestContextAfterTestMethod(java.lang.reflect.Method)[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextAfterTestMethod" is-config="true" duration-ms="1" started-at="2014-11-21T08:48:42Z" finished-at="2014-11-21T08:48:42Z">
           <params>
             <param index="0">
               <value>
@@ -45,11 +45,11 @@
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestMethod -->
-        <test-method status="PASS" signature="destroy()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="destroy" is-config="true" duration-ms="763" started-at="2014-11-21T08:43:46Z" finished-at="2014-11-21T08:43:46Z">
+        <test-method status="PASS" signature="destroy()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="destroy" is-config="true" duration-ms="738" started-at="2014-11-21T08:48:42Z" finished-at="2014-11-21T08:48:43Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- destroy -->
-        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2014-11-21T08:43:46Z" finished-at="2014-11-21T08:43:46Z">
+        <test-method status="PASS" signature="springTestContextAfterTestClass()[pri:0, instance:alize.nau.service.DOMServiceImplTest@cb51256]" name="springTestContextAfterTestClass" is-config="true" duration-ms="1" started-at="2014-11-21T08:48:43Z" finished-at="2014-11-21T08:48:43Z">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- springTestContextAfterTestClass -->
