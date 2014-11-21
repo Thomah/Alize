@@ -13,6 +13,7 @@ import static alize.commun.modele.tables.Transition.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,6 +26,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jooq.DSLContext;
+import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import alize.commun.modele.tables.records.ArretRecord;
@@ -67,12 +69,18 @@ public class DOMServiceImpl implements DOMService {
 			importerLignes(racine);
 			importerTransitions(racine);
 
+			dsl.configuration().connectionProvider().acquire().commit();
+
 		} catch (JDOMException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (DataAccessException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-
+		
 	}
 
 	@Override

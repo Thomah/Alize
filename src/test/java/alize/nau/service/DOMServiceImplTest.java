@@ -34,12 +34,13 @@ public class DOMServiceImplTest extends AbstractTestNGSpringContextTests {
 
 	@Test
 	public void testImporterReseau() {
-		assertNotNull(getClass().getResource("/reseaux.xml"), "Test file missing");
+		
+        assertNotNull(getClass().getResource("/reseaux.xml"), "Test file missing");
 		domService.importerReseau(new File(getClass().getResource("/reseaux.xml").getFile()));
 		
 		ReseauRecord result = (ReseauRecord) dsl.select().from(RESEAU).where(RESEAU.ID.equal(1)).fetchOne();
 		assertNotNull(result, "Aucun réseau enregistré");
-		
+    		
 	}
 	
 	@AfterClass
@@ -48,7 +49,8 @@ public class DOMServiceImplTest extends AbstractTestNGSpringContextTests {
 	}
 	
 	private void viderBDD() {
-		dsl.execute("SET FOREIGN_KEY_CHECKS=0;");
+		
+        dsl.execute("SET FOREIGN_KEY_CHECKS=0;");
 		dsl.truncate(alize.commun.modele.tables.Transition.TRANSITION).execute();
 		dsl.truncate(alize.commun.modele.tables.Periodedeconduite.PERIODEDECONDUITE).execute();
 		dsl.truncate(alize.commun.modele.tables.LigneVoie.LIGNE_VOIE).execute();
@@ -67,5 +69,6 @@ public class DOMServiceImplTest extends AbstractTestNGSpringContextTests {
 		dsl.truncate(alize.commun.modele.tables.Conducteur.CONDUCTEUR).execute();
 		dsl.truncate(alize.commun.modele.tables.Arret.ARRET).execute();
 		dsl.execute("SET FOREIGN_KEY_CHECKS=1;");
+	
 	}
 }

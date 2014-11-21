@@ -4,6 +4,8 @@ import static alize.commun.Constantes.*;
 import static alize.nau.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import alize.nau.service.DOMService;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -23,6 +25,9 @@ public class NauControlleur {
 	
 	@Autowired
 	private ServletContext servletContext;
+	
+	@Autowired
+	private DOMService domService;
 
 	@RequestMapping(value = URL_INDEX, method = GET)
 	public ModelAndView afficherDashboard(ModelMap model) {
@@ -48,6 +53,8 @@ public class NauControlleur {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		domService.importerReseau(fichierSauve);
 		
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_IMPORTER);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
