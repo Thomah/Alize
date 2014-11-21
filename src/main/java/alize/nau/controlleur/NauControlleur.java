@@ -50,6 +50,7 @@ public class NauControlleur {
 		File fichierSauve = new File(chemin + File.separator + "fichierImporte.xml");
 		try {
 			FileUtils.writeByteArrayToFile(fichierSauve, fichier.getBytes());
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -57,6 +58,13 @@ public class NauControlleur {
 		domService.importerReseau(fichierSauve);
 		
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_IMPORTER);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		return view;
+	}
+	
+	@RequestMapping(value = URL_AFFICHERARRETS, method = GET)
+	public ModelAndView afficherArrets(ModelMap model) {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_AFFICHERARRETS);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
 		return view;
 	}

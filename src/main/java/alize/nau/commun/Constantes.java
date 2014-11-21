@@ -11,12 +11,16 @@ public class Constantes {
 	public static final String URL_EXPORTER = SLASH + URL_MODULE + SLASH + "exporter";
 	
 	public static final String URL_IMPORTER = SLASH + URL_MODULE + SLASH + "importer";
+	
+	public static final String URL_AFFICHERARRETS = SLASH + URL_MODULE + SLASH + "afficherArrets";
 
 	public static final String URL_INDEX = SLASH + URL_MODULE;
 	
 	public static final String JSP_INDEX = "index";
 	
 	public static final String JSP_IMPORTER = "importer";
+	
+	public static final String JSP_AFFICHERARRETS = "afficherArrets";
 	
 	
 }
