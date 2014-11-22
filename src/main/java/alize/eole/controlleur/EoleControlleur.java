@@ -4,14 +4,8 @@ import static alize.commun.Constantes.*;
 import static alize.eole.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-import alize.nau.service.DOMService;
-
-import java.io.File;
-import java.io.IOException;
-
 import javax.servlet.ServletContext;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
