@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/commun/include.jsp" %>
-<%@ page import=" static alize.eole.commun.Constantes.*"%>
+<%@ page import="static alize.eole.constante.Communes.*"%>
 
 <div class="navbar-default sidebar" role="navigation">
 	<div class="sidebar-nav navbar-collapse">

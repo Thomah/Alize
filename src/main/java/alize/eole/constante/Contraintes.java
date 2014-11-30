@@ -1,0 +1,64 @@
+package alize.eole.constante;
+
+/**
+ * Constantes liées à la sauvegarde et au chargement des contraintes
+ * 
+ * @author Thomas
+ * @date 30/11/2014
+ */
+public class Contraintes {
+
+	/**
+	 * Nom du fichier utilisé pour sauvegarder les données
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String NOM_FICHIER = "contraintes.properties";
+
+	/**
+	 * Label utilisé dans le formulaire pour désigner le nombre de véhicules de
+	 * la compagnie de transport
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String NB_VEHICULES_MAX_LABEL = "nbVehiculesMax";
+
+	/**
+	 * Label utilisé dans le formulaire pour désigner le temps maximum de
+	 * travail par jour
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String TEMPS_TRAVAIL_MAX_LABEL = "tempsTravailMax";
+
+	/**
+	 * Label utilisé dans le formulaire pour désigner le temps maximum de
+	 * conduite consécutif
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String TEMPS_CONDUITE_MAX_LABEL = "tempsConduiteMax";
+
+	/**
+	 * Label utilisé dans le formulaire pour désigner le temps de pause minimum
+	 * d'un conducteur
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String TEMPS_PAUSE_MIN_LABEL = "tempsPauseMin";
+
+	/**
+	 * Label utilisé dans le formulaire pour désigner le temps de pause maximum
+	 * d'un conducteur
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String TEMPS_PAUSE_MAX_LABEL = "tempsPauseMax";
+
+}

@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 /**
- * @name Constantes
+ * @name Communes
  * @author Cyril [CS]
  * @date 23 oct. 2014
  * @version 1

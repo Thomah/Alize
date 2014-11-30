@@ -5,7 +5,7 @@
 <head>
 <%@ include file="/WEB-INF/jsp/commun/head.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>AliZé - Nau</title>
+<title>AliZé - Eole</title>
 </head>
 <body>
 	<div id="wrapper">

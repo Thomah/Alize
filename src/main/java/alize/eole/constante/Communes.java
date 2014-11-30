@@ -1,8 +1,8 @@
-package alize.eole.commun;
+package alize.eole.constante;
 
 import static alize.commun.Constantes.SLASH;
 
-public class Constantes {
+public class Communes {
 	
 	public static final String NOM_MODULE = "Eole";
 	
