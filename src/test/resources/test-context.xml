@@ -104,6 +104,7 @@
 
 	<!-- SERVICES -->
 
+	<bean name="stockageService" class="alize.commun.service.StockageServiceImpl" />
 	<bean name="domService" class="alize.nau.service.DOMServiceImpl" />
 	
 	<!-- CONTROLLEURS -->

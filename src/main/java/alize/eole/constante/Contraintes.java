@@ -60,5 +60,30 @@ public class Contraintes {
 	 * @date 30/11/2014
 	 */
 	public static final String TEMPS_PAUSE_MAX_LABEL = "tempsPauseMax";
+	
+	/**
+	 * Label utilisé dans le formulaire pour désigner la ligne
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String LIGNE_LABEL = "ligne";
+	
+	/**
+	 * Label utilisé dans le formulaire pour désigner la voie
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String VOIE_LABEL = "voie";
+	
+	/**
+	 * Label utilisé dans le formulaire pour désigner l'arret
+	 * 
+	 * @author Thomas
+	 * @date 30/11/2014
+	 */
+	public static final String ARRET_LABEL = "arret";
+	
 
 }

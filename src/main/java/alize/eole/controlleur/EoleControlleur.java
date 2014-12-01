@@ -14,10 +14,13 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+
+import alize.commun.service.StockageService;
 
 /**
  * Controlleur principal du module Eole
@@ -28,7 +31,10 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class EoleControlleur {
-
+	
+	@Autowired
+	private StockageService stockageService;
+	
 	/**
 	 * Affiche la page principale du module Eole
 	 * 
@@ -67,10 +73,10 @@ public class EoleControlleur {
 
 			input = new FileInputStream(NOM_FICHIER);
 
-			// load a properties file
+			// Chargement du fichier de propriétés
 			prop.load(input);
 
-			// get the property value and print it out
+			// Ajout des propriétés dans les attributs de la classe
 			view.addObject(NB_VEHICULES_MAX_LABEL,
 					prop.getProperty(NB_VEHICULES_MAX_LABEL));
 			view.addObject(TEMPS_TRAVAIL_MAX_LABEL,
@@ -93,6 +99,11 @@ public class EoleControlleur {
 				}
 			}
 		}
+		
+		view.addObject("lignes", stockageService.getLignes());
+		view.addObject("voies", stockageService.getVoies());
+		view.addObject("arrets", stockageService.getArrets());
+		view.addObject("periodicites", stockageService.getPeriodicites());
 
 		return view;
 	}
