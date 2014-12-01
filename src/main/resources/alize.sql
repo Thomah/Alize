@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Lun 17 Novembre 2014 à 18:40
+-- Généré le :  Ven 21 Novembre 2014 à 17:49
 -- Version du serveur :  5.5.40-0+wheezy1
 -- Version de PHP :  5.4.34-0+deb7u1
 
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `arret` (
   `estCommercial` tinyint(1) DEFAULT NULL,
   `estEntreeSortieDepot` tinyint(1) DEFAULT NULL,
   `estOccupe` tinyint(1) DEFAULT NULL,
-  `tempsImmobilisation` int(11) DEFAULT NULL,
+  `tempsImmobilisation_id` int(11) DEFAULT NULL,
   `estLieuEchangeConducteur` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Designe un lieu darret du véhicule';
 
@@ -69,8 +69,7 @@ CREATE TABLE IF NOT EXISTS `conducteur` (
 
 CREATE TABLE IF NOT EXISTS `depot` (
 `id` int(11) NOT NULL,
-  `arret_id` int(11) NOT NULL,
-  `tempsImmobilisation_id` int(11) NOT NULL
+  `arret_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Le terminus est le premier ou le dernier arrêt dune voie';
 
 -- --------------------------------------------------------
@@ -99,13 +98,6 @@ CREATE TABLE IF NOT EXISTS `intervalle` (
   `pref` time DEFAULT NULL,
   `max` time DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Donne le domaine de définition dune variable';
-
---
--- Contenu de la table `intervalle`
---
-
-INSERT INTO `intervalle` (`id`, `min`, `pref`, `max`) VALUES
-(0, '00:20:14', '00:20:14', '00:20:14');
 
 -- --------------------------------------------------------
 
@@ -191,8 +183,7 @@ CREATE TABLE IF NOT EXISTS `service` (
 
 CREATE TABLE IF NOT EXISTS `terminus` (
 `id` int(11) NOT NULL,
-  `arret_id` int(11) NOT NULL,
-  `tempsImmobilisation_id` int(11) NOT NULL
+  `arret_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
@@ -272,7 +263,7 @@ ALTER TABLE `conducteur`
 -- Index pour la table `depot`
 --
 ALTER TABLE `depot`
- ADD PRIMARY KEY (`id`), ADD KEY `arret_id` (`arret_id`), ADD KEY `tempsImmobilisation_id` (`tempsImmobilisation_id`);
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `arret_id_2` (`arret_id`), ADD KEY `arret_id` (`arret_id`);
 
 --
 -- Index pour la table `feuilledeservice`
@@ -326,7 +317,7 @@ ALTER TABLE `service`
 -- Index pour la table `terminus`
 --
 ALTER TABLE `terminus`
- ADD PRIMARY KEY (`id`), ADD KEY `arret_id` (`arret_id`), ADD KEY `tempsImmobilisation_id` (`tempsImmobilisation_id`);
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `arret_id_2` (`arret_id`), ADD KEY `arret_id` (`arret_id`);
 
 --
 -- Index pour la table `transition`
@@ -446,8 +437,7 @@ ADD CONSTRAINT `associationconducteurservice_ibfk_2` FOREIGN KEY (`conducteur_id
 -- Contraintes pour la table `depot`
 --
 ALTER TABLE `depot`
-ADD CONSTRAINT `depot_ibfk_1` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `depot_ibfk_2` FOREIGN KEY (`tempsImmobilisation_id`) REFERENCES `intervalle` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `depot_ibfk_1` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Contraintes pour la table `feuilledeservice`
@@ -481,8 +471,7 @@ ADD CONSTRAINT `service_ibfk_1` FOREIGN KEY (`feuilledeservice_id`) REFERENCES `
 -- Contraintes pour la table `terminus`
 --
 ALTER TABLE `terminus`
-ADD CONSTRAINT `terminus_ibfk_1` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `terminus_ibfk_2` FOREIGN KEY (`tempsImmobilisation_id`) REFERENCES `intervalle` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `terminus_ibfk_1` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Contraintes pour la table `transition`
@@ -495,8 +484,8 @@ ADD CONSTRAINT `transition_ibfk_2` FOREIGN KEY (`arretSuivant_id`) REFERENCES `a
 -- Contraintes pour la table `voie`
 --
 ALTER TABLE `voie`
-ADD CONSTRAINT `voie_ibfk_1` FOREIGN KEY (`terminusDepart_id`) REFERENCES `terminus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `voie_ibfk_2` FOREIGN KEY (`terminusArrivee_id`) REFERENCES `terminus` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `voie_ibfk_1` FOREIGN KEY (`terminusDepart_id`) REFERENCES `terminus` (`arret_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+ADD CONSTRAINT `voie_ibfk_2` FOREIGN KEY (`terminusArrivee_id`) REFERENCES `terminus` (`arret_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Contraintes pour la table `voie_arret`

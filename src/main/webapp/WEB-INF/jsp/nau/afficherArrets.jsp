@@ -2,7 +2,7 @@
     pageEncoding="ISO-8859-1"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="alize.commun.modele.tables.pojos.Arret"%>
-<% ArrayList<Arret> listeArret = (ArrayList<Arret>) request.getAttribute("listeArret"); %>
+<%ArrayList<Arret> listeArret = (ArrayList<Arret>) request.getAttribute("listeArret");%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 
@@ -43,7 +43,7 @@
 					</td>
 					<td><%out.println(a.getEstcommercial());%></td>
 					<td>
-						<%out.println(a.getTempsimmobilisation());%>
+						<%out.println(a.getTempsimmobilisationId());%>
 					</td>
 					<td>
 						<%out.println(a.getEstentreesortiedepot());%>
