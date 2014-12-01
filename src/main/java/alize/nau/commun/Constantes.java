@@ -22,5 +22,9 @@ public class Constantes {
 	
 	public static final String JSP_AFFICHERARRETS = "afficherArrets";
 	
+	public static final String ARRET_CLE = "arretCle";
+	
+	public static final String ARRET_VALEUR = "arretValeur";
+	
 	
 }
