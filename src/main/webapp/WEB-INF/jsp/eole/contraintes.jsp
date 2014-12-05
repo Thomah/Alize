@@ -183,7 +183,7 @@ input[type=checkbox] {
 						</div>
 						<div class="panel panel-default">
 	                        <div class="panel-heading">
-	                            <i class="fa fa-bar-chart-o fa-fw"></i> Bar Chart Example
+	                            <i class="fa fa-bar-chart-o fa-fw"></i> Périodicités
 	                        </div>
 	                        <!-- /.panel-heading -->
 	                        <div class="panel-body">
@@ -191,7 +191,7 @@ input[type=checkbox] {
 	                                <div class="col-lg-4">
 	                                	<div class="form-group">
                                             <label for="<%=LIGNE_LABEL %>">Ligne</label>
-                                            <select class="form-control" name="<%=LIGNE_LABEL %>" id="<%=LIGNE_LABEL %>">
+                                            <select class="form-control" name="<%=LIGNE_LABEL %>" id="<%=LIGNE_LABEL %>" onchange="getVoiesPourLaLigne()">
 												<%-- <option value=<%=ligne.getId() %>>Actuellement : <%=ligne.getId() %></option> --%>
 												<optgroup label="------------"></optgroup>
 												<% for (Ligne l : lignes) { %>
@@ -219,7 +219,10 @@ input[type=checkbox] {
 												<% } %>
 											</select>
                                         </div>
-	                                    <div class="table-responsive">
+	                                </div>
+	                                <!-- /.col-lg-4 (nested) -->
+	                                <div class="col-lg-8">
+										<div class="table-responsive">
 	                                        <table class="table table-bordered table-hover table-striped">
 	                                            <thead>
 	                                                <tr>
@@ -243,12 +246,6 @@ input[type=checkbox] {
 	                                    </div>
 	                                    <!-- /.table-responsive -->
 	                                </div>
-	                                <!-- /.col-lg-4 (nested) -->
-	                                <div class="col-lg-8">
-		                                <div class="demo-container">
-											<div id="placeholder" class="demo-placeholder"></div>
-										</div>
-	                                </div>
 	                                <!-- /.col-lg-8 (nested) -->
 	                            </div>
 	                            <!-- /.row -->
@@ -268,24 +265,33 @@ input[type=checkbox] {
 	<!-- /#wrapper -->
 	
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
-	<script src="<c:url value="/resources/js/plugins/flot/jquery.flot.js"/>"></script>
 	<script type="text/javascript">
-	$(function() {
+	function getVoiesPourLaLigne() {
+		var idLigne = $("#<%=LIGNE_LABEL %>").val();
 
-		var d1 = [];
-		for (var i = 0; i < 14; i += 0.5) {
-			d1.push([i, Math.sin(i)]);
-		}
-
-		var d2 = [[0, 3], [4, 8], [8, 5], [9, 13]];
-
-		// A null signifies separate line segments
-
-		var d3 = [[0, 12], [7, 12], null, [7, 2.5], [12, 2.5]];
-
-		$.plot("#placeholder", [ d1, d2, d3 ]);
-
-	});
+	    $.ajax({
+	    	url: "/alize/eole/contraintes/selectLigne",
+	    	data: "idLigne=" + idLigne,
+	    	type: "POST",
+	    	success: function(str) {
+	    		var voies = jQuery.parseJSON( str );
+   		    	var select = document.getElementById("<%=VOIE_LABEL %>");
+   		    	select.innerHTML = "";
+   		    	var index;
+	    		for(index = 0; index < voies.length; ++index)
+	    		{
+	    		     var id = voies[index].id;
+	    		     var direction = voies[index].direction;
+	    		     
+	    		     var option = document.createElement("option");
+	    		     option.text = direction;
+	    		     option.value = id;
+	    		     select.appendChild(option);
+	    		}
+	    	}
+	    });
+	    
+	}
 	</script>
 	
 </body>

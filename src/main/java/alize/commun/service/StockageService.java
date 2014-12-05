@@ -39,6 +39,18 @@ public interface StockageService {
 	public List<Voie> getVoies();
 	
 	/**
+	 * Récupère les voies de la ligne sélectionnée stockées en BDD
+	 * 
+	 * @name getVoiesPourLaLigne
+	 * @description Récupère les voies de la ligne sélectionnée stockées en BDD
+	 * @return List<Ligne> La liste des voies de la ligne sélectionnée stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 4 déc. 2014
+	 * @version 1
+	 */
+	public List<Voie> getVoiesPourLaLigne(int idLigne);
+	
+	/**
 	 * Récupère les arrets stockées en BDD
 	 * 
 	 * @name getArrets

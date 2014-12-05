@@ -10,16 +10,22 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jooq.tools.json.JSONArray;
+import org.jooq.tools.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
 
 /**
@@ -106,6 +112,32 @@ public class EoleControlleur {
 		view.addObject("periodicites", stockageService.getPeriodicites());
 
 		return view;
+	}
+	
+	/**
+	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
+	 * 
+	 * @param idLigne
+	 *            L'identifiant de la ligne souhaitée
+	 * @return La page associée
+	 * @author Thomas
+	 * @date 21/11/2014
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value=URL_CONTRAINTES + "/selectLigne", method=POST)
+	public @ResponseBody String getListVoies(@RequestParam int idLigne) {
+		List<Voie> voies = stockageService.getVoiesPourLaLigne(idLigne);
+		JSONArray array = new JSONArray();
+		for(Voie v : voies) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", v.getId());
+			object.put("'direction'", "'" + v.getDirection() + "'");
+			object.put("'idTerminusDepart'", v.getTerminusdepartId());
+			object.put("'idTerminusArrivee'", v.getTerminusarriveeId());
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"").replace("=", ":");
+		return validJSONString;
 	}
 
 	/**

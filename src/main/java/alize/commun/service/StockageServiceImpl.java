@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jooq.DSLContext;
+import org.jooq.Record6;
 import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,6 +54,31 @@ public class StockageServiceImpl implements StockageService {
 			voie.setDirection(v.getDirection());
 			voie.setTerminusarriveeId(v.getTerminusarriveeId());
 			voie.setTerminusdepartId(v.getTerminusdepartId());
+			voies.add(voie);
+		}
+		
+		return voies;
+	}
+	
+	public List<Voie> getVoiesPourLaLigne(int idLigne)
+	{
+		Voie voie;
+		List<Voie> voies = new ArrayList<Voie>();
+		
+		Result<Record6<Integer,String, Integer, Integer, Integer, Integer>> results = 
+				dsl.select(VOIE.ID, VOIE.DIRECTION, VOIE.TERMINUSDEPART_ID, VOIE.TERMINUSARRIVEE_ID, LIGNE_VOIE.VOIE_ID, LIGNE_VOIE.LIGNE_ID)
+				.from(VOIE)
+				.join(LIGNE_VOIE)
+				.on(VOIE.ID.equal(LIGNE_VOIE.VOIE_ID))
+				.where(LIGNE_VOIE.LIGNE_ID.equal(idLigne))
+				.fetch();
+		
+		for (Record6<Integer,String, Integer, Integer, Integer, Integer> v : results) {
+			voie = new Voie();
+			voie.setId(v.getValue(VOIE.ID));
+			voie.setDirection(v.getValue(VOIE.DIRECTION));
+			voie.setTerminusarriveeId(v.getValue(VOIE.TERMINUSARRIVEE_ID));
+			voie.setTerminusdepartId(v.getValue(VOIE.TERMINUSDEPART_ID));
 			voies.add(voie);
 		}
 		
