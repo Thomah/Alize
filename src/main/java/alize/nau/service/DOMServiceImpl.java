@@ -139,7 +139,8 @@ public class DOMServiceImpl implements DOMService {
 			arret.setId(Integer.valueOf(courant.getAttributeValue("id")));
 			arret.setNom(courant.getAttributeValue("nom"));
 			arret.setEstcommercial((byte) courant.getAttributeValue("estCommercial").compareTo("true"));
-			arret.setEstentreesortiedepot((byte) courant.getAttributeValue("estEntreeSortieDepot").compareTo("true"));
+			arret.setEstentreedepot((byte) courant.getAttributeValue("estEntreeDepot").compareTo("true"));
+			arret.setEstsortiedepot((byte) courant.getAttributeValue("estSortieDepot").compareTo("true"));
 			arret.setEstlieuechangeconducteur((byte) courant.getAttributeValue("estLieuEchangeConducteur").compareTo("true"));
 			arret.setEstoccupe((byte)0);
 			arret.setTempsimmobilisationId(Integer.valueOf(courant.getAttributeValue("tempsImmobilisation")));
@@ -251,7 +252,7 @@ public class DOMServiceImpl implements DOMService {
 			
 			try {
 				Date dureeDate = formater.parse(courant.getAttributeValue("duree"));
-				java.sql.Date dureeSQLDate = new java.sql.Date(dureeDate.getTime());
+				java.sql.Time dureeSQLDate = new java.sql.Time(dureeDate.getTime());
 				transition.setDuree(dureeSQLDate);
 			} catch (ParseException e) {
 				e.printStackTrace();

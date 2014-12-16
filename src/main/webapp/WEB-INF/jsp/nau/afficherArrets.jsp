@@ -3,10 +3,11 @@
 
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="alize.commun.modele.tables.pojos.Arret"%>
+<%@ page import="alize.commun.modele.tables.pojos.Terminus"%>
 <%@ page import="static alize.nau.commun.Constantes.*"%>
 <%
-	ArrayList<Arret> listeArret = (ArrayList<Arret>) request
-			.getAttribute(ARRET_CLE);
+	ArrayList<ArrayList<String>> tableauArret = (ArrayList<ArrayList<String>>) request.getAttribute(TABLEAU_ARRET_CLE);
+
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -29,70 +30,57 @@
 					<button style="margin-left: 5px" id="creer-arret">Ajouter
 						arrêt</button>
 					<br>
-					<table id="tableau" class="sortable"
-						style="border: '0'; cellpadding: '0'; cellspacing: '0'; overflow: scroll;">
+					<table id="tableau" class="sortable"  align = 'center' border="5" style="border: '0'; cellpadding: '5'; cellspacing: '5'; overflow: scroll;" >
 						<thead>
 							<tr>
 								<td><center>Nom</center></td>
 								<td><center>Id</center></td>
 								<td><center>Commercial</center></td>
 								<td><center>Temps Immobilisation</center></td>
-								<td><center>Entrée/Sortie</center></td>
+								<td><center>Entrée</center></td>
+								<td><center>Sortie</center></td>
 								<td><center>Lieu d'échange conducteur</center></td>
 								<td><center>Terminus</center></td>
 								<td><center>Modifier</center></td>
 								<td><center>Supprimer</center></td>
 							</tr>
 							<%
-								for (Arret a : listeArret) {
+								for (ArrayList<String> ligneArret : tableauArret) {
 							%>
 							<tr>
+							<%
+									for(String s : ligneArret){
+							%>
+							
 								<td>
 									<%
-										out.println(a.getNom());
+										if(s.equals("true")||s.equals("false")){
+											%>
+											<input type="checkbox"  value='<%out.println(s);%>'>
+											<%
+										}else{
+											out.println(s);
+										}
 									%>
 								</td>
-								<td>
-									<%
-										out.println(a.getId());
+								
+								
+								<%
+										}
+										
 									%>
-								</td>
-								<td>
-									<%
-										out.println(a.getEstcommercial());
-									%>
-								</td>
-								<td>
-									<%
-										out.println(a.getTempsimmobilisationId());
-									%>
-								</td>
-								<td>
-									<%
-										out.println(a.getEstentreesortiedepot());
-									%>
-								</td>
-								<td>
-									<%
-										out.println(a.getEstlieuechangeconducteur());
-									%>
-								</td>
-								<td>
-									<%
-										out.println("Test");
-									%>
-
-								</td>
-								<td>
+							
+							<td>
 									<button style="margin-left: 5px" id="modifier-arret">Modifier</button>
 								</td>
 								<td>
 									<button style="margin-left: 5px" id="creer-arret">Supprimer</button>
 								</td>
-							</tr>
+								</tr>
 							<%
-								}
-							%>
+										}
+										
+									%>
 						</thead>
 					</table>
 				</div>

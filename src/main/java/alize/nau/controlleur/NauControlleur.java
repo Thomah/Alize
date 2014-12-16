@@ -4,17 +4,25 @@ import static alize.commun.Constantes.*;
 import static alize.nau.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import alize.commun.modele.tables.daos.ArretDao;
-import alize.commun.modele.tables.Arret;
+import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.records.ArretRecord;
+import alize.commun.modele.tables.records.IntervalleRecord;
+import alize.commun.modele.tables.records.TerminusRecord;
 import alize.nau.service.DOMService;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletContext;
+
+import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Result;
+
 import alize.commun.modele.Keys;
 import alize.commun.modele.Tables;
 
@@ -38,7 +46,7 @@ public class NauControlleur {
 	private DOMService domService;
 	
 	@Autowired
-	private DSLContext dslContext;
+	private DSLContext dsl;
 
 	@RequestMapping(value = URL_INDEX, method = GET)
 	public ModelAndView afficherDashboard(ModelMap model) {
@@ -75,17 +83,57 @@ public class NauControlleur {
 	
 	@RequestMapping(value = URL_AFFICHERARRETS, method = GET)
 	public ModelAndView afficherArrets(ModelMap model) {
-		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_AFFICHERARRETS);
-		view.addObject(URL_MODULE_CLE, URL_MODULE);
-		List<ArretRecord> listeArret = new ArrayList<ArretRecord>();
-		Result<ArretRecord> resultArret = dslContext.fetch(Tables.ARRET);
-		for(ArretRecord a : resultArret){
+		List<List<String>> tableauArrets = new ArrayList<List<String>>();
+		
+		List<Arret> listeArret = new ArrayList<Arret>();
+		Result<ArretRecord> resultArret = dsl.fetch(Tables.ARRET);
+		List<Integer> listeIDTerminus = new ArrayList<Integer>();
+		Result<TerminusRecord> resultTerminus = dsl.fetch(Tables.TERMINUS);
+		List<String> listeTempsImmobilisationPref = new ArrayList<String>();
+		
+		for(ArretRecord aRec : resultArret){
+			Arret a = new Arret();
+			a.setNom(aRec .getNom()); 
+			a.setId(aRec.getId());
+			a.setEstcommercial(aRec.getEstcommercial());
+			a.setEstentreedepot(aRec.getEstentreedepot());
+			a.setEstlieuechangeconducteur(aRec.getEstlieuechangeconducteur());
+			a.setEstsortiedepot(aRec.getEstsortiedepot());
+			a.setTempsimmobilisationId(aRec.getTempsimmobilisationId());
 			listeArret.add(a);
 		}
+		for(TerminusRecord tRec : resultTerminus){
+			listeIDTerminus.add(tRec.getArretId());
+		}
 		
-		view.addObject(ARRET_CLE, listeArret);
+		Result<Record1<Time>> result = dsl.select(Tables.INTERVALLE.PREF)
+                .from(Tables.INTERVALLE)
+                .join(Tables.ARRET)
+                .on(Tables.ARRET.TEMPSIMMOBILISATION_ID.equal(Tables.INTERVALLE.ID))
+                .fetch();
+		for(Object rec : result.toArray()){
+			listeTempsImmobilisationPref.add(rec.toString());
+		}
 		
+		for(int i = 0; i<listeArret.size(); i++){
+			Arret a = listeArret.get(i);
+			List<String> ligneArret= new ArrayList<String>();
+			ligneArret.add(a.getNom());
+			ligneArret.add(a.getId().toString());
+			ligneArret.add(a.getEstcommercial().toString());
+			ligneArret.add(listeTempsImmobilisationPref.get(i));
+			ligneArret.add(a.getEstentreedepot().toString());
+			ligneArret.add(a.getEstsortiedepot().toString());
+			ligneArret.add(a.getEstlieuechangeconducteur().toString());
+			Boolean estTerminus = listeIDTerminus.contains(a.getId());
+			ligneArret.add(estTerminus.toString());
+			tableauArrets.add(ligneArret);
+		}
 		
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_AFFICHERARRETS);
+		
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(TABLEAU_ARRET_CLE, tableauArrets);
 		return view;
 	}
 
