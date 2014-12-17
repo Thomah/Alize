@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Record6;
+import org.jooq.Record8;
+import org.jooq.Record9;
 import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -96,7 +98,8 @@ public class StockageServiceImpl implements StockageService {
 			arret = new Arret();
 			arret.setId(a.getId());
 			arret.setEstcommercial(a.getEstcommercial());
-			arret.setEstentreesortiedepot(a.getEstentreesortiedepot());
+			arret.setEstentreedepot(a.getEstentreedepot());
+			arret.setEstsortiedepot(a.getEstsortiedepot());
 			arret.setEstlieuechangeconducteur(a.getEstlieuechangeconducteur());
 			arret.setEstoccupe(a.getEstoccupe());
 			arret.setNom(a.getNom());
@@ -106,6 +109,35 @@ public class StockageServiceImpl implements StockageService {
 		return arrets;
 	}
 
+	@Override
+	public List<Arret> getArretsPourLaVoie(int idVoie) {
+		
+		Arret arret;
+		List<Arret> arrets = new ArrayList<Arret>();
+		
+		Result<Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
+				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTOCCUPE, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
+				.from(ARRET)
+				.join(VOIE_ARRET)
+				.on(ARRET.ID.equal(VOIE_ARRET.ARRET_ID))
+				.where(VOIE_ARRET.VOIE_ID.equal(idVoie))
+				.fetch();
+		
+		for (Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer> a : results) {
+			arret = new Arret();
+			arret.setId(a.getValue(ARRET.ID));
+			arret.setNom(a.getValue(ARRET.NOM));
+			arret.setEstcommercial(a.getValue(ARRET.ESTCOMMERCIAL));
+			arret.setEstentreedepot(a.getValue(ARRET.ESTENTREEDEPOT));
+			arret.setEstlieuechangeconducteur(a.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
+			arret.setEstoccupe(a.getValue(ARRET.ESTOCCUPE));
+			arret.setEstsortiedepot(a.getValue(ARRET.ESTSORTIEDEPOT));
+			arrets.add(arret);
+		}
+		
+		return arrets;
+	}
+	
 	@Override
 	public List<Periodicite> getPeriodicites() {
 
@@ -126,5 +158,6 @@ public class StockageServiceImpl implements StockageService {
 		
 		return periodicites;
 	}
+
 
 }

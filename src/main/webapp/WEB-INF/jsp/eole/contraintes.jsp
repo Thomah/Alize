@@ -40,95 +40,95 @@
 	}
 	
 	a {	color: #069; }
-a:hover { color: #28b; }
-
-h2 {
-	margin-top: 15px;
-	font: normal 32px "omnes-pro", Helvetica, Arial, sans-serif;
-}
-
-h3 {
-	margin-left: 30px;
-	font: normal 26px "omnes-pro", Helvetica, Arial, sans-serif;
-	color: #666;
-}
-
-p {
-	margin-top: 10px;
-}
-
-button {
-	font-size: 18px;
-	padding: 1px 7px;
-}
-
-input {
-	font-size: 18px;
-}
-
-input[type=checkbox] {
-	margin: 7px;
-}
-
-#header {
-	position: relative;
-	width: 900px;
-	margin: auto;
-}
-
-#header h2 {
-	margin-left: 10px;
-	vertical-align: middle;
-	font-size: 42px;
-	font-weight: bold;
-	text-decoration: none;
-	color: #000;
-}
-
-#content {
-	width: 880px;
-	margin: 0 auto;
-	padding: 10px;
-}
-
-#footer {
-	margin-top: 25px;
-	margin-bottom: 10px;
-	text-align: center;
-	font-size: 12px;
-	color: #999;
-}
-
-.demo-container {
-	box-sizing: border-box;
-	width: 850px;
-	height: 450px;
-	padding: 20px 15px 15px 15px;
-	margin: 15px auto 30px auto;
-	border: 1px solid #ddd;
-	background: #fff;
-	background: linear-gradient(#f6f6f6 0, #fff 50px);
-	background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
-	background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
-	background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
-	background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
-	box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-	-o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-	-ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-	-moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-	-webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-.demo-placeholder {
-	width: 100%;
-	height: 100%;
-	font-size: 14px;
-	line-height: 1.2em;
-}
-
-.legend table {
-	border-spacing: 5px;
-}
+	a:hover { color: #28b; }
+	
+	h2 {
+		margin-top: 15px;
+		font: normal 32px "omnes-pro", Helvetica, Arial, sans-serif;
+	}
+	
+	h3 {
+		margin-left: 30px;
+		font: normal 26px "omnes-pro", Helvetica, Arial, sans-serif;
+		color: #666;
+	}
+	
+	p {
+		margin-top: 10px;
+	}
+	
+	button {
+		font-size: 18px;
+		padding: 1px 7px;
+	}
+	
+	input {
+		font-size: 18px;
+	}
+	
+	input[type=checkbox] {
+		margin: 7px;
+	}
+	
+	#header {
+		position: relative;
+		width: 900px;
+		margin: auto;
+	}
+	
+	#header h2 {
+		margin-left: 10px;
+		vertical-align: middle;
+		font-size: 42px;
+		font-weight: bold;
+		text-decoration: none;
+		color: #000;
+	}
+	
+	#content {
+		width: 880px;
+		margin: 0 auto;
+		padding: 10px;
+	}
+	
+	#footer {
+		margin-top: 25px;
+		margin-bottom: 10px;
+		text-align: center;
+		font-size: 12px;
+		color: #999;
+	}
+	
+	.demo-container {
+		box-sizing: border-box;
+		width: 850px;
+		height: 450px;
+		padding: 20px 15px 15px 15px;
+		margin: 15px auto 30px auto;
+		border: 1px solid #ddd;
+		background: #fff;
+		background: linear-gradient(#f6f6f6 0, #fff 50px);
+		background: -o-linear-gradient(#f6f6f6 0, #fff 50px);
+		background: -ms-linear-gradient(#f6f6f6 0, #fff 50px);
+		background: -moz-linear-gradient(#f6f6f6 0, #fff 50px);
+		background: -webkit-linear-gradient(#f6f6f6 0, #fff 50px);
+		box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+		-o-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+		-ms-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+		-moz-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+		-webkit-box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+	}
+	
+	.demo-placeholder {
+		width: 100%;
+		height: 100%;
+		font-size: 14px;
+		line-height: 1.2em;
+	}
+	
+	.legend table {
+		border-spacing: 5px;
+	}
 </style>
 </head>
 <body>
@@ -192,38 +192,23 @@ input[type=checkbox] {
 	                                	<div class="form-group">
                                             <label for="<%=LIGNE_LABEL %>">Ligne</label>
                                             <select class="form-control" name="<%=LIGNE_LABEL %>" id="<%=LIGNE_LABEL %>" onchange="getVoiesPourLaLigne()">
-												<%-- <option value=<%=ligne.getId() %>>Actuellement : <%=ligne.getId() %></option> --%>
-												<optgroup label="------------"></optgroup>
-												<% for (Ligne l : lignes) { %>
-												<option value="<%=l.getId() %>"><%=l.getId() %></option>
-												<% } %>
 											</select>
                                         </div>
                                         <div class="form-group">
                                             <label for="<%=VOIE_LABEL %>">Voie</label>
-                                            <select class="form-control" name="<%=VOIE_LABEL %>" id="<%=VOIE_LABEL %>">
-												<%-- <option value=<%=voie.getId() %>>Actuellement : <%=voie.getDirection() %></option> --%>
-												<optgroup label="------------"></optgroup>
-												<% for (Voie v : voies) { %>
-												<option value="<%=v.getId() %>"><%=v.getDirection() %></option>
-												<% } %>
+                                            <select class="form-control" name="<%=VOIE_LABEL %>" id="<%=VOIE_LABEL %>" onchange="getArretsPourLaLigne()">
 											</select>
                                         </div>
                                         <div class="form-group">
                                             <label for="<%=ARRET_LABEL %>">Arrêt de référence</label>
                                             <select class="form-control" name="<%=ARRET_LABEL %>" id="<%=ARRET_LABEL %>">
-												<%-- <option value=<%=arret.getId() %>>Actuellement : <%=arret.getNom() %></option> --%>
-												<optgroup label="------------"></optgroup>
-												<% for (Arret a : arrets) { %>
-												<option value="<%=a.getId() %>"><%=a.getNom() %></option>
-												<% } %>
 											</select>
                                         </div>
 	                                </div>
 	                                <!-- /.col-lg-4 (nested) -->
 	                                <div class="col-lg-8">
 										<div class="table-responsive">
-	                                        <table class="table table-bordered table-hover table-striped">
+	                                        <table class="table table-bordered table-hover table-striped" id="periodiciteTable">
 	                                            <thead>
 	                                                <tr>
 	                                                    <th>Début</th>
@@ -238,7 +223,6 @@ input[type=checkbox] {
 	                                                    <td><%=periodicite.getDebut() %></td>
 	                                                    <td><%=periodicite.getFin() %></td>
 	                                                    <td><%=periodicite.getPeriode() %></td>
-	                                                    <td><a href="#"><span class="glyphicon glyphicon-remove" aria-hidden="false"></span></a></td>
 	                                                </tr>
 	                                                <% } %>
 	                                            </tbody>
@@ -265,7 +249,48 @@ input[type=checkbox] {
 	<!-- /#wrapper -->
 	
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
+	<script src="<c:url value="/resources/js/plugins/dataTables/jquery.dataTables.js"/>"></script>
+	<script src="<c:url value="/resources/js/plugins/dataTables/dataTables.tableTools.min.js"/>"></script>
+	<script src="<c:url value="/resources/js/plugins/dataTables/dataTables.editor.min.js"/>"></script>
+	<script src="<c:url value="/resources/js/plugins/dataTables/dataTables.bootstrap.js"/>"></script>
+	<script src="<c:url value="/resources/js/plugins/dataTables/editor.bootstrap.js"/>"></script>
 	<script type="text/javascript">
+	var editor;
+	$(document).ready(function() {
+	    editor = new $.fn.dataTable.Editor( {
+	        "ajaxUrl": "php/browsers.php",
+	        "domTable": "#periodiciteTable",
+	        "fields": [ {
+	                "label": "Début",
+	                "name": "debut"
+	            }, {
+	                "label": "Fin",
+	                "name": "fin"
+	            }, {
+	                "label": "Périodicité",
+	                "name": "periodicite"
+	            }
+	        ]
+	    } );
+	 
+	    $('#periodiciteTable').dataTable( {
+	        "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
+	        "sAjaxSource": "php/browsers.php",
+	        "aoColumns": [
+	            { "mData": "debut" },
+	            { "mData": "fin" },
+	            { "mData": "periodicite" }
+	        ],
+	        "oTableTools": {
+	            "sRowSelect": "multi",
+	            "aButtons": [
+	                { "sExtends": "editor_create", "editor": editor },
+	                { "sExtends": "editor_edit",   "editor": editor },
+	                { "sExtends": "editor_remove", "editor": editor }
+	            ]
+	        }
+	    } );
+	} );
 	function getVoiesPourLaLigne() {
 		var idLigne = $("#<%=LIGNE_LABEL %>").val();
 
@@ -290,7 +315,31 @@ input[type=checkbox] {
 	    		}
 	    	}
 	    });
-	    
+	}
+	function getArretsPourLaLigne() {
+		var idVoie = $("#<%=VOIE_LABEL %>").val();
+
+	    $.ajax({
+	    	url: "/alize/eole/contraintes/selectVoie",
+	    	data: "idVoie=" + idVoie,
+	    	type: "POST",
+	    	success: function(str) {
+	    		var arrets = jQuery.parseJSON( str );
+   		    	var select = document.getElementById("<%=ARRET_LABEL %>");
+   		    	select.innerHTML = "";
+   		    	var index;
+	    		for(index = 0; index < arrets.length; ++index)
+	    		{
+	    		     var id = arrets[index].id;
+	    		     var nom = arrets[index].nom;
+
+	    		     var option = document.createElement("option");
+	    		     option.text = nom;
+	    		     option.value = id;
+	    		     select.appendChild(option);
+	    		}
+	    	}
+	    });
 	}
 	</script>
 	

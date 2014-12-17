@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
 
@@ -125,7 +126,7 @@ public class EoleControlleur {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value=URL_CONTRAINTES + "/selectLigne", method=POST)
-	public @ResponseBody String getListVoies(@RequestParam int idLigne) {
+	public @ResponseBody String getListeVoies(@RequestParam int idLigne) {
 		List<Voie> voies = stockageService.getVoiesPourLaLigne(idLigne);
 		JSONArray array = new JSONArray();
 		for(Voie v : voies) {
@@ -134,6 +135,35 @@ public class EoleControlleur {
 			object.put("'direction'", "'" + v.getDirection() + "'");
 			object.put("'idTerminusDepart'", v.getTerminusdepartId());
 			object.put("'idTerminusArrivee'", v.getTerminusarriveeId());
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"").replace("=", ":");
+		return validJSONString;
+	}
+	
+	/**
+	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
+	 * 
+	 * @param idLigne
+	 *            L'identifiant de la ligne souhaitée
+	 * @return La page associée
+	 * @author Thomas
+	 * @date 21/11/2014
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value=URL_CONTRAINTES + "/selectVoie", method=POST)
+	public @ResponseBody String getListeArrets(@RequestParam int idVoie) {
+		List<Arret> arrets = stockageService.getArretsPourLaVoie(idVoie);
+		JSONArray array = new JSONArray();
+		for(Arret a : arrets) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", a.getId());
+			object.put("'nom'", "'" + a.getNom() + "'");
+			object.put("'estCommercial'", a.getEstcommercial());
+			object.put("'estEntreeDepot'", a.getEstentreedepot());
+			object.put("'estSortieDepot'", a.getEstsortiedepot());
+			object.put("'estOccupe'", a.getEstoccupe());
+			object.put("'estLieuEchangeConducteur'", a.getEstlieuechangeconducteur());
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"").replace("=", ":");
