@@ -1,8 +1,12 @@
 package alize.commun.service;
 
 import alize.commun.modele.tables.pojos.*;
+import alize.commun.modele.tables.records.PeriodiciteRecord;
 
+import java.sql.Time;
 import java.util.List;
+
+import org.jooq.TableField;
 
 /**
  * Service associé à la gestion du stockage des données
@@ -86,6 +90,31 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Periodicite> getPeriodicites();
+
+	/**
+	 * Récupère les périodicités pour la voie et l'arret sélectionnés stockées en BDD
+	 * 
+	 * @name getPeriodicites
+	 * @description Récupère les périodicités pour la voie et l'arret sélectionnés stockées en BDD
+	 * @return List<Arret> La liste des périodicités pour la voie et l'arret sélectionnés stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 17 déc. 2014
+	 * @version 1
+	 */
+	public List<Periodicite> getPeriodicites(int idVoie, int idArret);
+
+	/**
+	 * Met à jour la périodicité indiquée stockées en BDD
+	 * @name updatePeriodicite
+	 * @description Met à jour la périodicité indiquée stockées en BDD
+	 * @param id L'identifiant de la périodicité à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 17 déc. 2014
+	 * @version 1
+	 */
+	public void updatePeriodicite(int id, String colonne, Time valeur);
 	
 
 }

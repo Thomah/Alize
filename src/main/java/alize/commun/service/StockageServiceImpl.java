@@ -2,14 +2,15 @@ package alize.commun.service;
 
 import static alize.commun.modele.Tables.*;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jooq.DSLContext;
 import org.jooq.Record6;
-import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
+import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import alize.commun.modele.tables.pojos.Arret;
@@ -157,6 +158,51 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return periodicites;
+	}
+
+	@Override
+	public List<Periodicite> getPeriodicites(int idVoie, int idArret) {
+
+		Periodicite periodicite;
+		List<Periodicite> periodicites = new ArrayList<Periodicite>();
+		
+		Result<Record6<Integer, Time, Time, Time, Integer, Integer>> results = dsl.select(PERIODICITE.ID, PERIODICITE.DEBUT, PERIODICITE.FIN, PERIODICITE.PERIODE, PERIODICITE.ID_VOIE, PERIODICITE.ID_ARRET)
+				.from(PERIODICITE)
+				.where(PERIODICITE.ID_VOIE.equal(idVoie))
+				.and(PERIODICITE.ID_ARRET.equal(idArret))
+				.fetch();
+		
+		
+		for (Record6<Integer, Time, Time, Time, Integer, Integer> p : results) {
+			periodicite = new Periodicite();
+			periodicite.setId(p.getValue(PERIODICITE.ID));
+			periodicite.setDebut(p.getValue(PERIODICITE.DEBUT));
+			periodicite.setFin(p.getValue(PERIODICITE.FIN));
+			periodicite.setPeriode(p.getValue(PERIODICITE.PERIODE));
+			periodicite.setIdVoie(p.getValue(PERIODICITE.ID_VOIE));
+			periodicite.setIdArret(p.getValue(PERIODICITE.ID_ARRET));
+			periodicites.add(periodicite);
+		}
+		
+		return periodicites;
+	}
+
+	@Override
+	public void updatePeriodicite(int id, String colonne, Time valeur) {
+		
+		TableField<PeriodiciteRecord, Time> field = null;
+		
+		if(colonne.compareTo("debut") == 0) {
+			field = PERIODICITE.DEBUT;
+		} else if(colonne.compareTo("fin") == 0) {
+			field = PERIODICITE.FIN;
+		} else if(colonne.compareTo("periode") == 0) {
+			field = PERIODICITE.PERIODE;
+		}
+		
+		dsl.update(PERIODICITE)
+			.set(field, valeur)
+			.where(PERIODICITE.ID.equal(id));
 	}
 
 

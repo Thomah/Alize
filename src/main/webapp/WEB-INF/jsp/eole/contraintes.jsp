@@ -192,41 +192,28 @@
 	                                	<div class="form-group">
                                             <label for="<%=LIGNE_LABEL %>">Ligne</label>
                                             <select class="form-control" name="<%=LIGNE_LABEL %>" id="<%=LIGNE_LABEL %>" onchange="getVoiesPourLaLigne()">
+                                           	<% for (Ligne l : lignes) { %>
+                                           		<option value="<%=l.getId() %>">Ligne <%=l.getId() %></option>
+                                           	<% } %>
 											</select>
                                         </div>
                                         <div class="form-group">
                                             <label for="<%=VOIE_LABEL %>">Voie</label>
-                                            <select class="form-control" name="<%=VOIE_LABEL %>" id="<%=VOIE_LABEL %>" onchange="getArretsPourLaLigne()">
+                                            <select class="form-control" name="<%=VOIE_LABEL %>" id="<%=VOIE_LABEL %>" onchange="getArretsPourLaVoie()">
 											</select>
                                         </div>
                                         <div class="form-group">
                                             <label for="<%=ARRET_LABEL %>">Arrêt de référence</label>
-                                            <select class="form-control" name="<%=ARRET_LABEL %>" id="<%=ARRET_LABEL %>">
+                                            <select class="form-control" name="<%=ARRET_LABEL %>" id="<%=ARRET_LABEL %>" onchange="getPeriodicitePourLArret()">
 											</select>
                                         </div>
 	                                </div>
 	                                <!-- /.col-lg-4 (nested) -->
 	                                <div class="col-lg-8">
-										<div class="table-responsive">
-	                                        <table class="table table-bordered table-hover table-striped" id="periodiciteTable">
-	                                            <thead>
-	                                                <tr>
-	                                                    <th>Début</th>
-	                                                    <th>Fin</th>
-	                                                    <th>Périodicité</th>
-	                                                    <th>Supprimer</th>
-	                                                </tr>
-	                                            </thead>
-	                                            <tbody>
-	                                            	<% for (Periodicite periodicite : periodicites) { %>
-	                                                <tr>
-	                                                    <td><%=periodicite.getDebut() %></td>
-	                                                    <td><%=periodicite.getFin() %></td>
-	                                                    <td><%=periodicite.getPeriode() %></td>
-	                                                </tr>
-	                                                <% } %>
-	                                            </tbody>
-	                                        </table>
+	                                	<div class="btn-group" role="group">
+	                                		<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Ajouter</button>
+	                                	</div>
+										<div id="periodiciteContent" class="table-responsive">
 	                                    </div>
 	                                    <!-- /.table-responsive -->
 	                                </div>
@@ -249,48 +236,13 @@
 	<!-- /#wrapper -->
 	
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
-	<script src="<c:url value="/resources/js/plugins/dataTables/jquery.dataTables.js"/>"></script>
-	<script src="<c:url value="/resources/js/plugins/dataTables/dataTables.tableTools.min.js"/>"></script>
-	<script src="<c:url value="/resources/js/plugins/dataTables/dataTables.editor.min.js"/>"></script>
-	<script src="<c:url value="/resources/js/plugins/dataTables/dataTables.bootstrap.js"/>"></script>
-	<script src="<c:url value="/resources/js/plugins/dataTables/editor.bootstrap.js"/>"></script>
+	<script src="<c:url value="/resources/js/plugins/editablegrid/editablegrid.js"/>"></script>
+	<script src="<c:url value="/resources/js/plugins/editablegrid/demo.js"/>"></script>
 	<script type="text/javascript">
-	var editor;
-	$(document).ready(function() {
-	    editor = new $.fn.dataTable.Editor( {
-	        "ajaxUrl": "php/browsers.php",
-	        "domTable": "#periodiciteTable",
-	        "fields": [ {
-	                "label": "Début",
-	                "name": "debut"
-	            }, {
-	                "label": "Fin",
-	                "name": "fin"
-	            }, {
-	                "label": "Périodicité",
-	                "name": "periodicite"
-	            }
-	        ]
-	    } );
-	 
-	    $('#periodiciteTable').dataTable( {
-	        "sDom": "<'row-fluid'<'span6'T><'span6'f>r>t<'row-fluid'<'span6'i><'span6'p>>",
-	        "sAjaxSource": "php/browsers.php",
-	        "aoColumns": [
-	            { "mData": "debut" },
-	            { "mData": "fin" },
-	            { "mData": "periodicite" }
-	        ],
-	        "oTableTools": {
-	            "sRowSelect": "multi",
-	            "aButtons": [
-	                { "sExtends": "editor_create", "editor": editor },
-	                { "sExtends": "editor_edit",   "editor": editor },
-	                { "sExtends": "editor_remove", "editor": editor }
-	            ]
-	        }
-	    } );
-	} );
+	window.onload = function() {
+		// Faire qqchose
+	}
+	
 	function getVoiesPourLaLigne() {
 		var idLigne = $("#<%=LIGNE_LABEL %>").val();
 
@@ -316,7 +268,8 @@
 	    	}
 	    });
 	}
-	function getArretsPourLaLigne() {
+	
+	function getArretsPourLaVoie() {
 		var idVoie = $("#<%=VOIE_LABEL %>").val();
 
 	    $.ajax({
@@ -340,6 +293,78 @@
 	    		}
 	    	}
 	    });
+	}
+	
+	function getPeriodicitePourLArret() {
+		var idVoie = $("#<%=VOIE_LABEL %>").val();
+		var idArret = $("#<%=ARRET_LABEL %>").val();
+
+	    $.ajax({
+	    	url: "/alize/eole/contraintes/selectArret",
+	    	data: "idVoie=" + idVoie + "&idArret=" + idArret,
+	    	type: "POST",
+	    	success: function(str) {
+   		    	var metadata = [];
+   		     	metadata.push({name: "debut", label: "Heure de début", datatype: "string", editable: true});
+   		     	metadata.push({name: "fin", label: "Heure de fin", datatype: "string", editable: true});
+   		     	metadata.push({name: "periode", label: "Temps entre deux véhicules", datatype: "string", editable: true});
+   		     	
+				var data = [];
+	    		var periodicites = jQuery.parseJSON( str );
+   		    	var index;
+	    		for(index = 0; index < periodicites.length; ++index)
+	    		{
+	    		     data.push({id: periodicites[index].id, values: {"debut": periodicites[index].debut, "fin": periodicites[index].fin, "periode": periodicites[index].periode}});
+	    		}
+	    		
+	    		editableGrid = new EditableGrid("GridPeriodicites", {
+	    			modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {
+	    	   	    	updateCellValue(this, rowIndex, columnIndex, oldValue, newValue, row);
+	    	       	}
+	    	 	});
+	    		editableGrid.load({"metadata": metadata, "data": data});
+	    		editableGrid.renderGrid("periodiciteContent", "table table-bordered table-hover table-striped");
+	    	}
+	    });
+	}
+	
+	function updateCellValue(editableGrid, rowIndex, columnIndex, oldValue, newValue, row, onResponse)
+	{
+		var id = editableGrid.getRowId(rowIndex);
+		var newvalue = editableGrid.getColumnType(columnIndex) == "boolean" ? (newValue ? 1 : 0) : newValue;
+		var colname = editableGrid.getColumnName(columnIndex);
+		
+		$.ajax({
+			url: '/alize/eole/contraintes/updatePeriodicite',
+			type: 'POST',
+	    	data: "id=" + id + 
+	    		"&newvalue=" + newvalue + 
+   				"&colname=" + colname,
+			success: function (response) 
+			{ 
+				// reset old value if failed then highlight row
+				var success = onResponse ? onResponse(response) : (response == "ok" || !isNaN(parseInt(response))); // by default, a sucessfull reponse can be "ok" or a database id 
+				if (!success) editableGrid.setValueAt(rowIndex, columnIndex, oldValue);
+			    highlight(row.id, success ? "ok" : "error"); 
+			},
+			error: function(XMLHttpRequest, textStatus, exception) { alert("Ajax failure\n" + errortext); },
+			async: true
+		});
+	}
+	
+	function highlightRow(rowId, bgColor, after)
+	{
+		var rowSelector = $("#" + rowId);
+		rowSelector.css("background-color", bgColor);
+		rowSelector.fadeTo("normal", 0.5, function() { 
+			rowSelector.fadeTo("fast", 1, function() { 
+				rowSelector.css("background-color", '');
+			});
+		});
+	}
+
+	function highlight(div_id, style) {
+		highlightRow(div_id, style == "error" ? "#e5afaf" : style == "warning" ? "#ffcc00" : "#8dc70a");
 	}
 	</script>
 	

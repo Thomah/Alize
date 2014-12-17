@@ -10,6 +10,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Properties;
 
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
 
@@ -38,6 +42,8 @@ import alize.commun.service.StockageService;
  */
 @Controller
 public class EoleControlleur {
+	
+	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat("hh:mm:ss");
 	
 	@Autowired
 	private StockageService stockageService;
@@ -144,9 +150,9 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
 	 * 
-	 * @param idLigne
-	 *            L'identifiant de la ligne souhaitée
-	 * @return La page associée
+	 * @param idVoie
+	 *            L'identifiant de la voie souhaitée
+	 * @return La liste des arrets au format JSON
 	 * @author Thomas
 	 * @date 21/11/2014
 	 */
@@ -169,6 +175,60 @@ public class EoleControlleur {
 		String validJSONString = array.toString().replace("'", "\"").replace("=", ":");
 		return validJSONString;
 	}
+
+	/**
+	 * Retourne en AJAX la liste des périodicités associées à la voie et à l'arret sélectionnés
+	 * 
+	 * @param idVoie
+	 *            L'identifiant de la voie souhaitée
+	 * @param idArret
+	 *            L'identifiant de l'arret souhaité
+	 * @return La liste des périodicités au format JSON
+	 * @author Thomas
+	 * @date 21/11/2014
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value=URL_CONTRAINTES + "/selectArret", method=POST)
+	public @ResponseBody String getListePeriodicites(@RequestParam int idVoie, @RequestParam int idArret) {
+		List<Periodicite> periodicites = stockageService.getPeriodicites(idVoie, idArret);
+		JSONArray array = new JSONArray();
+		for(Periodicite p : periodicites) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", p.getId());
+			object.put("'debut'", "'" + p.getDebut().toString() + "'");
+			object.put("'fin'", "'" + p.getFin().toString() + "'");
+			object.put("'periode'", "'" + p.getPeriode().toString() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"").replace("=", ":");
+		return validJSONString;
+	}
+	
+
+	/**
+	 * Met à jour en AJAX les périodicités 
+	 * 
+	 * @param id
+	 *            L'identifiant de la périodicité
+	 * @param newvalue
+	 *            La valeur mise à jour
+	 * @param colname
+	 *            Le nom de la propriété mise à jour
+	 * @return La liste des périodicités au format JSON
+	 * @author Thomas
+	 * @date 21/11/2014
+	 */
+	@RequestMapping(value=URL_CONTRAINTES + "/updatePeriodicite", method=POST)
+	public @ResponseBody String updatePeriodicite(@RequestParam int id, @RequestParam String newvalue, @RequestParam String colname) {
+		Time valeur;
+		try {
+			valeur = new Time(PERIODE_FORMAT.parse(newvalue).getTime());
+			stockageService.updatePeriodicite(id, colname, valeur);
+		} catch (ParseException e) {
+		}
+		return "ok";
+	}
+	
 
 	/**
 	 * Traite les données définies dans la page des contraintes
