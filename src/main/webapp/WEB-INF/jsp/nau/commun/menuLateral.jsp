@@ -18,6 +18,8 @@
 					class="fa fa-dashboard fa-fw"></i> Importer</a></li>
 			<li><a href="<c:url value="<%=URL_EXPORTER %>" />"><i
 					class="fa fa-dashboard fa-fw"></i> Exporter</a></li>
+			<li><a href="<c:url value="<%=URL_AFFICHERARRETS %>" />"><i
+					class="fa fa-dashboard fa-fw"></i> Afficher arrêts</a></li>
 		</ul>
 	</div>
 </div>
