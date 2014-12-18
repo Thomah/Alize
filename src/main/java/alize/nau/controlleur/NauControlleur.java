@@ -1,6 +1,9 @@
 package alize.nau.controlleur;
 
 import static alize.commun.Constantes.*;
+import java.lang.Object;
+
+import alize.commun.controlleur.AliZeControlleur;
 import static alize.nau.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import alize.commun.modele.tables.daos.ArretDao;
@@ -111,30 +114,51 @@ public class NauControlleur {
                 .join(Tables.ARRET)
                 .on(Tables.ARRET.TEMPSIMMOBILISATION_ID.equal(Tables.INTERVALLE.ID))
                 .fetch();
-		for(Object rec : result.toArray()){
-			listeTempsImmobilisationPref.add(rec.toString());
+		for(int i =0; i< result.size(); i++){
+			listeTempsImmobilisationPref.add(result.get(i).value1().toString());
 		}
+//		for(Object rec : result.toArray()){
+//			
+//			listeTempsImmobilisationPref.add(rec.toString());
+//		}
 		
 		for(int i = 0; i<listeArret.size(); i++){
 			Arret a = listeArret.get(i);
 			List<String> ligneArret= new ArrayList<String>();
-			ligneArret.add(a.getNom());
 			ligneArret.add(a.getId().toString());
-			ligneArret.add(a.getEstcommercial().toString());
+			ligneArret.add(a.getNom());
+			ligneArret.add(byteToBoolean(a.getEstcommercial()).toString());
 			ligneArret.add(listeTempsImmobilisationPref.get(i));
-			ligneArret.add(a.getEstentreedepot().toString());
-			ligneArret.add(a.getEstsortiedepot().toString());
-			ligneArret.add(a.getEstlieuechangeconducteur().toString());
+			ligneArret.add(byteToBoolean(a.getEstentreedepot()).toString());
+			ligneArret.add(byteToBoolean(a.getEstsortiedepot()).toString());
+			ligneArret.add(byteToBoolean(a.getEstlieuechangeconducteur()).toString());
 			Boolean estTerminus = listeIDTerminus.contains(a.getId());
 			ligneArret.add(estTerminus.toString());
 			tableauArrets.add(ligneArret);
 		}
+		
+		
 		
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_AFFICHERARRETS);
 		
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
 		view.addObject(TABLEAU_ARRET_CLE, tableauArrets);
 		return view;
+	}
+	
+	
+	public void supprimerArret(String id){
+		dsl.delete(Tables.ARRET)
+	      .where(Tables.ARRET.ID.equal(Integer.parseInt(id)));
+	}
+	
+	
+	public Boolean byteToBoolean(Byte b){
+		if(b==1){
+			return true;
+		}else{
+			return false;	
+		}
 	}
 
 }

@@ -1,3 +1,4 @@
+<%@page import="alize.nau.controlleur.NauControlleur"%>
 <%@ include file ="/WEB-INF/jsp/commun/include.jsp"%>
 
 
@@ -14,6 +15,14 @@
 
 <head>
 <%@ include file="/WEB-INF/jsp/commun/head.jsp"%>
+<%
+    NauControlleur controleur = new NauControlleur();
+    if (request.getParameter("action").equals("supprimer")) {
+      controleur.supprimerArret(request.getParameter("id"));
+    } else {
+        out.println("Hello <b>"+request. getParameter("name")+"</b>!");
+    }
+%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Arrets :</title>
 
@@ -30,11 +39,11 @@
 					<button style="margin-left: 5px" id="creer-arret">Ajouter
 						arrêt</button>
 					<br>
-					<table id="tableau" class="sortable"  align = 'center' border="5" style="border: '0'; cellpadding: '5'; cellspacing: '5'; overflow: scroll;" >
+					<table id="tableau" class="sortable"  align = 'center' border="5" style="border: '0'; cellpadding: '5'; cellspacing: '5'; overflow: scroll; text-align: center;" >
 						<thead>
 							<tr>
-								<td><center>Nom</center></td>
 								<td><center>Id</center></td>
+								<td><center>Nom</center></td>
 								<td><center>Commercial</center></td>
 								<td><center>Temps Immobilisation</center></td>
 								<td><center>Entrée</center></td>
@@ -45,7 +54,9 @@
 								<td><center>Supprimer</center></td>
 							</tr>
 							<%
+							
 								for (ArrayList<String> ligneArret : tableauArret) {
+								
 							%>
 							<tr>
 							<%
@@ -56,31 +67,37 @@
 									<%
 										if(s.equals("true")||s.equals("false")){
 											%>
-											<input type="checkbox"  value='<%out.println(s);%>'>
+											<input type="checkbox"  disabled="disabled" align = "middle"
+												<%
+												if(s.equals("true")){
+												%>
+												 checked
+												<%
+												}
+												%>
+											>
+											
 											<%
 										}else{
 											out.println(s);
 										}
 									%>
 								</td>
-								
-								
 								<%
 										}
 										
 									%>
-							
 							<td>
-									<button style="margin-left: 5px" id="modifier-arret">Modifier</button>
+							
+									<a href="<c:url value="<%=URL_AFFICHERARRETS%>"/>?action=modifier&amp;id=<%=ligneArret.get(0)%>">Modifier</a>
 								</td>
 								<td>
-									<button style="margin-left: 5px" id="creer-arret">Supprimer</button>
-								</td>
+									<a href="<c:url value="<%=URL_AFFICHERARRETS%>"/>?action=supprimer&amp;id=<%=ligneArret.get(0)%>">Supprimer</a>
+									</td>
 								</tr>
 							<%
-										}
-										
-									%>
+							}			
+							%>
 						</thead>
 					</table>
 				</div>
@@ -88,6 +105,7 @@
 			</div>
 			<!-- /.row -->
 		</div>
+		<label id="test"></label>
 
 	</div>
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
