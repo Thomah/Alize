@@ -204,7 +204,38 @@ public class EoleControlleur {
 		return validJSONString;
 	}
 	
+	/**
+	 * Ajouter en AJAX une périodicité vide
+	 * 
+	 * @param idVoie
+	 *            L'identifiant de la voie souhaitée
+	 * @param idArret
+	 *            L'identifiant de l'arret souhaité
+	 * @return La liste des périodicités au format JSON
+	 * @author Thomas
+	 * @date 21/11/2014
+	 */
+	@RequestMapping(value=URL_CONTRAINTES + "/ajouterPeriodicite", method=POST)
+	public @ResponseBody String ajouterPeriodicite(@RequestParam int idVoie, @RequestParam int idArret) {
+		stockageService.ajouterPeriodicite(idVoie, idArret);
+		return "ok";
+	}
 
+	/**
+	 * Ajouter en AJAX une périodicité vide
+	 * 
+	 * @param id
+	 *            L'identifiant de la périodicité à supprimer
+	 * @return La liste des périodicités au format JSON
+	 * @author Thomas
+	 * @date 21/11/2014
+	 */
+	@RequestMapping(value=URL_CONTRAINTES + "/supprimerPeriodicite", method=POST)
+	public @ResponseBody String ajouterPeriodicite(@RequestParam int id) {
+		stockageService.supprimerPeriodicite(id);
+		return "ok";
+	}
+	
 	/**
 	 * Met à jour en AJAX les périodicités 
 	 * 

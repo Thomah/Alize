@@ -129,6 +129,9 @@
 	.legend table {
 		border-spacing: 5px;
 	}
+	.btn-group {
+		margin-bottom: 5px;
+	}
 </style>
 </head>
 <body>
@@ -211,7 +214,7 @@
 	                                <!-- /.col-lg-4 (nested) -->
 	                                <div class="col-lg-8">
 	                                	<div class="btn-group" role="group">
-	                                		<button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus"></span> Ajouter</button>
+	                                		<button type="button" class="btn btn-default" onclick="ajouterPeriodicite()"><span class="glyphicon glyphicon-plus"></span> Ajouter</button>
 	                                	</div>
 										<div id="periodiciteContent" class="table-responsive">
 	                                    </div>
@@ -240,7 +243,8 @@
 	<script src="<c:url value="/resources/js/plugins/editablegrid/demo.js"/>"></script>
 	<script type="text/javascript">
 	window.onload = function() {
-		// Faire qqchose
+		document.getElementById("<%=LIGNE_LABEL %>").value = <%=lignes.get(0).getId()%>;
+		getVoiesPourLaLigne();
 	}
 	
 	function getVoiesPourLaLigne() {
@@ -265,6 +269,8 @@
 	    		     option.value = id;
 	    		     select.appendChild(option);
 	    		}
+	    		document.getElementById("<%=VOIE_LABEL %>").firstChild.selected = true;
+	    		getArretsPourLaVoie();
 	    	}
 	    });
 	}
@@ -291,6 +297,8 @@
 	    		     option.value = id;
 	    		     select.appendChild(option);
 	    		}
+	    		document.getElementById("<%=ARRET_LABEL %>").firstChild.selected = true;
+	    		getPeriodicitePourLArret();
 	    	}
 	    });
 	}
@@ -308,13 +316,14 @@
    		     	metadata.push({name: "debut", label: "Heure de début", datatype: "string", editable: true});
    		     	metadata.push({name: "fin", label: "Heure de fin", datatype: "string", editable: true});
    		     	metadata.push({name: "periode", label: "Temps entre deux véhicules", datatype: "string", editable: true});
+   		     	metadata.push({datatype: "html", editable: false});
    		     	
 				var data = [];
 	    		var periodicites = jQuery.parseJSON( str );
    		    	var index;
 	    		for(index = 0; index < periodicites.length; ++index)
 	    		{
-	    		     data.push({id: periodicites[index].id, values: {"debut": periodicites[index].debut, "fin": periodicites[index].fin, "periode": periodicites[index].periode}});
+	    		     data.push({id: periodicites[index].id, values: {"debut": periodicites[index].debut, "fin": periodicites[index].fin, "periode": periodicites[index].periode, "":"<a href='#' onclick='supprimerPeriodicite(" + periodicites[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"}});
 	    		}
 	    		
 	    		editableGrid = new EditableGrid("GridPeriodicites", {
@@ -324,6 +333,34 @@
 	    	 	});
 	    		editableGrid.load({"metadata": metadata, "data": data});
 	    		editableGrid.renderGrid("periodiciteContent", "table table-bordered table-hover table-striped");
+	    	}
+	    });
+	}
+	
+	function ajouterPeriodicite() {
+		var idVoie = $("#<%=VOIE_LABEL %>").val();
+		var idArret = $("#<%=ARRET_LABEL %>").val();
+
+	    $.ajax({
+	    	url: "/alize/eole/contraintes/ajouterPeriodicite",
+	    	data: "idVoie=" + idVoie + "&idArret=" + idArret,
+	    	type: "POST",
+	    	success: function(str) {
+	    		getPeriodicitePourLArret();
+	    	}
+	    });
+	}
+
+	function supprimerPeriodicite(id) {
+		var idVoie = $("#<%=VOIE_LABEL %>").val();
+		var idArret = $("#<%=ARRET_LABEL %>").val();
+
+	    $.ajax({
+	    	url: "/alize/eole/contraintes/supprimerPeriodicite",
+	    	data: "id=" + id,
+	    	type: "POST",
+	    	success: function(str) {
+	    		getPeriodicitePourLArret();
 	    	}
 	    });
 	}

@@ -1,12 +1,9 @@
 package alize.commun.service;
 
 import alize.commun.modele.tables.pojos.*;
-import alize.commun.modele.tables.records.PeriodiciteRecord;
 
 import java.sql.Time;
 import java.util.List;
-
-import org.jooq.TableField;
 
 /**
  * Service associé à la gestion du stockage des données
@@ -96,13 +93,38 @@ public interface StockageService {
 	 * 
 	 * @name getPeriodicites
 	 * @description Récupère les périodicités pour la voie et l'arret sélectionnés stockées en BDD
-	 * @return List<Arret> La liste des périodicités pour la voie et l'arret sélectionnés stockées en BDD
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @param idArret L'identifiant de l'arret concerné
+	 * @return List<Periodicite> La liste des périodicités pour la voie et l'arret sélectionnés stockées en BDD
 	 * @author Thomas [TH]
 	 * @date 17 déc. 2014
 	 * @version 1
 	 */
 	public List<Periodicite> getPeriodicites(int idVoie, int idArret);
 
+	/**
+	 * Créer une périodicité en BDD
+	 * @name ajouterPeriodicite
+	 * @description Créer une périodicité en BDD
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @param idArret L'identifiant de l'arret concerné
+	 * @author Thomas [TH]
+	 * @date 18 déc. 2014
+	 * @version 1
+	 */
+	public void ajouterPeriodicite(int idVoie, int idArret);
+	
+	/**
+	 * Supprime la périodicité indiquée stockées en BDD
+	 * @name supprimerPeriodicite
+	 * @description Supprime la périodicité indiquée stockées en BDD
+	 * @param id L'identifiant de la périodicité à supprimer
+	 * @author Thomas [TH]
+	 * @date 17 déc. 2014
+	 * @version 1
+	 */
+	public void supprimerPeriodicite(int id);
+	
 	/**
 	 * Met à jour la périodicité indiquée stockées en BDD
 	 * @name updatePeriodicite
@@ -114,7 +136,6 @@ public interface StockageService {
 	 * @date 17 déc. 2014
 	 * @version 1
 	 */
-	public void updatePeriodicite(int id, String colonne, Time valeur);
-	
+	public void updatePeriodicite(int id, String colonne, Time valeur);	
 
 }

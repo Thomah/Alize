@@ -10,7 +10,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record6;
 import org.jooq.Record9;
 import org.jooq.Result;
-import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import alize.commun.modele.tables.pojos.Arret;
@@ -188,22 +187,35 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	@Override
-	public void updatePeriodicite(int id, String colonne, Time valeur) {
-		
-		TableField<PeriodiciteRecord, Time> field = null;
-		
-		if(colonne.compareTo("debut") == 0) {
-			field = PERIODICITE.DEBUT;
-		} else if(colonne.compareTo("fin") == 0) {
-			field = PERIODICITE.FIN;
-		} else if(colonne.compareTo("periode") == 0) {
-			field = PERIODICITE.PERIODE;
-		}
-		
-		dsl.update(PERIODICITE)
-			.set(field, valeur)
-			.where(PERIODICITE.ID.equal(id));
+	public void ajouterPeriodicite(int idVoie, int idArret) {
+		PeriodiciteRecord periodiciteRecord = dsl.newRecord(PERIODICITE);
+		periodiciteRecord.setId(null);
+		periodiciteRecord.setIdVoie(idVoie);
+		periodiciteRecord.setIdArret(idArret);
+		periodiciteRecord.store();
 	}
 
+	@Override
+	public void supprimerPeriodicite(int id) {
+		dsl.delete(PERIODICITE)
+		.where(PERIODICITE.ID.equal(id))
+		.execute();
+	}
+	@Override
+	public void updatePeriodicite(int id, String colonne, Time valeur) {
+
+		PeriodiciteRecord periodiciteRecord = dsl.fetchOne(PERIODICITE, PERIODICITE.ID.equal(id));
+		
+		if(colonne.compareTo("debut") == 0) {
+			periodiciteRecord.setDebut(valeur);
+		} else if(colonne.compareTo("fin") == 0) {
+			periodiciteRecord.setFin(valeur);
+		} else if(colonne.compareTo("periode") == 0) {
+			periodiciteRecord.setPeriode(valeur);
+		}
+
+		periodiciteRecord.store();
+		
+	}
 
 }
