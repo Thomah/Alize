@@ -254,6 +254,7 @@ public class DOMServiceImpl implements DOMService {
 				Date dureeDate = formater.parse(courant.getAttributeValue("duree"));
 				java.sql.Time dureeSQLTime = new java.sql.Time(dureeDate.getTime());
 				transition.setDuree(dureeSQLTime);
+
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
