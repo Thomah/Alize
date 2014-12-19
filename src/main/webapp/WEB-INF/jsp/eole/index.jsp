@@ -5,7 +5,7 @@
 <head>
 <%@ include file="/WEB-INF/jsp/commun/head.jsp"%>
 <link type="text/css" rel="stylesheet"
-	href="<c:url value="/resources/css/plugins/datetimepicker/bootstrap-datetimepicker.min.css"/>" />
+	href="<c:url value="/resources/css/plugins/datetimepicker/bootstrap-datetimepicker.css"/>" />
 <style>
 #journal-logs-scrollspy {
 	height: 400px;
@@ -43,7 +43,7 @@
 							<div class="progress">
 								<div class="progress-bar progress-bar-striped active"
 									role="progressbar" aria-valuenow="45" aria-valuemin="0"
-									aria-valuemax="100" style="width: 45%">
+									aria-valuemax="100" style="width: 45%" id="progress-bar-eole">
 									<span class="sr-only">45% Complété</span>
 								</div>
 							</div>
@@ -145,16 +145,15 @@
 							<i class="fa fa-bell fa-fw"></i> Temps accordé
 						</div>
 						<div class="panel-body">
-							<form method="post" action="/alize/eole/contraintes">
-								<div class="form-group">
-									<div id="dureeEole" class="input-append date">
-										<input type="text"></input> <span class="add-on"> <i
-											data-time-icon="icon-time" data-date-icon="icon-calendar"></i>
-										</span>
-									</div>
+							<div class="form-group">
+								<label for="finEole">Fin des calculs</label>
+								<div class='input-group date' id='dureeEole'>
+									<input type='text' class="form-control" name="finEole" id="finEole" /> <span
+										class="input-group-addon"><span
+										class="glyphicon glyphicon-calendar"></span> </span>
 								</div>
-								<input type="submit" class="btn btn-default" value="Envoyer" />
-							</form>
+							</div>
+							<button class="btn btn-default" onclick="lancerEole()">Calculer</button>
 						</div>
 					</div>
 					<div class="panel panel-default">
@@ -194,18 +193,50 @@
 
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
 	<script
-		src="<c:url value="/resources/js/plugins/datetimepicker/bootstrap-datetimepicker.min.js"/>"></script>
+		src="<c:url value="/resources/js/plugins/moment/moment.js"/>"></script>
+	<script
+		src="<c:url value="/resources/js/plugins/datetimepicker/bootstrap-datetimepicker.js"/>"></script>
 	<script type="text/javascript">
-		$(function() {
-			$('#dureeEole').datetimepicker({
-				pickDate : false,
-				use24hours : true,
-				format : 'HH:mm'
-			});
-			$('#journal-logs-scrollspy').scrollspy({
-				target : '#fat'
-			});
+	
+		$('#dureeEole').datetimepicker({
+	        format: 'DD/MM/YYYY HH:mm',
+	        pickSeconds: false,
+	        pick12HourFormat: false            
+	    });
+		$('#journal-logs-scrollspy').scrollspy({
+			target : '#fat'
 		});
+		
+		function updateStatut(){
+		    setTimeout(function(){
+		    	$.ajax({
+		    	  	url: "/alize/eole/recupererStatut",
+		    	  	type: "POST",
+		    	  	success: function(str) {
+		    	  		document.getElementById("progress-bar-eole").setAttribute("aria-valuenow", str);
+		    	  		document.getElementById("progress-bar-eole").setAttribute("style", "width: " + str + "%");
+		    	  	}
+		    	  });
+				updateStatut();
+		    }, 1000);
+		}
+		
+		function lancerEole() {
+			var finEole = document.getElementById("finEole").value;
+
+		    $.ajax({
+		    	url: "/alize/eole/calculer",
+		    	data: "finEole=" + finEole,
+		    	type: "POST",
+		    	success: function(str) {
+		    		$('#dureeEole').data("DateTimePicker").disable();
+		    		updateStatut();
+		    	}
+		    });
+		}
+		
+		
+		
 	</script>
 </body>
 </html>
