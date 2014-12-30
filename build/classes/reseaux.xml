@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<Reseau xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="reseaux.xsd">
+
+	<intervalles>
+		<Intervalle id="1">
+			<pref>00:01:00</pref>
+		</Intervalle>
+		<Intervalle id="2">
+			<min>00:30:00</min>
+			<pref>10:00:00</pref>
+		</Intervalle>
+		<Intervalle id="3">
+			<min>00:10:00</min>
+			<pref>00:15:00</pref>
+			<max>00:45:00</max>
+		</Intervalle>
+	</intervalles>
+
+	<arrets>
+		<Arret id="1" nom="Foch Haras" estCommercial="true"
+			estEntreeSortieDepot="false" tempsImmobilisation="1"
+			estLieuEchangeConducteur="true" />
+		<Arret id="2" nom="Foch Maison Bleue"
+			estCommercial="true" estEntreeSortieDepot="false"
+			tempsImmobilisation="1"
+			estLieuEchangeConducteur="true" />
+		<Arret id="3" nom="Angers Roseraie"
+			estCommercial="true" estEntreeSortieDepot="false"
+			tempsImmobilisation="3" estLieuEchangeConducteur="true" />
+		<Arret id="4" nom="Avrillé Ardenne"
+			estCommercial="true" estEntreeSortieDepot="false"
+			tempsImmobilisation="3" estLieuEchangeConducteur="true" />
+		<Arret id="5" nom="CTT"
+			estCommercial="false" estEntreeSortieDepot="false"
+			tempsImmobilisation="2" estLieuEchangeConducteur="true" />
+	</arrets>
+	
+	<depots>
+		<Depot ref="5" />
+	</depots>
+	
+	<lignes>
+		<Ligne id="1">
+
+			<voies>
+				<Voie direction="Avrillé">
+					<arrets>
+						<Arret ref="1" />
+						<Arret ref="2" />
+					</arrets>
+					<terminusDepart>
+						<Terminus ref="3" />
+					</terminusDepart>
+					<terminusArrivee>
+						<Terminus ref="4" />
+					</terminusArrivee>
+				</Voie>
+			</voies>
+
+		</Ligne>
+	</lignes>
+
+	<transitions>
+		<Transition id="1" duree="00:20:00">
+			<arretPrecedent>
+				<Arret ref="3" />
+			</arretPrecedent>
+			<arretSuivant>
+				<Arret ref="1" />
+			</arretSuivant>
+		</Transition>
+		<Transition id="2" duree="00:01:00">
+			<arretPrecedent>
+				<Arret ref="1" />
+			</arretPrecedent>
+			<arretSuivant>
+				<Arret ref="2" />
+			</arretSuivant>
+		</Transition>
+		<Transition id="3"
+			duree="00:25:00">
+			<arretPrecedent>
+				<Arret ref="2" />
+			</arretPrecedent>
+			<arretSuivant>
+				<Arret ref="4" />
+			</arretSuivant>
+		</Transition>
+	</transitions>
+
+</Reseau>
