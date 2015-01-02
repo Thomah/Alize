@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -284,7 +283,7 @@ public class EoleControlleur {
 	 * @date 21/11/2014
 	 */
 	@RequestMapping(value = URL_CONTRAINTES + "/supprimerPeriodicite", method = POST)
-	public @ResponseBody String ajouterPeriodicite(@RequestParam int id) {
+	public @ResponseBody String supprimerPeriodicite(@RequestParam int id) {
 		stockageService.supprimerPeriodicite(id);
 		return "ok";
 	}

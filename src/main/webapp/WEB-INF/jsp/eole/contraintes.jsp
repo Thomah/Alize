@@ -129,9 +129,6 @@
 	.legend table {
 		border-spacing: 5px;
 	}
-	.btn-group {
-		margin-bottom: 5px;
-	}
 </style>
 </head>
 <body>

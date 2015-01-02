@@ -4,9 +4,12 @@ import static alize.commun.modele.Tables.*;
 
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jooq.DSLContext;
+import org.jooq.Record2;
 import org.jooq.Record6;
 import org.jooq.Record9;
 import org.jooq.Result;
@@ -26,6 +29,8 @@ public class StockageServiceImpl implements StockageService {
 	@Autowired
 	private DSLContext dsl;
 	
+	/* GESTION DES LIGNES */
+	
 	@Override
 	public List<Ligne> getLignes() {
 		
@@ -42,6 +47,34 @@ public class StockageServiceImpl implements StockageService {
 		
 		return lignes;
 	}
+	
+	@Override
+	public void updateLigne(int id, String colonne, Object valeur) {
+		LigneRecord ligneRecord = dsl.fetchOne(LIGNE, LIGNE.ID.equal(id));
+		
+		if(colonne.compareTo("typeVehicule") == 0) {
+			ligneRecord.setTypevehicule(valeur.toString());
+		}
+		
+		ligneRecord.store();
+	}
+
+	@Override
+	public void ajouterLigne() {
+		LigneRecord ligneRecord = dsl.newRecord(LIGNE);
+		ligneRecord.setId(null);
+		ligneRecord.setTypevehicule("");
+		ligneRecord.store();
+	}
+
+	@Override
+	public void supprimerLigne(int id) {
+		dsl.delete(LIGNE)
+		.where(LIGNE.ID.equal(id))
+		.execute();
+	}
+	
+	/* GESTION DES VOIES */
 	
 	@Override
 	public List<Voie> getVoies() {
@@ -86,6 +119,38 @@ public class StockageServiceImpl implements StockageService {
 		
 		return voies;
 	}
+	
+	@Override
+	public void updateVoie(int id, String colonne, Object valeur) {
+		VoieRecord voieRecord = dsl.fetchOne(VOIE, VOIE.ID.equal(id));
+		
+		if(colonne.compareTo("direction") == 0) {
+			voieRecord.setDirection(valeur.toString());
+		} else if(colonne.compareTo("terminusDepart_id") == 0) {
+			voieRecord.setTerminusdepartId(Integer.valueOf(valeur.toString()));
+		} else if(colonne.compareTo("terminusArrivee_id") == 0) {
+			voieRecord.setTerminusarriveeId(Integer.valueOf(valeur.toString()));
+		}
+		
+		voieRecord.store();
+	}
+
+	@Override
+	public void ajouterVoie() {
+		VoieRecord voieRecord = dsl.newRecord(VOIE);
+		voieRecord.setId(null);
+		voieRecord.setDirection("");
+		voieRecord.store();
+	}
+
+	@Override
+	public void supprimerVoie(int id) {
+		dsl.delete(VOIE)
+		.where(VOIE.ID.equal(id))
+		.execute();
+	}
+	
+	/* GESTION DES ARRETS */
 
 	@Override
 	public List<Arret> getArrets() {
@@ -137,6 +202,28 @@ public class StockageServiceImpl implements StockageService {
 		
 		return arrets;
 	}
+	
+	@Override
+	public Map<Integer, String> getTerminusVoie(int idVoie) {
+		
+		Map<Integer, String> terminus = new HashMap<Integer, String>();
+		
+		Result<Record2<Integer, String>> results =
+				dsl.select(TERMINUS.ARRET_ID, ARRET.NOM)
+				.from(TERMINUS)
+				.join(ARRET).on(TERMINUS.ARRET_ID.equal(ARRET.ID))
+				.join(VOIE_ARRET).on(ARRET.ID.equal(VOIE_ARRET.ARRET_ID))
+				.where(VOIE_ARRET.VOIE_ID.equal(idVoie))
+				.fetch();
+		
+		for(Record2<Integer, String> t : results) {
+			terminus.put(t.getValue(TERMINUS.ARRET_ID), t.getValue(ARRET.NOM));
+		}
+		
+		return terminus;
+	}
+	
+	/* GESTION DES PERIODICITES */
 	
 	@Override
 	public List<Periodicite> getPeriodicites() {
@@ -215,7 +302,6 @@ public class StockageServiceImpl implements StockageService {
 		}
 
 		periodiciteRecord.store();
-		
 	}
 
 }

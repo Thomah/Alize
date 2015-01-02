@@ -9,8 +9,8 @@
 			<li><a href="#"><i class="fa fa-list fa-fw"></i> Modèle<span
 					class="fa arrow"></span></a>
 				<ul class="nav nav-second-level">
-					<li><a href="<c:url value="#"/>">Ligne</a></li>
-					<li><a href="<c:url value="#"/>">Voies</a></li>
+					<li><a href="<c:url value="<%=URL_LIGNES %>" />">Lignes</a></li>
+					<li><a href="<c:url value="<%=URL_VOIES %>" />">Voies</a></li>
 					<li><a href="<c:url value="#"/>">Arrets</a></li>
 					<li><a href="<c:url value="#"/>">Transitions</a></li>
 				</ul></li>
