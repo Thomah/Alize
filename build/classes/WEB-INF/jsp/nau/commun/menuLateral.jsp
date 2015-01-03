@@ -1,25 +1,52 @@
 <%@ include file="/WEB-INF/jsp/commun/include.jsp" %>
-<%@ page import=" static alize.nau.commun.Constantes.*"%>
+<%@ page import="static alize.nau.commun.Constantes.*"%>
+<%@ page import="static alize.commun.Constantes.*"%>
+<%!
+	public String classActive(String urlPage, String urlLien) {
+		String chaineRetournee = "";
+		if(urlPage.compareTo(urlLien) == 0) {
+			chaineRetournee = "class = 'active'";
+		}
+		return chaineRetournee;
+	}
+%>
+<%
+	String urlPage = request.getAttribute(URL_PAGE_CLE).toString();
+%>
 
 <div class="navbar-default sidebar" role="navigation">
 	<div class="sidebar-nav navbar-collapse">
 		<ul class="nav" id="side-menu">
-			<li><a class="active" href="<c:url value="<%=URL_INDEX %>" />"><i
-					class="fa fa-dashboard fa-fw"></i> Accueil</a></li>
-			<li><a href="#"><i class="fa fa-list fa-fw"></i> Modèle<span
-					class="fa arrow"></span></a>
-				<ul class="nav nav-second-level">
-					<li><a href="<c:url value="<%=URL_LIGNES %>" />">Lignes</a></li>
-					<li><a href="<c:url value="<%=URL_VOIES %>" />">Voies</a></li>
-					<li><a href="<c:url value="#"/>">Arrets</a></li>
-					<li><a href="<c:url value="#"/>">Transitions</a></li>
-				</ul></li>
-			<li><a href="<c:url value="<%=URL_IMPORTER %>" />"><i
-					class="fa fa-dashboard fa-fw"></i> Importer</a></li>
-			<li><a href="<c:url value="<%=URL_EXPORTER %>" />"><i
-					class="fa fa-dashboard fa-fw"></i> Exporter</a></li>
-			<li><a href="<c:url value="<%=URL_AFFICHERARRETS %>" />"><i
-					class="fa fa-dashboard fa-fw"></i> Afficher arrêts</a></li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_INDEX)); %> href="<c:url value="<%=URL_INDEX %>" />">
+					<i class="fa fa-home fa-fw"></i> Accueil
+				</a>
+			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_LIGNES)); %> href="<c:url value="<%=URL_LIGNES %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Lignes
+				</a>
+			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_VOIES)); %> href="<c:url value="<%=URL_VOIES %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Voies
+				</a>
+			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_AFFICHERARRETS)); %> href="<c:url value="<%=URL_AFFICHERARRETS %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Arrêts
+				</a>
+			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_TRANSITIONS)); %> href="<c:url value="<%=URL_TRANSITIONS %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Transitions
+				</a>
+			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_IMPORTER_EXPORTER)); %> href="<c:url value="<%=URL_IMPORTER_EXPORTER %>" />">
+					<i class="fa fa-save fa-fw"></i> Importer / Exporter
+				</a>
+			</li>
 		</ul>
 	</div>
 </div>

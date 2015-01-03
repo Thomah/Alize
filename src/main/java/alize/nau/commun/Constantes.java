@@ -6,29 +6,39 @@ public class Constantes {
 	
 	public static final String NOM_MODULE = "Nau";
 	
+	/* URL */
+	
 	public static final String URL_MODULE = "nau";
 	
 	public static final String URL_INDEX = SLASH + URL_MODULE;
-
-	public static final String URL_EXPORTER = URL_INDEX + SLASH + "exporter";
-	
-	public static final String URL_IMPORTER = URL_INDEX + SLASH + "importer";
-	
-	public static final String URL_AFFICHERARRETS = URL_INDEX + SLASH + "afficherArrets";
 	
 	public static final String URL_LIGNES = URL_INDEX + SLASH + "lignes";
 
 	public static final String URL_VOIES = URL_INDEX + SLASH + "voies";
+
+	public static final String URL_AFFICHERARRETS = URL_INDEX + SLASH + "afficherArrets";
+	
+	public static final String URL_ARRETS = URL_INDEX + SLASH + "arrets";
+	
+	public static final String URL_TRANSITIONS = URL_INDEX + SLASH + "transitions";
+
+	public static final String URL_IMPORTER_EXPORTER = URL_INDEX + SLASH + "importexport";
+
+	/* JSP */
 	
 	public static final String JSP_INDEX = "index";
 	
-	public static final String JSP_IMPORTER = "importer";
-	
-	public static final String JSP_AFFICHERARRETS = "afficherArrets";
-
 	public static final String JSP_LIGNES = "lignes";
 
 	public static final String JSP_VOIES = "voies";
+	
+	public static final String JSP_AFFICHERARRETS = "afficherArrets";
+
+	public static final String JSP_TRANSITIONS = "transitions";
+	
+	public static final String JSP_IMPORTER_EXPORTER = "importexport";
+	
+	/* CLE */
 	
 	public static final String TABLEAU_ARRET_CLE = "tableauArretCle";
 	

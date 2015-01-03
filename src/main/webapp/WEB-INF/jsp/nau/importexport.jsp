@@ -1,5 +1,5 @@
 <%@ include file="/WEB-INF/jsp/commun/include.jsp" %>
-<%@ page import=" static alize.nau.commun.Constantes.URL_IMPORTER"%>
+<%@ page import="static alize.nau.commun.Constantes.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -16,7 +16,7 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<h1 class="page-header">Importer un réseau</h1>
-					<form method="POST" action="<c:url value="<%=URL_IMPORTER %>" />" enctype="multipart/form-data">
+					<form method="POST" action="<c:url value="<%=URL_IMPORTER_EXPORTER %>" />" enctype="multipart/form-data">
 						<input name="fichierImporte" type="file" />
 						<input class="btn btn-primary" type="submit" value="Envoyer" />
 					</form>

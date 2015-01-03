@@ -3,6 +3,8 @@ package alize.commun.service;
 import static alize.commun.modele.Tables.*;
 
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,13 +20,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
+import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.PeriodiciteRecord;
+import alize.commun.modele.tables.records.TransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 
 public class StockageServiceImpl implements StockageService {
+
+	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat(
+			"hh:mm:ss");
 	
 	@Autowired
 	private DSLContext dsl;
@@ -221,6 +228,60 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return terminus;
+	}
+	
+	/* GESTION DES TRANSITIONS */
+
+	@Override
+	public List<Transition> getTransitions() {
+		Transition transition;
+		List<Transition> transitions = new ArrayList<Transition>();
+		
+		Result<TransitionRecord> results = dsl.fetch(TRANSITION);
+		for (TransitionRecord t : results) {
+			transition = new Transition();
+			transition.setId(t.getId());
+			transition.setDuree(t.getDuree());
+			transition.setArretprecedentId(t.getArretprecedentId());
+			transition.setArretsuivantId(t.getArretsuivantId());
+			transitions.add(transition);
+		}
+		
+		return transitions;
+	}
+
+	@Override
+	public void updateTransition(int id, String colname, String newvalue) {
+		TransitionRecord transitionRecord = dsl.fetchOne(TRANSITION, TRANSITION.ID.equal(id));
+		
+		if(colname.compareTo("duree") == 0) {
+			Time valeur;
+			try {
+				valeur = new Time(PERIODE_FORMAT.parse(newvalue).getTime());
+				transitionRecord.setDuree(valeur);
+			} catch (ParseException e) {
+			}
+		} else if(colname.compareTo("arretPrecedent_id") == 0) {
+			transitionRecord.setArretprecedentId(Integer.valueOf(newvalue));
+		} else if(colname.compareTo("arretSuivant_id") == 0) {
+			transitionRecord.setArretsuivantId(Integer.valueOf(newvalue));
+		}
+		
+		transitionRecord.store();
+	}
+
+	@Override
+	public void ajouterTransition() {
+		TransitionRecord transitionRecord = dsl.newRecord(TRANSITION);
+		transitionRecord.setId(null);
+		transitionRecord.store();
+	}
+
+	@Override
+	public void supprimerTransition(int id) {
+		dsl.delete(TRANSITION)
+		.where(TRANSITION.ID.equal(id))
+		.execute();
 	}
 	
 	/* GESTION DES PERIODICITES */

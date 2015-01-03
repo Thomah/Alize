@@ -69,8 +69,8 @@
 	    		    	 values: {
 	    		    		 "id": voies[index].id, 
 	    		    		 "direction": voies[index].direction, 
-	    		    		 "terminusDepart": "<select class='selectTerminus' id='terminusDepart_" + voies[index].id + "' onchange='updateTerminus(" + voies[index].id + ", \"Depart\")' data-selected='" + voies[index].terminusDepart_id + "'></select>", 
-	    		    		 "terminusArrivee": "<select id='terminusArrivee_" + voies[index].id + "' onchange='updateTerminus(" + voies[index].id + ", \"Arrivee\")' data-selected='" + voies[index].terminusArrivee_id + "'></select>", 
+	    		    		 "terminusDepart": "<div class='form-group'><select class='form-control selectTerminus' id='terminusDepart_" + voies[index].id + "' onchange='updateTerminus(" + voies[index].id + ", \"Depart\")' data-selected='" + voies[index].terminusDepart_id + "'></select></div>", 
+	    		    		 "terminusArrivee": "<div class='form-group'><select class='form-control' id='terminusArrivee_" + voies[index].id + "' onchange='updateTerminus(" + voies[index].id + ", \"Arrivee\")' data-selected='" + voies[index].terminusArrivee_id + "'></select></div>", 
 	    		    		 "":"<a href='#' onclick='supprimerVoie(" + voies[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
 	    		    		 }
 	    		     });

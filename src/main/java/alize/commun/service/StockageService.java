@@ -129,6 +129,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void supprimerVoie(int id);
+	
 	/* GESTION DES ARRETS */
 	
 	/**
@@ -166,6 +167,57 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public Map<Integer, String> getTerminusVoie(int idVoie);
+	
+	/* GESTION DES TRANSITIONS */
+
+	/**
+	 * Récupère les transitions stockées en BDD
+	 * 
+	 * @name getTransitions
+	 * @description Récupère les transitions stockées en BDD
+	 * @return List<Arret> La liste des transitions stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 3 déc. 2014
+	 * @version 1
+	 */
+	public List<Transition> getTransitions();
+
+	/**
+	 * Met à jour la transitions stockée en BDD
+	 * 
+	 * @name updateTransition
+	 * @description Met à jour la transitions stockée en BDD
+	 * @param id L'identifiant de la transitions à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	public void updateTransition(int id, String colname, String newvalue);
+
+	/**
+	 * Créer une nouvelle transition en BDD
+	 * 
+	 * @name ajouterTransition
+	 * @description Créer une nouvelle transition en BDD
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterTransition();
+
+	/**
+	 * Supprime une transition en BDD selon son ID
+	 * 
+	 * @name supprimerTransition
+	 * @description Supprime une transition en BDD selon son ID
+	 * @param id L'identifiant de la transition à supprimer
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerTransition(int id);
 	
 	/* GESTION DES PERIODICITES */
 	
@@ -230,7 +282,5 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void updatePeriodicite(int id, String colonne, Time valeur);
-	
-
 
 }

@@ -5,7 +5,7 @@
 <head>
 <%@ include file="/WEB-INF/jsp/commun/head.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>AliZé - Eole</title>
+<title>AliZé - Nau</title>
 </head>
 <body>
 	<div id="wrapper">
@@ -15,8 +15,7 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Test</h1>
-					 <% request.getAttribute(URL_MODULE_CLE); %>
+					<h1 class="page-header">Bienvenue</h1>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>

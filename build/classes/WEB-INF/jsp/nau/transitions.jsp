@@ -15,7 +15,7 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Voies</h1>
+					<h1 class="page-header">Transitions</h1>
 					<div class="panel panel-default">
 	                        <div class="panel-heading">
 	                            <i class="fa fa-bar-chart-o fa-fw"></i> Composition du réseau
@@ -25,7 +25,7 @@
                                	<div class="btn-group" role="group">
                                		<button type="button" class="btn btn-default" onclick="ajouterVoie()"><span class="glyphicon glyphicon-plus"></span> Ajouter</button>
                                	</div>
-	                        	<div id="voiesContent" class="table-responsive">
+	                        	<div id="transitionsContent" class="table-responsive">
 	                            </div>
 	                        </div>
 	                        <!-- /.panel-body -->
@@ -44,119 +44,112 @@
 	<script src="<c:url value="/resources/js/plugins/editablegrid/editablegrid.js"/>"></script>
 	<script type="text/javascript">
 	window.onload = function() {
-		getVoies();
+		getTransitions();
 	}
 	
-	function getVoies() {
+	function getTransitions() {
 	    $.ajax({
-	    	url: "/alize/nau/voies/get",
+	    	url: "/alize/nau/transitions/get",
 	    	type: "POST",
 	    	success: function(str) {
    		    	var metadata = [];
    		     	metadata.push({name: "id", label: "ID", datatype: "int", editable: false});
-   		     	metadata.push({name: "direction", label: "Direction", datatype: "string", editable: true});
-   		     	metadata.push({name: "terminusDepart", label: "Terminus Départ", datatype: "html", editable: false});
-   		     	metadata.push({name: "terminusArrivee", label: "Terminus Arrivée", datatype: "html", editable: false});
+   		     	metadata.push({name: "duree", label: "Durée", datatype: "string", editable: true});
+   		     	metadata.push({name: "arretPrecedent", label: "Arrêt précédent", datatype: "html", editable: false});
+   		     	metadata.push({name: "arretSuivant", label: "Arrêt suivant", datatype: "html", editable: false});
    		     	metadata.push({datatype: "html", editable: false});
    		     	
 				var data = [];
-	    		var voies = jQuery.parseJSON( str );
+	    		var transitions = jQuery.parseJSON( str );
    		    	var index;
-	    		for(index = 0; index < voies.length; ++index)
+   		    	var optionsSelectArret = getOptionsSelectArret();
+	    		for(index = 0; index < transitions.length; ++index)
 	    		{
 	    		     data.push({
-	    		    	 id: voies[index].id, 
+	    		    	 id: transitions[index].id, 
 	    		    	 values: {
-	    		    		 "id": voies[index].id, 
-	    		    		 "direction": voies[index].direction, 
-	    		    		 "terminusDepart": "<div class='form-group'><select class='form-control selectTerminus' id='terminusDepart_" + voies[index].id + "' onchange='updateTerminus(" + voies[index].id + ", \"Depart\")' data-selected='" + voies[index].terminusDepart_id + "'></select></div>", 
-	    		    		 "terminusArrivee": "<div class='form-group'><select class='form-control' id='terminusArrivee_" + voies[index].id + "' onchange='updateTerminus(" + voies[index].id + ", \"Arrivee\")' data-selected='" + voies[index].terminusArrivee_id + "'></select></div>", 
-	    		    		 "":"<a href='#' onclick='supprimerVoie(" + voies[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
+	    		    		 "id": transitions[index].id, 
+	    		    		 "duree": transitions[index].duree, 
+	    		    		 "arretPrecedent": "<div class='form-group'><select class='form-control selectArret' id='arretPrecedent_" + transitions[index].id + "' onchange='updateArret(" + transitions[index].id + ", \"Precedent\")' data-selected='" + transitions[index].arretPrecedent_id + "'>" + optionsSelectArret + "</select></div>", 
+	    		    		 "arretSuivant": "<div class='form-group'><select class='form-control' id='arretSuivant_" + transitions[index].id + "' onchange='updateArret(" + transitions[index].id + ", \"Suivant\")' data-selected='" + transitions[index].arretSuivant_id + "'>" + optionsSelectArret + "</select></div>", 
+	    		    		 "":"<a href='#' onclick='supprimerVoie(" + transitions[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
 	    		    		 }
 	    		     });
 	    		}
 	    		
-	    		editableGrid = new EditableGrid("GridVoies", {
+	    		editableGrid = new EditableGrid("GridTransitions", {
 	    			modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {
 	    	   	    	updateCellValue(this, rowIndex, columnIndex, oldValue, newValue, row);
 	    	       	}
 	    	 	});
 	    		editableGrid.load({"metadata": metadata, "data": data});
-	    		editableGrid.renderGrid("voiesContent", "table table-bordered table-hover table-striped");
+	    		editableGrid.renderGrid("transitionsContent", "table table-bordered table-hover table-striped");
 	    		
-	    	    getTerminusVoie();
+	    		selectArrets();
 	    	}
 	    });
 	}
 	
-	function getTerminusVoie() {
-		$('.selectTerminus').each(function(i, obj) {
+	function getOptionsSelectArret() {
+	    var chaineOptions = "";
+		$.ajax({
+	    	url: "/alize/nau/arrets/get",
+	    	type: "POST",
+	    	async: false,
+	    	success: function(str) {
+	    		var data = [];
+	    		var arrets = jQuery.parseJSON( str );
+   		    	var index;
+	    		for(index = 0; index < arrets.length; ++index)
+	    		{
+	    			chaineOptions+= "<option value='" + arrets[index].id + "'>" + arrets[index].nom + "</option>";
+	    		}
+	    	}
+	    });
+		return chaineOptions;
+	}
+	
+	function selectArrets() {
+		$('.selectArret').each(function(i, obj) {
 			var id = $(obj).attr('id').substring(15);
-			$.ajax({
-		    	url: "/alize/nau/voies/getTerminus",
-		    	data: "idVoie=" + id,
-		    	type: "POST",
-		    	success: function(str) {
-		    		var terminus = jQuery.parseJSON( str );
-	   		    	var index;
-		    		for(index = 0; index < terminus.length; ++index)
-		    		{
-						var option = document.createElement("option");
-		    		    option.text = terminus[index].nom;
-		    		    option.value = terminus[index].id;
-		    		    $(obj).append(option);
-		    		}
-		    		
-		    		var terminusSelectionne = $(obj).attr("data-selected");
-		    		$(obj).children("[value=" + terminusSelectionne + "]").attr("selected", true);
-		    		
-		    		var selectTerminusArrivee = $("#terminusArrivee_" + id);
-	   		    	var index;
-		    		for(index = 0; index < terminus.length; ++index)
-		    		{
-						var option = document.createElement("option");
-		    		    option.text = terminus[index].nom;
-		    		    option.value = terminus[index].id;
-		    		    selectTerminusArrivee.append(option);
-		    		}
-		    		
-		    		terminusSelectionne = selectTerminusArrivee.attr("data-selected");
-		    		selectTerminusArrivee.children("[value=" + terminusSelectionne + "]").attr("selected", true);
-		    		
-		    	}
-		    });
+			var arretSelectionne = $(obj).attr("data-selected");
+    		$(obj).children("[value=" + arretSelectionne + "]").attr("selected", true);
+
+    		var selectArretSuivant = $("#arretSuivant_" + id);
+    		arretSelectionne = selectArretSuivant.attr("data-selected");
+    		selectArretSuivant.children("[value=" + arretSelectionne + "]").attr("selected", true);
 		});
 	}
 	
 	function ajouterVoie() {
 	    $.ajax({
-	    	url: "/alize/nau/voies/ajouter",
+	    	url: "/alize/nau/transitions/ajouter",
 	    	type: "POST",
 	    	success: function(str) {
-	    		getVoies();
+	    		getTransitions();
 	    	}
 	    });
 	}
 	
 	function supprimerVoie(id) {
 	    $.ajax({
-	    	url: "/alize/nau/voies/supprimer",
+	    	url: "/alize/nau/transitions/supprimer",
 	    	data: "id=" + id,
 	    	type: "POST",
 	    	success: function(str) {
-	    		getVoies();
+	    		getTransitions();
 	    	}
 	    });
 	}
 	
-	function updateTerminus(idVoie, typeTerminus) {
-		var colname = "terminus" + typeTerminus + "_id";
-		var newvalue = $('#terminus' + typeTerminus + "_" + idVoie).val();
+	function updateArret(idTransition, typeArret) {
+		var colname = "arret" + typeArret + "_id";
+		var newvalue = $('#arret' + typeArret + "_" + idTransition).val();
 		
 		$.ajax({
-			url: '/alize/nau/voies/update',
+			url: '/alize/nau/transitions/update',
 			type: 'POST',
-	    	data: "id=" + idVoie + 
+	    	data: "id=" + idTransition + 
 	    		"&newvalue=" + newvalue + 
    				"&colname=" + colname,
 			success: function (response) 
@@ -178,7 +171,7 @@
 		var coltype = editableGrid.getColumnType(columnIndex);
 		
 		$.ajax({
-			url: '/alize/nau/voies/update',
+			url: '/alize/nau/transitions/update',
 			type: 'POST',
 	    	data: "id=" + id + 
 	    		"&newvalue=" + newvalue + 

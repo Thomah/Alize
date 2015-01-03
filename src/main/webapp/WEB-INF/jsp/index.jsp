@@ -1,11 +1,10 @@
 <%@ include file="/WEB-INF/jsp/commun/include.jsp" %>
-<%@ page import=" static alize.commun.Constantes.URL_MODULE_CLE"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <%@ include file="/WEB-INF/jsp/commun/head.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>AliZé - Nau</title>
+<title>AliZé</title>
 </head>
 <body>
 	<div id="wrapper">

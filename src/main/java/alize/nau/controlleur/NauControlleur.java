@@ -5,6 +5,7 @@ import static alize.nau.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Ligne;
+import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.TerminusRecord;
@@ -55,35 +56,10 @@ public class NauControlleur {
 	private StockageService stockageService;
 	
 	@RequestMapping(value = URL_INDEX, method = GET)
-	public ModelAndView afficherDashboard(ModelMap model) {
+	public ModelAndView afficherDashboard() {
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_INDEX);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
-		return view;
-	}
-
-	@RequestMapping(value = URL_IMPORTER, method = GET)
-	public ModelAndView afficherImporter(ModelMap model) {
-		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_IMPORTER);
-		view.addObject(URL_MODULE_CLE, URL_MODULE);
-		return view;
-	}
-
-	@RequestMapping(value = URL_IMPORTER, method = POST)
-	public ModelAndView traiterImporter(
-			@RequestParam("fichierImporte") MultipartFile fichier) {
-		String chemin = RACINE + servletContext.getContextPath().substring(1);
-		File fichierSauve = new File(chemin + File.separator + "fichierImporte.xml");
-		try {
-			FileUtils.writeByteArrayToFile(fichierSauve, fichier.getBytes());
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		domService.importerReseau(fichierSauve);
-		
-		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_IMPORTER);
-		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_INDEX);
 		return view;
 	}
 	
@@ -170,16 +146,16 @@ public class NauControlleur {
 	 * 
 	 * @name afficherLignes
 	 * @description Affiche la JSP de gestion des lignes
-	 * @param model Le modèle associé à la vue
 	 * @return La vue de la JSP de gestion des lignes
 	 * @author Thomas [TH]
 	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES, method = GET)
-	public ModelAndView afficherLignes(ModelMap model) {
+	public ModelAndView afficherLignes() {
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_LIGNES);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_LIGNES);
 		return view;
 	}
 
@@ -270,16 +246,16 @@ public class NauControlleur {
 	 * 
 	 * @name afficherLignes
 	 * @description Affiche la JSP de gestion des voies
-	 * @param model Le modèle associé à la vue
 	 * @return La vue de la JSP de gestion des voies
 	 * @author Thomas [TH]
 	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VOIES, method = GET)
-	public ModelAndView afficherVoies(ModelMap model) {
+	public ModelAndView afficherVoies() {
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_VOIES);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_VOIES);
 		return view;
 	}
 	
@@ -391,4 +367,165 @@ public class NauControlleur {
 		return "ok";
 	}
 	
+	/* ARRETS */
+
+	/**
+	 * Retourne en AJAX la liste des arrets au format JSON
+	 * 
+	 * @name getListeArrets
+	 * @description Retourne en AJAX la liste des arrets au format JSON
+	 * @return La liste des arrets au format JSON
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_ARRETS + "/get", method = POST)
+	public @ResponseBody String getListeArrets() {
+		List<Arret> arrets = stockageService.getArrets();
+		JSONArray array = new JSONArray();
+		for (Arret a : arrets) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", a.getId());
+			object.put("'nom'", "'" + a.getNom() + "'");
+			object.put("'estCommercial'", "'" + a.getEstcommercial() + "'");
+			object.put("'estEntreeDepot'", "'" + a.getEstentreedepot() + "'");
+			object.put("'estSortieDepot'", "'" + a.getEstsortiedepot() + "'");
+			object.put("'estLieuEchangeConducteur'", "'" + a.getEstlieuechangeconducteur() + "'");
+			object.put("'tempsImmobilisation_id'", "'" + a.getTempsimmobilisationId() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+	
+	
+	/* TRANSITIONS */
+	
+	/**
+	 * Affiche la JSP de gestion des transitions
+	 * 
+	 * @name afficherTransitions
+	 * @description Affiche la JSP de gestion des transitions
+	 * @return La vue de la JSP de gestion des transitions
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_TRANSITIONS, method = GET)
+	public ModelAndView afficherTransitions() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_TRANSITIONS);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_TRANSITIONS);
+		return view;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des transitions au format JSON
+	 * 
+	 * @name getListeTransitions
+	 * @description Retourne en AJAX la liste des transitions au format JSON
+	 * @return La liste des transitions au format JSON
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_TRANSITIONS + "/get", method = POST)
+	public @ResponseBody String getListeTransitions() {
+		List<Transition> transitions = stockageService.getTransitions();
+		JSONArray array = new JSONArray();
+		for (Transition t : transitions) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", t.getId());
+			object.put("'duree'", "'" + t.getDuree() + "'");
+			object.put("'arretPrecedent_id'", "'" + t.getArretprecedentId() + "'");
+			object.put("'arretSuivant_id'", "'" + t.getArretsuivantId() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Met à jour en AJAX la transition sélectionnée
+	 * 
+	 * @name updateTransition
+	 * @description Met à jour en AJAX la transition sélectionnée
+	 * @param id L'identifiant de la transition à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_TRANSITIONS + "/update", method = POST)
+	public @ResponseBody String updateTransition(@RequestParam int id,
+			@RequestParam String newvalue, @RequestParam String colname) {
+		stockageService.updateTransition(id, colname, newvalue);
+		return "ok";
+	}
+
+	/**
+	 * Créer en AJAX une nouvelle transition
+	 * 
+	 * @name ajouterTransition
+	 * @description Créer en AJAX une nouvelle transition
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_TRANSITIONS + "/ajouter", method = POST)
+	public @ResponseBody String ajouterTransition() {
+		stockageService.ajouterTransition();
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX la transition d'identifiant donné en paramètre
+	 * 
+	 * @name supprimerTransition
+	 * @description Supprime en AJAX la transition d'identifiant donné en paramètre
+	 * @param id L'identifiant de la transition à supprimer
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_TRANSITIONS + "/supprimer", method = POST)
+	public @ResponseBody String supprimerTransition(@RequestParam int id) {
+		stockageService.supprimerTransition(id);
+		return "ok";
+	}
+	
+	/* IMPORTER ET EXPORTER */
+	
+	@RequestMapping(value = URL_IMPORTER_EXPORTER, method = GET)
+	public ModelAndView afficherImporter() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_IMPORTER_EXPORTER);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_IMPORTER_EXPORTER);
+		return view;
+	}
+
+	@RequestMapping(value = URL_IMPORTER_EXPORTER, method = POST)
+	public ModelAndView traiterImporter(
+			@RequestParam("fichierImporte") MultipartFile fichier) {
+		String chemin = RACINE + servletContext.getContextPath().substring(1);
+		File fichierSauve = new File(chemin + File.separator + "fichierImporte.xml");
+		try {
+			FileUtils.writeByteArrayToFile(fichierSauve, fichier.getBytes());
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		domService.importerReseau(fichierSauve);
+		
+		return afficherImporter();
+	}
 }

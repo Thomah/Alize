@@ -16,6 +16,8 @@ public class Constantes {
 
 	public static final String URL_MODULE_CLE = "URL_MODULE";
 	
+	public static final String URL_PAGE_CLE = "URL_PAGE";
+	
 	public static final String SLASH = "/";
 	
 	public static final String RACINE = System.getProperty("catalina.home") + File.separator + "webapps" + File.separator;
