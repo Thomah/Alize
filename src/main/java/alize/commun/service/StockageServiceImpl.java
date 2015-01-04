@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.jooq.DSLContext;
 import org.jooq.Record2;
+import org.jooq.Record4;
 import org.jooq.Record6;
 import org.jooq.Record9;
 import org.jooq.Result;
@@ -24,6 +25,7 @@ import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.LigneRecord;
+import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.PeriodiciteRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
@@ -78,6 +80,85 @@ public class StockageServiceImpl implements StockageService {
 	public void supprimerLigne(int id) {
 		dsl.delete(LIGNE)
 		.where(LIGNE.ID.equal(id))
+		.execute();
+	}
+
+	/* ATTRIBUTION DES VOIES AUX LIGNES */	
+	
+	@Override
+	public Map<Voie, String> getVoiesNonAttribuees(int idLigne) {
+		Map<Voie, String> voies = new HashMap<Voie, String>();
+		Voie voie;
+		String terminus;
+		
+		Result<Record4<Integer, String, String, String>> results =
+				dsl.selectDistinct(VOIE.ID, VOIE.DIRECTION, ARRET.as("arretdepart").NOM, ARRET.as("arretarrivee").NOM)
+				.from(VOIE, LIGNE_VOIE, ARRET.as("arretdepart"), ARRET.as("arretarrivee"))
+				.where(
+						LIGNE_VOIE.VOIE_ID.equal(VOIE.ID)
+						.or(VOIE.ID.notIn(
+							dsl.select(LIGNE_VOIE.VOIE_ID)
+							.from(LIGNE_VOIE)
+							)
+						))
+				.and(VOIE.TERMINUSDEPART_ID.equal(ARRET.as("arretdepart").ID))
+				.and(VOIE.TERMINUSARRIVEE_ID.equal(ARRET.as("arretarrivee").ID))
+				.and(VOIE.ID.notIn(dsl.select(LIGNE_VOIE.VOIE_ID)
+						.from(LIGNE_VOIE)
+						.where(LIGNE_VOIE.LIGNE_ID.equal(idLigne)))
+						)
+				.fetch();
+		
+		for(Record4<Integer, String, String, String> v : results) {
+			voie = new Voie();
+			voie.setId(v.getValue(VOIE.ID));
+			voie.setDirection(v.getValue(VOIE.DIRECTION));
+			terminus = v.getValue(ARRET.as("arretdepart").NOM) + " -> " + v.getValue(ARRET.as("arretarrivee").NOM);
+			voies.put(voie, terminus);
+		}
+		
+		return voies;
+	}
+
+	@Override
+	public Map<Voie, String> getVoiesAttribuees(int idLigne) {
+		Map<Voie, String> voies = new HashMap<Voie, String>();
+		Voie voie;
+		String terminus;
+		
+		Result<Record4<Integer, String, String, String>> results =
+				dsl.select(VOIE.ID, VOIE.DIRECTION, ARRET.as("arretdepart").NOM, ARRET.as("arretarrivee").NOM)
+				.from(VOIE, LIGNE_VOIE, ARRET.as("arretdepart"), ARRET.as("arretarrivee"))
+				.where(LIGNE_VOIE.VOIE_ID.equal(VOIE.ID))
+				.and(VOIE.TERMINUSDEPART_ID.equal(ARRET.as("arretdepart").ID))
+				.and(VOIE.TERMINUSARRIVEE_ID.equal(ARRET.as("arretarrivee").ID))
+				.and(LIGNE_VOIE.LIGNE_ID.equal(idLigne))
+				.fetch();
+		
+		for(Record4<Integer, String, String, String> v : results) {
+			voie = new Voie();
+			voie.setId(v.getValue(VOIE.ID));
+			voie.setDirection(v.getValue(VOIE.DIRECTION));
+			terminus = v.getValue(ARRET.as("arretdepart").NOM) + " -> " + v.getValue(ARRET.as("arretarrivee").NOM);
+			voies.put(voie, terminus);
+		}
+		
+		return voies;
+	}
+	
+
+	public void ajouterLigneVoie(int idVoie, int idLigne) {
+		LigneVoieRecord ligneVoieRecord = dsl.newRecord(LIGNE_VOIE);
+		ligneVoieRecord.setId(null);
+		ligneVoieRecord.setLigneId(idLigne);
+		ligneVoieRecord.setVoieId(idVoie);
+		ligneVoieRecord.store();
+	}
+
+	public void supprimerLigneVoie(int idVoie, int idLigne) {
+		dsl.delete(LIGNE_VOIE)
+		.where(LIGNE_VOIE.VOIE_ID.equal(idVoie))
+		.and(LIGNE_VOIE.LIGNE_ID.equal(idLigne))
 		.execute();
 	}
 	

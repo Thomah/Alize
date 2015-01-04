@@ -66,6 +66,58 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void supprimerLigne(int id);
+
+	/* ATTRIBUTION DES VOIES AUX LIGNES */
+
+	/**
+	 * Récupère les voies non attribuées à la ligne d'identifiant donné stockées en BDD
+	 * 
+	 * @name getVoiesNonAttribuees
+	 * @description Récupère les voies non attribuées à la ligne d'identifiant donné stockées en BDD
+	 * @return La liste des voies non attribuées à la ligne d'identifiant donné
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	public Map<Voie, String> getVoiesNonAttribuees(int idLigne);
+
+	/**
+	 * Récupère les voies attribuées à la ligne d'identifiant donné stockées en BDD
+	 * 
+	 * @name getVoiesAttribuees
+	 * @description Récupère les voies attribuées à la ligne d'identifiant donné stockées en BDD
+	 * @return La liste des voies attribuées à la ligne d'identifiant donné
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	public Map<Voie, String> getVoiesAttribuees(int idLigne);
+
+	/**
+	 * Ajoute une association ligne / voie en BDD
+	 * 
+	 * @name ajouterLigneVoie
+	 * @description Ajoute une association ligne / voie en BDD
+	 * @param idVoie L'identifiant de la voie
+	 * @param idLigne L'identifiant de la ligne
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterLigneVoie(int idVoie, int idLigne);
+
+	/**
+	 * Supprime une association ligne / voie en BDD
+	 * 
+	 * @name supprimerLigneVoie
+	 * @description Supprime une association ligne / voie en BDD
+	 * @param idVoie L'identifiant de la voie
+	 * @param idLigne L'identifiant de la ligne
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerLigneVoie(int idVoie, int idLigne);
 	
 	/* GESTION DES VOIES */
 	

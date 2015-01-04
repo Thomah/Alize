@@ -239,6 +239,120 @@ public class NauControlleur {
 		return "ok";
 	}
 	
+	/* ATTRIBUTION DES VOIES AUX LIGNES */
+
+	/**
+	 * Affiche la JSP de gestion des attributions lignes / voies
+	 * 
+	 * @name afficherLignesVoies
+	 * @description Affiche la JSP de gestion des attributions lignes / voies
+	 * @return La vue de la JSP de gestion des attributions lignes / voies
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_LIGNES_VOIES, method = GET)
+	public ModelAndView afficherLignesVoies() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_LIGNES_VOIES);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_LIGNES_VOIES);
+		return view;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des voies non attribuées au format JSON
+	 * 
+	 * @name getListeVoiesNonAttribuees
+	 * @description Retourne en AJAX la liste des voies non attribuées au format JSON
+	 * @param idLigne L'identifiant de la ligne concernée
+	 * @return La liste des voies non attribuées au format JSON
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_LIGNES_VOIES + "/get/nonattribuees", method = POST)
+	public @ResponseBody String getListeVoiesNonAttribuees(@RequestParam int idLigne) {
+		Map<Voie, String> voies = stockageService.getVoiesNonAttribuees(idLigne);
+		JSONArray array = new JSONArray();
+		for (Entry<Voie, String> t : voies.entrySet()) {
+			JSONObject object = new JSONObject();
+			Voie v = t.getKey();
+			object.put("'id'", v.getId());
+			object.put("'direction'", "'" + v.getDirection() + "'");
+			object.put("'terminus'", "'" + t.getValue() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des voies attribuées au format JSON
+	 * 
+	 * @name getListeVoiesNonAttribuees
+	 * @description Retourne en AJAX la liste des voies attribuées au format JSON
+	 * @param idLigne L'identifiant de la ligne concernée
+	 * @return La liste des voies attribuées au format JSON
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_LIGNES_VOIES + "/get/attribuees", method = POST)
+	public @ResponseBody String getListeVoiesAttribuees(@RequestParam int idLigne) {
+		Map<Voie, String> voies = stockageService.getVoiesAttribuees(idLigne);
+		JSONArray array = new JSONArray();
+		for (Entry<Voie, String> t : voies.entrySet()) {
+			JSONObject object = new JSONObject();
+			Voie v = t.getKey();
+			object.put("'id'", v.getId());
+			object.put("'direction'", "'" + v.getDirection() + "'");
+			object.put("'terminus'", "'" + t.getValue() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Créer en AJAX une nouvelle association ligne / voie
+	 * 
+	 * @name ajouterLigneVoie
+	 * @description Créer en AJAX une nouvelle association ligne / voie
+	 * @param id L'identifiant de la voie concernée
+	 * @param idLigne L'identifiant de la ligne concernée
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_LIGNES_VOIES + "/ajouter", method = POST)
+	public @ResponseBody String ajouterLigneVoie(@RequestParam int id, @RequestParam int idLigne) {
+		stockageService.ajouterLigneVoie(id, idLigne);
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX l'association ligne / voie donnée en paramètre
+	 * 
+	 * @name supprimerLigne
+	 * @description Supprime en AJAX l'association ligne / voie donnée en paramètre
+	 * @param id L'identifiant de la voie concernée
+	 * @param idLigne L'identifiant de la ligne concernée
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_LIGNES_VOIES + "/supprimer", method = POST)
+	public @ResponseBody String supprimerLigne(@RequestParam int id, @RequestParam int idLigne) {
+		stockageService.supprimerLigneVoie(id, idLigne);
+		return "ok";
+	}
+	
 	/* GESTION DES VOIES */
 
 	/**
