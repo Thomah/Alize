@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `arret` (
   `estLieuEchangeConducteur` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Designe un lieu darret du véhicule';
 
---
+-- 
 -- Contenu de la table `arret`
 --
 

@@ -1,6 +1,8 @@
 package alize.nau.controlleur;
 
 import static alize.commun.Constantes.*;
+import static alize.eole.constante.Communes.URL_CONTRAINTES;
+
 import java.lang.Object;
 
 import alize.commun.controlleur.AliZeControlleur;
@@ -36,6 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -144,6 +147,19 @@ public class NauControlleur {
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
 		view.addObject(TABLEAU_ARRET_CLE, tableauArrets);
 		return view;
+	}
+	
+	/**
+	 * Supprimer un arrêt
+	 * 
+	 * @param idArret
+	 *            L'identifiant de l'arrêt à supprimer
+	 * @author Cyril
+	 * @date 18/12/2014
+	 */
+	@RequestMapping(value=URL_AFFICHERARRETS + "/supprimerArret", method=POST)
+	public @ResponseBody void ajouterPeriodicite(@RequestParam String idArret) {
+		supprimerArret(idArret);
 	}
 	
 	

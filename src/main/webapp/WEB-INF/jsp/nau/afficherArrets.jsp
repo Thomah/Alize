@@ -15,14 +15,7 @@
 
 <head>
 <%@ include file="/WEB-INF/jsp/commun/head.jsp"%>
-<%
-    NauControlleur controleur = new NauControlleur();
-    if (request.getParameter("action").equals("supprimer")) {
-      controleur.supprimerArret(request.getParameter("id"));
-    } else {
-        out.println("Hello <b>"+request. getParameter("name")+"</b>!");
-    }
-%>
+
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Arrets :</title>
 
@@ -89,26 +82,40 @@
 										
 									%>
 							<td>
-							
-									<a href="<c:url value="<%=URL_AFFICHERARRETS%>"/>?action=modifier&amp;id=<%=ligneArret.get(0)%>">Modifier</a>
-								</td>
-								<td>
-									<a href="<c:url value="<%=URL_AFFICHERARRETS%>"/>?action=supprimer&amp;id=<%=ligneArret.get(0)%>">Supprimer</a>
-									</td>
-								</tr>
-							<%
-							}			
-							%>
+								<button type="button" class="btn btn-default" onclick="supprimerArret(<%=ligneArret.get(0)%>)">Modifier</button>
+							</td>
+							<td>
+								<button type="button" class="btn btn-default" onclick="supprimerArret(<%=ligneArret.get(0)%> )">Supprimer</button>
+							</td>
+						</tr>
+						<%
+						}			
+						%>
 						</thead>
 					</table>
+					<div id="periodiciteContent" class="table-responsive">
+	                </div>
 				</div>
 				<!-- /.col-lg-12 -->
 			</div>
 			<!-- /.row -->
 
 		</div>
-		<label id="test"></label>
-
+		<label id="test">Test : </label>
+	<script type="text/javascript">
+		
+	function supprimerArret(id) {
+	
+		editableGrid = new EditableGrid("GridPeriodicites", {
+	    			modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {
+	    	   	    	updateCellValue(this, rowIndex, columnIndex, oldValue, newValue, row);
+	    	       	}
+	    	 	});
+	    editableGrid.load({"metadata": metadata, "data": data});
+	    editableGrid.renderGrid("periodiciteContent", "table table-bordered table-hover table-striped");
+	}
+	
+	</script>
 	</div>
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
 </body>
