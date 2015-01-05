@@ -4,6 +4,7 @@ import alize.commun.modele.tables.pojos.*;
 
 import java.sql.Time;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Service associé à la gestion du stockage des données
@@ -14,7 +15,9 @@ import java.util.List;
  * @version 1
  */
 public interface StockageService {
-
+	
+	/* GESTION DES LIGNES */
+	
 	/**
 	 * Récupère les lignes stockées en BDD
 	 * 
@@ -26,6 +29,97 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Ligne> getLignes();
+
+	/**
+	 * Met à jour la ligne stockée en BDD
+	 * 
+	 * @name updateLigne
+	 * @description Met à jour la ligne stockée en BDD
+	 * @param id L'identifiant de la ligne à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 2 jan. 2015
+	 * @version 1
+	 */
+	public void updateLigne(int id, String colonne, Object valeur);
+	
+	/**
+	 * Créer une nouvelle ligne en BDD
+	 * 
+	 * @name ajouterLigne
+	 * @description Créer une nouvelle ligne en BDD
+	 * @author Thomas [TH]
+	 * @date 2 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterLigne();
+	
+	/**
+	 * Supprime une ligne en BDD selon son ID
+	 * 
+	 * @name supprimerLigne
+	 * @description Supprime une ligne en BDD selon son ID
+	 * @param id L'identifiant de la ligne à supprimer
+	 * @author Thomas [TH]
+	 * @date 2 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerLigne(int id);
+
+	/* ATTRIBUTION DES VOIES AUX LIGNES */
+
+	/**
+	 * Récupère les voies non attribuées à la ligne d'identifiant donné stockées en BDD
+	 * 
+	 * @name getVoiesNonAttribuees
+	 * @description Récupère les voies non attribuées à la ligne d'identifiant donné stockées en BDD
+	 * @return La liste des voies non attribuées à la ligne d'identifiant donné
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	public Map<Voie, String> getVoiesNonAttribuees(int idLigne);
+
+	/**
+	 * Récupère les voies attribuées à la ligne d'identifiant donné stockées en BDD
+	 * 
+	 * @name getVoiesAttribuees
+	 * @description Récupère les voies attribuées à la ligne d'identifiant donné stockées en BDD
+	 * @return La liste des voies attribuées à la ligne d'identifiant donné
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	public Map<Voie, String> getVoiesAttribuees(int idLigne);
+
+	/**
+	 * Ajoute une association ligne / voie en BDD
+	 * 
+	 * @name ajouterLigneVoie
+	 * @description Ajoute une association ligne / voie en BDD
+	 * @param idVoie L'identifiant de la voie
+	 * @param idLigne L'identifiant de la ligne
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterLigneVoie(int idVoie, int idLigne);
+
+	/**
+	 * Supprime une association ligne / voie en BDD
+	 * 
+	 * @name supprimerLigneVoie
+	 * @description Supprime une association ligne / voie en BDD
+	 * @param idVoie L'identifiant de la voie
+	 * @param idLigne L'identifiant de la ligne
+	 * @author Thomas [TH]
+	 * @date 4 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerLigneVoie(int idVoie, int idLigne);
+	
+	/* GESTION DES VOIES */
 	
 	/**
 	 * Récupère les voies stockées en BDD
@@ -50,6 +144,45 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Voie> getVoiesPourLaLigne(int idLigne);
+
+	/**
+	 * Met à jour la ligne stockée en BDD
+	 * 
+	 * @name updateVoie
+	 * @description Met à jour la voie stockée en BDD
+	 * @param id L'identifiant de la voie à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 2 jan. 2015
+	 * @version 1
+	 */
+	public void updateVoie(int id, String colonne, Object valeur);
+
+	/**
+	 * Créer une nouvelle voie en BDD
+	 * 
+	 * @name ajouterVoie
+	 * @description Créer une nouvelle voie en BDD
+	 * @author Thomas [TH]
+	 * @date 2 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterVoie();
+	
+	/**
+	 * Supprime une voie en BDD selon son ID
+	 * 
+	 * @name supprimerVoie
+	 * @description Supprime une voie en BDD selon son ID
+	 * @param id L'identifiant de la voie à supprimer
+	 * @author Thomas [TH]
+	 * @date 2 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerVoie(int id);
+	
+	/* GESTION DES ARRETS */
 	
 	/**
 	 * Récupère les arrets stockées en BDD
@@ -62,8 +195,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Arret> getArrets();
-
-
+	
 	/**
 	 * Récupère les arrets de la voie sélectionnée stockées en BDD
 	 * 
@@ -75,6 +207,71 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Arret> getArretsPourLaVoie(int idVoie);
+	
+	/**
+	 * Récupère l'identifiant et le nom des terminus pour l'ID de voie donnée
+	 * 
+	 * @name getTerminusVoie
+	 * @description Récupère l'identifiant et le nom des terminus pour l'ID de voie donnée
+	 * @return La liste des identifiants et noms des terminus pour l'ID de voie donnée
+	 * @author Thomas [TH]
+	 * @date 2 jan. 2015
+	 * @version 1
+	 */
+	public Map<Integer, String> getTerminusVoie(int idVoie);
+	
+	/* GESTION DES TRANSITIONS */
+
+	/**
+	 * Récupère les transitions stockées en BDD
+	 * 
+	 * @name getTransitions
+	 * @description Récupère les transitions stockées en BDD
+	 * @return List<Arret> La liste des transitions stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 3 déc. 2014
+	 * @version 1
+	 */
+	public List<Transition> getTransitions();
+
+	/**
+	 * Met à jour la transitions stockée en BDD
+	 * 
+	 * @name updateTransition
+	 * @description Met à jour la transitions stockée en BDD
+	 * @param id L'identifiant de la transitions à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	public void updateTransition(int id, String colname, String newvalue);
+
+	/**
+	 * Créer une nouvelle transition en BDD
+	 * 
+	 * @name ajouterTransition
+	 * @description Créer une nouvelle transition en BDD
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterTransition();
+
+	/**
+	 * Supprime une transition en BDD selon son ID
+	 * 
+	 * @name supprimerTransition
+	 * @description Supprime une transition en BDD selon son ID
+	 * @param id L'identifiant de la transition à supprimer
+	 * @author Thomas [TH]
+	 * @date 3 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerTransition(int id);
+	
+	/* GESTION DES PERIODICITES */
 	
 	/**
 	 * Récupère les périodicités stockées en BDD
@@ -136,6 +333,6 @@ public interface StockageService {
 	 * @date 17 déc. 2014
 	 * @version 1
 	 */
-	public void updatePeriodicite(int id, String colonne, Time valeur);	
+	public void updatePeriodicite(int id, String colonne, Time valeur);
 
 }

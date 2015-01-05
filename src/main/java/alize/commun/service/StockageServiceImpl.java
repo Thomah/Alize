@@ -3,10 +3,16 @@ package alize.commun.service;
 import static alize.commun.modele.Tables.*;
 
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jooq.DSLContext;
+import org.jooq.Record2;
+import org.jooq.Record4;
 import org.jooq.Record6;
 import org.jooq.Record9;
 import org.jooq.Result;
@@ -15,16 +21,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
+import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.LigneRecord;
+import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.PeriodiciteRecord;
+import alize.commun.modele.tables.records.TransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 
 public class StockageServiceImpl implements StockageService {
+
+	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat(
+			"hh:mm:ss");
 	
 	@Autowired
 	private DSLContext dsl;
+	
+	/* GESTION DES LIGNES */
 	
 	@Override
 	public List<Ligne> getLignes() {
@@ -42,6 +56,113 @@ public class StockageServiceImpl implements StockageService {
 		
 		return lignes;
 	}
+	
+	@Override
+	public void updateLigne(int id, String colonne, Object valeur) {
+		LigneRecord ligneRecord = dsl.fetchOne(LIGNE, LIGNE.ID.equal(id));
+		
+		if(colonne.compareTo("typeVehicule") == 0) {
+			ligneRecord.setTypevehicule(valeur.toString());
+		}
+		
+		ligneRecord.store();
+	}
+
+	@Override
+	public void ajouterLigne() {
+		LigneRecord ligneRecord = dsl.newRecord(LIGNE);
+		ligneRecord.setId(null);
+		ligneRecord.setTypevehicule("");
+		ligneRecord.store();
+	}
+
+	@Override
+	public void supprimerLigne(int id) {
+		dsl.delete(LIGNE)
+		.where(LIGNE.ID.equal(id))
+		.execute();
+	}
+
+	/* ATTRIBUTION DES VOIES AUX LIGNES */	
+	
+	@Override
+	public Map<Voie, String> getVoiesNonAttribuees(int idLigne) {
+		Map<Voie, String> voies = new HashMap<Voie, String>();
+		Voie voie;
+		String terminus;
+		
+		Result<Record4<Integer, String, String, String>> results =
+				dsl.selectDistinct(VOIE.ID, VOIE.DIRECTION, ARRET.as("arretdepart").NOM, ARRET.as("arretarrivee").NOM)
+				.from(VOIE, LIGNE_VOIE, ARRET.as("arretdepart"), ARRET.as("arretarrivee"))
+				.where(
+						LIGNE_VOIE.VOIE_ID.equal(VOIE.ID)
+						.or(VOIE.ID.notIn(
+							dsl.select(LIGNE_VOIE.VOIE_ID)
+							.from(LIGNE_VOIE)
+							)
+						))
+				.and(VOIE.TERMINUSDEPART_ID.equal(ARRET.as("arretdepart").ID))
+				.and(VOIE.TERMINUSARRIVEE_ID.equal(ARRET.as("arretarrivee").ID))
+				.and(VOIE.ID.notIn(dsl.select(LIGNE_VOIE.VOIE_ID)
+						.from(LIGNE_VOIE)
+						.where(LIGNE_VOIE.LIGNE_ID.equal(idLigne)))
+						)
+				.fetch();
+		
+		for(Record4<Integer, String, String, String> v : results) {
+			voie = new Voie();
+			voie.setId(v.getValue(VOIE.ID));
+			voie.setDirection(v.getValue(VOIE.DIRECTION));
+			terminus = v.getValue(ARRET.as("arretdepart").NOM) + " -> " + v.getValue(ARRET.as("arretarrivee").NOM);
+			voies.put(voie, terminus);
+		}
+		
+		return voies;
+	}
+
+	@Override
+	public Map<Voie, String> getVoiesAttribuees(int idLigne) {
+		Map<Voie, String> voies = new HashMap<Voie, String>();
+		Voie voie;
+		String terminus;
+		
+		Result<Record4<Integer, String, String, String>> results =
+				dsl.select(VOIE.ID, VOIE.DIRECTION, ARRET.as("arretdepart").NOM, ARRET.as("arretarrivee").NOM)
+				.from(VOIE, LIGNE_VOIE, ARRET.as("arretdepart"), ARRET.as("arretarrivee"))
+				.where(LIGNE_VOIE.VOIE_ID.equal(VOIE.ID))
+				.and(VOIE.TERMINUSDEPART_ID.equal(ARRET.as("arretdepart").ID))
+				.and(VOIE.TERMINUSARRIVEE_ID.equal(ARRET.as("arretarrivee").ID))
+				.and(LIGNE_VOIE.LIGNE_ID.equal(idLigne))
+				.fetch();
+		
+		for(Record4<Integer, String, String, String> v : results) {
+			voie = new Voie();
+			voie.setId(v.getValue(VOIE.ID));
+			voie.setDirection(v.getValue(VOIE.DIRECTION));
+			terminus = v.getValue(ARRET.as("arretdepart").NOM) + " -> " + v.getValue(ARRET.as("arretarrivee").NOM);
+			voies.put(voie, terminus);
+		}
+		
+		return voies;
+	}
+	
+
+	public void ajouterLigneVoie(int idVoie, int idLigne) {
+		LigneVoieRecord ligneVoieRecord = dsl.newRecord(LIGNE_VOIE);
+		ligneVoieRecord.setId(null);
+		ligneVoieRecord.setLigneId(idLigne);
+		ligneVoieRecord.setVoieId(idVoie);
+		ligneVoieRecord.store();
+	}
+
+	public void supprimerLigneVoie(int idVoie, int idLigne) {
+		dsl.delete(LIGNE_VOIE)
+		.where(LIGNE_VOIE.VOIE_ID.equal(idVoie))
+		.and(LIGNE_VOIE.LIGNE_ID.equal(idLigne))
+		.execute();
+	}
+	
+	/* GESTION DES VOIES */
 	
 	@Override
 	public List<Voie> getVoies() {
@@ -86,6 +207,38 @@ public class StockageServiceImpl implements StockageService {
 		
 		return voies;
 	}
+	
+	@Override
+	public void updateVoie(int id, String colonne, Object valeur) {
+		VoieRecord voieRecord = dsl.fetchOne(VOIE, VOIE.ID.equal(id));
+		
+		if(colonne.compareTo("direction") == 0) {
+			voieRecord.setDirection(valeur.toString());
+		} else if(colonne.compareTo("terminusDepart_id") == 0) {
+			voieRecord.setTerminusdepartId(Integer.valueOf(valeur.toString()));
+		} else if(colonne.compareTo("terminusArrivee_id") == 0) {
+			voieRecord.setTerminusarriveeId(Integer.valueOf(valeur.toString()));
+		}
+		
+		voieRecord.store();
+	}
+
+	@Override
+	public void ajouterVoie() {
+		VoieRecord voieRecord = dsl.newRecord(VOIE);
+		voieRecord.setId(null);
+		voieRecord.setDirection("");
+		voieRecord.store();
+	}
+
+	@Override
+	public void supprimerVoie(int id) {
+		dsl.delete(VOIE)
+		.where(VOIE.ID.equal(id))
+		.execute();
+	}
+	
+	/* GESTION DES ARRETS */
 
 	@Override
 	public List<Arret> getArrets() {
@@ -137,6 +290,82 @@ public class StockageServiceImpl implements StockageService {
 		
 		return arrets;
 	}
+	
+	@Override
+	public Map<Integer, String> getTerminusVoie(int idVoie) {
+		
+		Map<Integer, String> terminus = new HashMap<Integer, String>();
+		
+		Result<Record2<Integer, String>> results =
+				dsl.select(TERMINUS.ARRET_ID, ARRET.NOM)
+				.from(TERMINUS)
+				.join(ARRET).on(TERMINUS.ARRET_ID.equal(ARRET.ID))
+				.join(VOIE_ARRET).on(ARRET.ID.equal(VOIE_ARRET.ARRET_ID))
+				.where(VOIE_ARRET.VOIE_ID.equal(idVoie))
+				.fetch();
+		
+		for(Record2<Integer, String> t : results) {
+			terminus.put(t.getValue(TERMINUS.ARRET_ID), t.getValue(ARRET.NOM));
+		}
+		
+		return terminus;
+	}
+	
+	/* GESTION DES TRANSITIONS */
+
+	@Override
+	public List<Transition> getTransitions() {
+		Transition transition;
+		List<Transition> transitions = new ArrayList<Transition>();
+		
+		Result<TransitionRecord> results = dsl.fetch(TRANSITION);
+		for (TransitionRecord t : results) {
+			transition = new Transition();
+			transition.setId(t.getId());
+			transition.setDuree(t.getDuree());
+			transition.setArretprecedentId(t.getArretprecedentId());
+			transition.setArretsuivantId(t.getArretsuivantId());
+			transitions.add(transition);
+		}
+		
+		return transitions;
+	}
+
+	@Override
+	public void updateTransition(int id, String colname, String newvalue) {
+		TransitionRecord transitionRecord = dsl.fetchOne(TRANSITION, TRANSITION.ID.equal(id));
+		
+		if(colname.compareTo("duree") == 0) {
+			Time valeur;
+			try {
+				valeur = new Time(PERIODE_FORMAT.parse(newvalue).getTime());
+				transitionRecord.setDuree(valeur);
+			} catch (ParseException e) {
+			}
+		} else if(colname.compareTo("arretPrecedent_id") == 0) {
+			transitionRecord.setArretprecedentId(Integer.valueOf(newvalue));
+		} else if(colname.compareTo("arretSuivant_id") == 0) {
+			transitionRecord.setArretsuivantId(Integer.valueOf(newvalue));
+		}
+		
+		transitionRecord.store();
+	}
+
+	@Override
+	public void ajouterTransition() {
+		TransitionRecord transitionRecord = dsl.newRecord(TRANSITION);
+		transitionRecord.setId(null);
+		transitionRecord.store();
+	}
+
+	@Override
+	public void supprimerTransition(int id) {
+		dsl.delete(TRANSITION)
+		.where(TRANSITION.ID.equal(id))
+		.execute();
+	}
+	
+	/* GESTION DES PERIODICITES */
 	
 	@Override
 	public List<Periodicite> getPeriodicites() {
@@ -215,7 +444,6 @@ public class StockageServiceImpl implements StockageService {
 		}
 
 		periodiciteRecord.store();
-		
 	}
 
 }

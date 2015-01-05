@@ -13,6 +13,11 @@ import java.io.InputStream;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -32,6 +37,8 @@ import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
+import alize.eole.thread.CalculTask;
+import alize.eole.thread.Tasks;
 
 /**
  * Controlleur principal du module Eole
@@ -42,12 +49,15 @@ import alize.commun.service.StockageService;
  */
 @Controller
 public class EoleControlleur {
+
+	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat(
+			"hh:mm:ss");
 	
-	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat("hh:mm:ss");
-	
+	private CalculTask calculs;
+
 	@Autowired
 	private StockageService stockageService;
-	
+
 	/**
 	 * Affiche la page principale du module Eole
 	 * 
@@ -62,6 +72,40 @@ public class EoleControlleur {
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_INDEX);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
 		return view;
+	}
+
+	/**
+	 * Lance les calculs d'Eole
+	 * 
+	 * @param finEole
+	 *            La date et l'heure limite à laquelle Eole doit finir
+	 * @return Un message indiquant le succès du lancement ou non
+	 * @author Thomas
+	 * @date 19/12/2014
+	 */
+	@RequestMapping(value = URL_INDEX + "/calculer", method = POST)
+	public @ResponseBody String calculer(@RequestParam String finEole) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+		Tasks.setCalculTask(LocalDateTime.parse(finEole, formatter));
+		return "ok";
+	}
+	
+
+	/**
+	 * Récupère le statut d'Eole
+	 * 
+	 * @return Un message indiquant le succès du lancement ou non
+	 * @author Thomas
+	 * @date 19/12/2014
+	 */
+	@RequestMapping(value = URL_INDEX + "/recupererStatut", method = POST)
+	public @ResponseBody String recupererStatut() {
+		ZonedDateTime zdtDebut = Tasks.getCalculTask().getDebutEole().atZone(ZoneId.systemDefault());
+		ZonedDateTime zdtFin = Tasks.getCalculTask().getFinEole().atZone(ZoneId.systemDefault());
+		System.out.println("FIN : " + zdtFin.toInstant().toEpochMilli());
+		double percent = (((double)(new Date()).getTime() - (double)zdtDebut.toInstant().toEpochMilli()) / ((double)zdtFin.toInstant().toEpochMilli() - (double)zdtDebut.toInstant().toEpochMilli())) * 100;
+		System.out.println("PERCENT :" + percent);
+		return Double.toString(percent);
 	}
 
 	/**
@@ -112,7 +156,7 @@ public class EoleControlleur {
 				}
 			}
 		}
-		
+
 		view.addObject("lignes", stockageService.getLignes());
 		view.addObject("voies", stockageService.getVoies());
 		view.addObject("arrets", stockageService.getArrets());
@@ -120,7 +164,7 @@ public class EoleControlleur {
 
 		return view;
 	}
-	
+
 	/**
 	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
 	 * 
@@ -131,22 +175,25 @@ public class EoleControlleur {
 	 * @date 21/11/2014
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value=URL_CONTRAINTES + "/selectLigne", method=POST)
+	@RequestMapping(value = URL_CONTRAINTES + "/selectLigne", method = POST)
 	public @ResponseBody String getListeVoies(@RequestParam int idLigne) {
 		List<Voie> voies = stockageService.getVoiesPourLaLigne(idLigne);
 		JSONArray array = new JSONArray();
-		for(Voie v : voies) {
+		for (Voie v : voies) {
 			JSONObject object = new JSONObject();
 			object.put("'id'", v.getId());
 			object.put("'direction'", "'" + v.getDirection() + "'");
 			object.put("'idTerminusDepart'", v.getTerminusdepartId());
 			object.put("'idTerminusArrivee'", v.getTerminusarriveeId());
 			array.add(object);
-		} 
-		String validJSONString = array.toString().replace("'", "\"").replace("=", ":");
+
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+
 		return validJSONString;
 	}
-	
+
 	/**
 	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
 	 * 
@@ -157,11 +204,11 @@ public class EoleControlleur {
 	 * @date 21/11/2014
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value=URL_CONTRAINTES + "/selectVoie", method=POST)
+	@RequestMapping(value = URL_CONTRAINTES + "/selectVoie", method = POST)
 	public @ResponseBody String getListeArrets(@RequestParam int idVoie) {
 		List<Arret> arrets = stockageService.getArretsPourLaVoie(idVoie);
 		JSONArray array = new JSONArray();
-		for(Arret a : arrets) {
+		for (Arret a : arrets) {
 			JSONObject object = new JSONObject();
 			object.put("'id'", a.getId());
 			object.put("'nom'", "'" + a.getNom() + "'");
@@ -169,15 +216,18 @@ public class EoleControlleur {
 			object.put("'estEntreeDepot'", a.getEstentreedepot());
 			object.put("'estSortieDepot'", a.getEstsortiedepot());
 			object.put("'estOccupe'", a.getEstoccupe());
-			object.put("'estLieuEchangeConducteur'", a.getEstlieuechangeconducteur());
+			object.put("'estLieuEchangeConducteur'",
+					a.getEstlieuechangeconducteur());
 			array.add(object);
 		}
-		String validJSONString = array.toString().replace("'", "\"").replace("=", ":");
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
 		return validJSONString;
 	}
 
 	/**
-	 * Retourne en AJAX la liste des périodicités associées à la voie et à l'arret sélectionnés
+	 * Retourne en AJAX la liste des périodicités associées à la voie et à
+	 * l'arret sélectionnés
 	 * 
 	 * @param idVoie
 	 *            L'identifiant de la voie souhaitée
@@ -188,11 +238,13 @@ public class EoleControlleur {
 	 * @date 21/11/2014
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value=URL_CONTRAINTES + "/selectArret", method=POST)
-	public @ResponseBody String getListePeriodicites(@RequestParam int idVoie, @RequestParam int idArret) {
-		List<Periodicite> periodicites = stockageService.getPeriodicites(idVoie, idArret);
+	@RequestMapping(value = URL_CONTRAINTES + "/selectArret", method = POST)
+	public @ResponseBody String getListePeriodicites(@RequestParam int idVoie,
+			@RequestParam int idArret) {
+		List<Periodicite> periodicites = stockageService.getPeriodicites(
+				idVoie, idArret);
 		JSONArray array = new JSONArray();
-		for(Periodicite p : periodicites) {
+		for (Periodicite p : periodicites) {
 			JSONObject object = new JSONObject();
 			object.put("'id'", p.getId());
 			object.put("'debut'", "'" + p.getDebut().toString() + "'");
@@ -200,10 +252,11 @@ public class EoleControlleur {
 			object.put("'periode'", "'" + p.getPeriode().toString() + "'");
 			array.add(object);
 		}
-		String validJSONString = array.toString().replace("'", "\"").replace("=", ":");
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
 		return validJSONString;
 	}
-	
+
 	/**
 	 * Ajouter en AJAX une périodicité vide
 	 * 
@@ -215,8 +268,9 @@ public class EoleControlleur {
 	 * @author Thomas
 	 * @date 21/11/2014
 	 */
-	@RequestMapping(value=URL_CONTRAINTES + "/ajouterPeriodicite", method=POST)
-	public @ResponseBody String ajouterPeriodicite(@RequestParam int idVoie, @RequestParam int idArret) {
+	@RequestMapping(value = URL_CONTRAINTES + "/ajouterPeriodicite", method = POST)
+	public @ResponseBody String ajouterPeriodicite(@RequestParam int idVoie,
+			@RequestParam int idArret) {
 		stockageService.ajouterPeriodicite(idVoie, idArret);
 		return "ok";
 	}
@@ -230,14 +284,14 @@ public class EoleControlleur {
 	 * @author Thomas
 	 * @date 21/11/2014
 	 */
-	@RequestMapping(value=URL_CONTRAINTES + "/supprimerPeriodicite", method=POST)
-	public @ResponseBody String ajouterPeriodicite(@RequestParam int id) {
+	@RequestMapping(value = URL_CONTRAINTES + "/supprimerPeriodicite", method = POST)
+	public @ResponseBody String supprimerPeriodicite(@RequestParam int id) {
 		stockageService.supprimerPeriodicite(id);
 		return "ok";
 	}
-	
+
 	/**
-	 * Met à jour en AJAX les périodicités 
+	 * Met à jour en AJAX les périodicités
 	 * 
 	 * @param id
 	 *            L'identifiant de la périodicité
@@ -249,8 +303,9 @@ public class EoleControlleur {
 	 * @author Thomas
 	 * @date 21/11/2014
 	 */
-	@RequestMapping(value=URL_CONTRAINTES + "/updatePeriodicite", method=POST)
-	public @ResponseBody String updatePeriodicite(@RequestParam int id, @RequestParam String newvalue, @RequestParam String colname) {
+	@RequestMapping(value = URL_CONTRAINTES + "/updatePeriodicite", method = POST)
+	public @ResponseBody String updatePeriodicite(@RequestParam int id,
+			@RequestParam String newvalue, @RequestParam String colname) {
 		Time valeur;
 		try {
 			valeur = new Time(PERIODE_FORMAT.parse(newvalue).getTime());
@@ -259,7 +314,6 @@ public class EoleControlleur {
 		}
 		return "ok";
 	}
-	
 
 	/**
 	 * Traite les données définies dans la page des contraintes
