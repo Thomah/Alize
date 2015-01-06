@@ -181,6 +181,58 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void supprimerVoie(int id);
+
+	/* ATTRIBUTION DES ARRETS AUX VOIES */
+
+	/**
+	 * Récupère les arrets non attribués à la voie d'identifiant donné stockées en BDD
+	 * 
+	 * @name getArretsNonAttribues
+	 * @description Récupère les arrets non attribués à la voie d'identifiant donné stockées en BDD
+	 * @return La liste des arrets non attribués à la voie d'identifiant donné
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	public Map<Arret, String> getArretsNonAttribues(int idVoie);
+
+	/**
+	 * Récupère les arrets attribués à la voie d'identifiant donné stockées en BDD
+	 * 
+	 * @name getArretsNonAttribues
+	 * @description Récupère les arrets attribués à la voie d'identifiant donné stockées en BDD
+	 * @return La liste des arrets attribués à la voie d'identifiant donné
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	public Map<Arret, String> getArretsAttribues(int idVoie);
+
+	/**
+	 * Ajoute une association voies / arrets en BDD
+	 * 
+	 * @name ajouterLigneVoie
+	 * @description Ajoute une association voies / arrets en BDD
+	 * @param idVoie L'identifiant de la voie
+	 * @param idArret L'identifiant de l'arrêt
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterVoieArret(int idVoie, int idArret);
+
+	/**
+	 * Supprime une association voies / arrets en BDD
+	 * 
+	 * @name supprimerVoieArret
+	 * @description Supprimer une association voies / arrets en BDD
+	 * @param idVoie L'identifiant de la voie
+	 * @param idArret L'identifiant de l'arrêt
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerVoieArret(int idVoie, int idArret);
 	
 	/* GESTION DES ARRETS */
 	

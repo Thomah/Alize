@@ -291,7 +291,7 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des voies attribuées au format JSON
 	 * 
-	 * @name getListeVoiesNonAttribuees
+	 * @name getListeVoiesAttribuees
 	 * @description Retourne en AJAX la liste des voies attribuées au format JSON
 	 * @param idLigne L'identifiant de la ligne concernée
 	 * @return La liste des voies attribuées au format JSON
@@ -348,7 +348,7 @@ public class NauControlleur {
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES_VOIES + "/supprimer", method = POST)
-	public @ResponseBody String supprimerLigne(@RequestParam int id, @RequestParam int idLigne) {
+	public @ResponseBody String supprimerLigneVoie(@RequestParam int id, @RequestParam int idLigne) {
 		stockageService.supprimerLigneVoie(id, idLigne);
 		return "ok";
 	}
@@ -478,6 +478,132 @@ public class NauControlleur {
 	@RequestMapping(value = URL_VOIES + "/supprimer", method = POST)
 	public @ResponseBody String supprimerVoie(@RequestParam int id) {
 		stockageService.supprimerVoie(id);
+		return "ok";
+	}
+
+	/* ATTRIBUTION DES ARRETS AUX VOIES */
+
+	/**
+	 * Affiche la JSP de gestion des attributions voies / arrets
+	 * 
+	 * @name afficherVoiesArrets
+	 * @description Affiche la JSP de gestion des attributions voies / arrets
+	 * @return La vue de la JSP de gestion des attributions voies / arrets
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VOIES_ARRETS, method = GET)
+	public ModelAndView afficherVoiesArrets() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_VOIES_ARRETS);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_VOIES_ARRETS);
+		return view;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des arrets non attribués au format JSON
+	 * 
+	 * @name getListeArretsNonAttribues
+	 * @description Retourne en AJAX la liste des arrets non attribués au format JSON
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @return La liste des voies non attribuées au format JSON
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_VOIES_ARRETS + "/get/nonattribues", method = POST)
+	public @ResponseBody String getListeArretsNonAttribues(@RequestParam int idVoie) {
+		Map<Arret, String> arrets = stockageService.getArretsNonAttribues(idVoie);
+		Arret a;
+		JSONArray array = new JSONArray();
+		
+		for (Entry<Arret, String> arret : arrets.entrySet()) {
+			JSONObject object = new JSONObject();
+			a = arret.getKey();
+			object.put("'id'", a.getId());
+			object.put("'statut'", "'" + arret.getValue() + "'");
+			object.put("'nom'", "'" + a.getNom() + "'");
+			object.put("'estCommercial'", "'" + a.getEstcommercial() + "'");
+			object.put("'estEntreeDepot'", "'" + a.getEstentreedepot() + "'");
+			object.put("'estSortieDepot'", "'" + a.getEstsortiedepot() + "'");
+			object.put("'estLieuEchangeConducteur'", "'" + a.getEstsortiedepot() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des arrets attribuées au format JSON
+	 * 
+	 * @name getListeArretsAttribues
+	 * @description Retourne en AJAX la liste des arrets attribués au format JSON
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @return La liste des voies attribuées au format JSON
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_VOIES_ARRETS + "/get/attribues", method = POST)
+	public @ResponseBody String getListeArretsAttribues(@RequestParam int idVoie) {
+		Map<Arret, String> arrets = stockageService.getArretsAttribues(idVoie);
+		Arret a;
+		JSONArray array = new JSONArray();
+		
+		for (Entry<Arret, String> arret : arrets.entrySet()) {
+			JSONObject object = new JSONObject();
+			a = arret.getKey();
+			object.put("'id'", a.getId());
+			object.put("'statut'", "'" + arret.getValue() + "'");
+			object.put("'nom'", "'" + a.getNom() + "'");
+			object.put("'estCommercial'", "'" + a.getEstcommercial() + "'");
+			object.put("'estEntreeDepot'", "'" + a.getEstentreedepot() + "'");
+			object.put("'estSortieDepot'", "'" + a.getEstsortiedepot() + "'");
+			object.put("'estLieuEchangeConducteur'", "'" + a.getEstsortiedepot() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Créer en AJAX une nouvelle association voie / arret
+	 * 
+	 * @name ajouterVoieArret
+	 * @description Créer en AJAX une nouvelle association voie / arret
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @param idArret L'identifiant de l'arrêt concernée
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VOIES_ARRETS + "/ajouter", method = POST)
+	public @ResponseBody String ajouterVoieArret(@RequestParam int idVoie, @RequestParam int idArret) {
+		stockageService.ajouterVoieArret(idVoie, idArret);
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX l'association voie / arret donnée en paramètre
+	 * 
+	 * @name supprimerVoieArret
+	 * @description Supprime en AJAX l'association voie / arret donnée en paramètre
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @param idArret L'identifiant de l'arrêt concernée
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VOIES_ARRETS + "/supprimer", method = POST)
+	public @ResponseBody String supprimerVoieArret(@RequestParam int idVoie, @RequestParam int idArret) {
+		stockageService.supprimerVoieArret(idVoie, idArret);
 		return "ok";
 	}
 	

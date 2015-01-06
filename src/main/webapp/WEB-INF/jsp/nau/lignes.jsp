@@ -63,7 +63,15 @@
    		    	var index;
 	    		for(index = 0; index < lignes.length; ++index)
 	    		{
-	    		     data.push({id: lignes[index].id, values: {"id": lignes[index].id, "typeVehicule": lignes[index].typeVehicule, "affecterVoies":"<a href='lignesvoies?ligne=" + lignes[index].id + "'><span class='glyphicon glyphicon-cog' aria-label='Affecter voies'></span></a>", "supprimer":"<a href='#' onclick='supprimerLigne(" + lignes[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"}});
+	    		     data.push({
+	    		    	 id: lignes[index].id, 
+	    		    	 values: {
+	    		    		 "id": lignes[index].id, 
+	    		    		 "typeVehicule": lignes[index].typeVehicule, 
+	    		    		 "affecterVoies":"<a href='lignesvoies?ligne=" + lignes[index].id + "'><span class='glyphicon glyphicon-cog' aria-label='Affecter voies'></span></a>", 
+	    		    		 "supprimer":"<a href='#' onclick='supprimerLigne(" + lignes[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
+	    		    		 }
+	    		     });
 	    		}
 	    		
 	    		editableGrid = new EditableGrid("GridLignes", {

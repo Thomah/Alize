@@ -15,14 +15,14 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Attribution des voies</h1>
+					<h1 class="page-header">Attribution des voies à la ligne : <%=request.getParameter("ligne") %></h1>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-lg-6">
 					<div class="panel panel-default">
                         <div class="panel-heading">
-                            <i class="fa fa-bar-chart-o fa-fw"></i> Voies non attribuées
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Voies disponibles
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">

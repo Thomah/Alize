@@ -14,6 +14,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record6;
+import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.PeriodiciteRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
+import alize.commun.modele.tables.records.VoieArretRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 
 public class StockageServiceImpl implements StockageService {
@@ -235,6 +237,105 @@ public class StockageServiceImpl implements StockageService {
 	public void supprimerVoie(int id) {
 		dsl.delete(VOIE)
 		.where(VOIE.ID.equal(id))
+		.execute();
+	}
+	
+
+	/* ATTRIBUTION DES ARRETS AUX VOIES */
+
+	@Override
+	public Map<Arret, String> getArretsNonAttribues(int idVoie) {
+		Map<Arret, String> arrets = new HashMap<Arret, String>();
+		Arret arret;
+		String status = "";
+		
+		Result<Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer>> results =
+				dsl.selectDistinct(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTSORTIEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, TERMINUS.ID, DEPOT.ID)
+				.from(ARRET)
+				.leftOuterJoin(TERMINUS).on(ARRET.ID.equal(TERMINUS.ARRET_ID))
+				.leftOuterJoin(DEPOT).on(ARRET.ID.equal(DEPOT.ARRET_ID))
+				.where(ARRET.ID.notIn(
+						dsl.select(VOIE_ARRET.ARRET_ID)
+						.from(VOIE_ARRET)
+						.where(VOIE_ARRET.VOIE_ID.equal(idVoie))
+						))
+				.fetch();
+		
+		for(Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer> a : results) {
+			arret = new Arret();
+			arret.setId(a.getValue(ARRET.ID));
+			arret.setNom(a.getValue(ARRET.NOM));
+			arret.setEstcommercial(a.getValue(ARRET.ESTCOMMERCIAL));
+			arret.setEstentreedepot(a.getValue(ARRET.ESTENTREEDEPOT));
+			arret.setEstsortiedepot(a.getValue(ARRET.ESTSORTIEDEPOT));
+			arret.setEstlieuechangeconducteur(a.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
+			
+			status = "";
+			if(a.getValue(TERMINUS.ID) != null && a.getValue(TERMINUS.ID).toString().compareTo("null") != 0) {
+				status = "T";
+			}
+			if(a.getValue(DEPOT.ID) != null && a.getValue(DEPOT.ID).toString().compareTo("null") != 0) {
+				status = "D";
+			}
+			
+			arrets.put(arret, status);
+		}
+		
+		return arrets;
+	}
+
+	@Override
+	public Map<Arret, String> getArretsAttribues(int idVoie) {
+		Map<Arret, String> arrets = new HashMap<Arret, String>();
+		Arret arret;
+		String status = "";
+		
+		Result<Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer>> results =
+				dsl.selectDistinct(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTSORTIEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, TERMINUS.ID, DEPOT.ID)
+				.from(ARRET)
+				.join(VOIE_ARRET).on(ARRET.ID.equal(VOIE_ARRET.ARRET_ID))
+				.leftOuterJoin(TERMINUS).on(ARRET.ID.equal(TERMINUS.ARRET_ID))
+				.leftOuterJoin(DEPOT).on(ARRET.ID.equal(DEPOT.ARRET_ID))
+				.where(VOIE_ARRET.VOIE_ID.equal(idVoie))
+				.fetch();
+		
+		for(Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer> a : results) {
+			arret = new Arret();
+			arret.setId(a.getValue(ARRET.ID));
+			arret.setNom(a.getValue(ARRET.NOM));
+			arret.setEstcommercial(a.getValue(ARRET.ESTCOMMERCIAL));
+			arret.setEstentreedepot(a.getValue(ARRET.ESTENTREEDEPOT));
+			arret.setEstsortiedepot(a.getValue(ARRET.ESTSORTIEDEPOT));
+			arret.setEstlieuechangeconducteur(a.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
+
+			status = "";
+			if(a.getValue(TERMINUS.ID) != null && a.getValue(TERMINUS.ID).toString().compareTo("null") != 0) {
+				status = "T";
+			}
+			if(a.getValue(DEPOT.ID) != null && a.getValue(DEPOT.ID).toString().compareTo("null") != 0) {
+				status = "D";
+			}
+			
+			arrets.put(arret, status);
+		}
+		
+		return arrets;
+	}
+
+	@Override
+	public void ajouterVoieArret(int idVoie, int idArret) {
+		VoieArretRecord voieArretRecord = dsl.newRecord(VOIE_ARRET);
+		voieArretRecord.setId(null);
+		voieArretRecord.setVoieId(idVoie);
+		voieArretRecord.setArretId(idArret);
+		voieArretRecord.store();
+	}
+
+	@Override
+	public void supprimerVoieArret(int idVoie, int idArret) {
+		dsl.delete(VOIE_ARRET)
+		.where(VOIE_ARRET.VOIE_ID.equal(idVoie))
+		.and(VOIE_ARRET.ARRET_ID.equal(idArret))
 		.execute();
 	}
 	
