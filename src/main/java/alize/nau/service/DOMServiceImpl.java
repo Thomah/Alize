@@ -15,7 +15,6 @@ import static alize.commun.modele.tables.Transition.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -82,7 +81,7 @@ public class DOMServiceImpl implements DOMService {
 			racine = document.getRootElement();
 			
 			ReseauRecord reseau = dsl.newRecord(RESEAU);
-			reseau.setId(1);
+			reseau.setId(null);
 			reseau.setNom(null);
 			reseau.store();
 			
@@ -133,10 +132,10 @@ public class DOMServiceImpl implements DOMService {
 				courant = (Element) i.next();
 				arret.setId(Integer.valueOf(courant.getAttributeValue("id")));
 				arret.setNom(courant.getAttributeValue("nom"));
-				arret.setEstcommercial((byte) courant.getAttributeValue("estCommercial").compareTo("true"));
-				arret.setEstentreedepot((byte) courant.getAttributeValue("estentreedepot").compareTo("true"));
-				arret.setEstsortiedepot((byte) courant.getAttributeValue("estsortiedepot").compareTo("true"));
-				arret.setEstlieuechangeconducteur((byte) courant.getAttributeValue("estLieuEchangeConducteur").compareTo("true"));
+				arret.setEstcommercial((byte) courant.getAttributeValue("estCommercial").compareTo("1"));
+				arret.setEstentreedepot((byte) courant.getAttributeValue("estEntreeDepot").compareTo("1"));
+				arret.setEstsortiedepot((byte) courant.getAttributeValue("estSortieDepot").compareTo("1"));
+				arret.setEstlieuechangeconducteur((byte) courant.getAttributeValue("estLieuEchangeConducteur").compareTo("1"));
 				arret.setEstoccupe((byte)0);
 				arret.setTempsimmobilisationId(Integer.valueOf(courant.getAttributeValue("tempsImmobilisation")));
 				arret.store();
@@ -174,9 +173,6 @@ public class DOMServiceImpl implements DOMService {
 			Iterator<Element> i2, i3;
 			Element enfant;
 			LigneRecord ligne = dsl.newRecord(LIGNE);
-			LigneVoieRecord ligneVoie = dsl.newRecord(LIGNE_VOIE);
-			VoieRecord voie = dsl.newRecord(VOIE);
-			VoieArretRecord voieArret = dsl.newRecord(VOIE_ARRET);
 			int terminusDepartArretId, terminusArriveeArretId;
 
 			while (i.hasNext()) {
@@ -184,9 +180,6 @@ public class DOMServiceImpl implements DOMService {
 				ligne.setId(Integer.valueOf(courant.getAttributeValue("id")));
 				ligne.store();
 				
-				ligneVoie.setId(null);
-				ligneVoie.setLigneId(ligne.getId());
-
 				listElementsVoies = courant.getChild("voies").getChildren();
 				i2 = listElementsVoies.iterator();
 				while (i2.hasNext()) {
@@ -207,13 +200,17 @@ public class DOMServiceImpl implements DOMService {
 						terminus.setArretId(terminusArriveeArretId);
 						terminus.store();
 					}
-					
-					voie.setId(null);
+
+					VoieRecord voie = dsl.newRecord(VOIE);
+					voie.setId(Integer.valueOf(courant.getAttributeValue("id")));
 					voie.setDirection(courant.getAttributeValue("direction"));
 					voie.setTerminusdepartId(terminusDepartArretId);
-					voie.setTerminusarriveeId(Integer.valueOf(courant.getChild("terminusArrivee").getChild("Terminus").getAttributeValue("ref")));
+					voie.setTerminusarriveeId(terminusArriveeArretId);
 					voie.store();
 
+					LigneVoieRecord ligneVoie = dsl.newRecord(LIGNE_VOIE);
+					ligneVoie.setId(null);
+					ligneVoie.setLigneId(ligne.getId());
 					ligneVoie.setVoieId(voie.getId());
 					ligneVoie.store();
 					
@@ -221,9 +218,10 @@ public class DOMServiceImpl implements DOMService {
 					i3 = listElementsArrets.iterator();
 					while(i3.hasNext()) {
 						enfant = (Element) i3.next();
+						VoieArretRecord voieArret = dsl.newRecord(VOIE_ARRET);
 						voieArret.setId(null);
-						voieArret.setArretId(Integer.valueOf(enfant.getAttributeValue("ref")));
 						voieArret.setVoieId(voie.getId());
+						voieArret.setArretId(Integer.valueOf(enfant.getAttributeValue("ref")));
 						voieArret.store();
 					}
 				}
@@ -254,15 +252,12 @@ public class DOMServiceImpl implements DOMService {
 				transition.store();
 			}
 
-			dsl.configuration().connectionProvider().acquire().commit();
 
 		} catch (JDOMException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (DataAccessException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
