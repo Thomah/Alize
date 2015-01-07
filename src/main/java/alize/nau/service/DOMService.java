@@ -2,11 +2,10 @@ package alize.nau.service;
 
 import java.io.File;
 
-import org.jdom2.Element;
-import org.jooq.DSLContext;
-
 public interface DOMService {
-
+	
+	/* IMPORTATION */
+	
 	/**
 	 * Importe le fichier XML représentant un réseau de transport respectant la
 	 * grammaire XSD en base de données
@@ -21,28 +20,19 @@ public interface DOMService {
 	 * @version 1
 	 */
 	public void importerReseau(File fichier);
+	
+	/* EXPORTATION */
 
-	public void importerIntervalles(Element racine);
-	
-	public void importerArrets(Element racine);
-	
-	public void importerDepots(Element racine);
-	
-	public void importerLignes(Element racine);
-
-	public void importerTransitions(Element racine);
-
-	/* GETTERS & SETTERS */
-	
 	/**
-	 * Remplace la valeur de dsl
-	 * @name setDsl
-	 * @description Remplace la valeur de dsl
-	 * @param dsl Le DSLContext à remplacer
+	 * Génère le fichier XML correspondant au réseau
+	 * 
+	 * @name exporterReseau
+	 * @description Génère le fichier XML correspondant au réseau
+	 * @return L'URL vers le fichier généré
 	 * @author Thomas [TH]
-	 * @date 16 nov. 2014
+	 * @date 6 jan. 2015
 	 * @version 1
 	 */
-	public void setDsl(DSLContext dsl);
+	public String exporterReseau();
 
 }

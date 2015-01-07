@@ -241,13 +241,36 @@ public interface StockageService {
 	 * 
 	 * @name getArrets
 	 * @description Récupère les arrets stockées en BDD
-	 * @return List<Arret> La liste des arrets stockées en BDD
+	 * @return La liste des arrets stockées en BDD
 	 * @author Thomas [TH]
 	 * @date 1 déc. 2014
 	 * @version 1
 	 */
 	public List<Arret> getArrets();
-	
+
+	/**
+	 * Récupère les dépôts stockées en BDD
+	 * 
+	 * @name getDepots
+	 * @description Récupère les dépôts stockées en BDD
+	 * @return La liste des dépôts stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 7 jan. 2015
+	 * @version 1
+	 */
+	public List<Depot> getDepots();
+
+	/**
+	 * Récupère les terminus stockées en BDD
+	 * 
+	 * @name getTerminus
+	 * @description Récupère les terminus stockées en BDD
+	 * @return La liste des terminus stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 7 jan. 2015
+	 * @version 1
+	 */
+	public List<Terminus> getTerminus();
 	/**
 	 * Récupère les arrets de la voie sélectionnée stockées en BDD
 	 * 
@@ -271,7 +294,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public Map<Integer, String> getTerminusVoie(int idVoie);
-	
+
 	/* GESTION DES TRANSITIONS */
 
 	/**
@@ -386,5 +409,18 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void updatePeriodicite(int id, String colonne, Time valeur);
+
+	/* INTERVALLES */
+
+	/**
+	 * Récupère les intervalles stockés en BDD
+	 * @name getIntervalles
+	 * @description Récupère les intervalles stockés en BDD
+	 * @return La liste des intervalles stockés en BDD
+	 * @author Thomas [TH]
+	 * @date 6 jan. 2015
+	 * @version 1
+	 */
+	public List<Intervalle> getIntervalles();
 
 }

@@ -38,6 +38,13 @@
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
+			<xsd:element name="terminus">
+				<xsd:complexType>
+					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
+						<xsd:element name="Terminus" type="Reference" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
 			<xsd:element name="lignes">
 				<xsd:complexType>
 					<xsd:sequence minOccurs="0" maxOccurs="unbounded">
@@ -67,9 +74,10 @@
 	<xsd:complexType name="Arret">
 		<xsd:attribute name="id" type="Identifiant" use="required" />
 		<xsd:attribute name="nom" type="xsd:string" use="required" />
-		<xsd:attribute name="estCommercial" type="xsd:boolean" use="optional" default="true" />
-		<xsd:attribute name="estEntreeSortieDepot" type="xsd:boolean" use="optional" default="false" />
-		<xsd:attribute name="estLieuEchangeConducteur" type="xsd:boolean" use="optional" default="false" />
+		<xsd:attribute name="estCommercial" type="xsd:unsignedByte" use="optional" default="1" />
+		<xsd:attribute name="estLieuEchangeConducteur" type="xsd:unsignedByte" use="optional" default="0" />
+		<xsd:attribute name="estEntreeDepot" type="xsd:unsignedByte" use="optional" default="0" />
+		<xsd:attribute name="estSortieDepot" type="xsd:unsignedByte" use="optional" default="0" />
 		<xsd:attribute name="tempsImmobilisation" type="Identifiant" use="required" />
 	</xsd:complexType>
 	

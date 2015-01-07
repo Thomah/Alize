@@ -20,14 +20,20 @@ import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.tables.pojos.Depot;
+import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
+import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
+import alize.commun.modele.tables.records.DepotRecord;
+import alize.commun.modele.tables.records.IntervalleRecord;
 import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.PeriodiciteRecord;
+import alize.commun.modele.tables.records.TerminusRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
 import alize.commun.modele.tables.records.VoieArretRecord;
 import alize.commun.modele.tables.records.VoieRecord;
@@ -357,12 +363,46 @@ public class StockageServiceImpl implements StockageService {
 			arret.setEstlieuechangeconducteur(a.getEstlieuechangeconducteur());
 			arret.setEstoccupe(a.getEstoccupe());
 			arret.setNom(a.getNom());
+			arret.setTempsimmobilisationId(a.getTempsimmobilisationId());
 			arrets.add(arret);
 		}
 		
 		return arrets;
 	}
 
+	@Override
+	public List<Depot> getDepots() {
+		
+		Depot depot;
+		List<Depot> depots = new ArrayList<Depot>();
+		
+		Result<DepotRecord> results = dsl.fetch(DEPOT);
+		for (DepotRecord d : results) {
+			depot = new Depot();
+			depot.setId(d.getId());
+			depot.setArretId(d.getArretId());
+			depots.add(depot);
+		}
+		
+		return depots;
+	}
+
+	@Override
+	public List<Terminus> getTerminus() {
+		
+		Terminus terminus;
+		List<Terminus> listeTerminus = new ArrayList<Terminus>();
+		
+		Result<TerminusRecord> results = dsl.fetch(TERMINUS);
+		for (TerminusRecord t : results) {
+			terminus = new Terminus();
+			terminus.setId(t.getId());
+			terminus.setArretId(t.getArretId());
+			listeTerminus.add(terminus);
+		}
+		
+		return listeTerminus;
+	}
 	@Override
 	public List<Arret> getArretsPourLaVoie(int idVoie) {
 		
@@ -545,6 +585,27 @@ public class StockageServiceImpl implements StockageService {
 		}
 
 		periodiciteRecord.store();
+	}
+	
+	/* INTERVALLES */
+	
+	@Override
+	public List<Intervalle> getIntervalles() {
+
+		Intervalle intervalle;
+		List<Intervalle> intervalles = new ArrayList<Intervalle>();
+		
+		Result<IntervalleRecord> results = dsl.fetch(INTERVALLE);
+		for (IntervalleRecord i : results) {
+			intervalle = new Intervalle();
+			intervalle.setId(i.getId());
+			intervalle.setMin(i.getMin());
+			intervalle.setPref(i.getPref());
+			intervalle.setMax(i.getMax());
+			intervalles.add(intervalle);
+		}
+		
+		return intervalles;
 	}
 
 }
