@@ -71,6 +71,7 @@ public class EoleControlleur {
 	public ModelAndView afficherDashboard(ModelMap model) {
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_INDEX);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_INDEX);
 		return view;
 	}
 
@@ -122,6 +123,7 @@ public class EoleControlleur {
 		ModelAndView view = new ModelAndView(URL_MODULE + SLASH
 				+ JSP_CONTRAINTES);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_CONTRAINTES);
 
 		Properties prop = new Properties();
 		InputStream input = null;

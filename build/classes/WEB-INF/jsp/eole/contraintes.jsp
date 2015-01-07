@@ -39,8 +39,12 @@
 		transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
 	}
 	
-	a {	color: #069; }
-	a:hover { color: #28b; }
+	a {
+		color: #E66D2B;
+	}
+	a:hover, a:focus {
+	    color: #651C00;
+	}
 	
 	h2 {
 		margin-top: 15px;

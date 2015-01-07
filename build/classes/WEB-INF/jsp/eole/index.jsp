@@ -7,6 +7,12 @@
 <link type="text/css" rel="stylesheet"
 	href="<c:url value="/resources/css/plugins/datetimepicker/bootstrap-datetimepicker.css"/>" />
 <style>
+a {
+	color: #E66D2B;
+}
+a:hover, a:focus {
+    color: #651C00;
+}
 #journal-logs-scrollspy {
 	height: 400px;
 	overflow: auto;
