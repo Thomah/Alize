@@ -188,9 +188,11 @@ public class EoleControlleur {
 			object.put("'idTerminusDepart'", v.getTerminusdepartId());
 			object.put("'idTerminusArrivee'", v.getTerminusarriveeId());
 			array.add(object);
+
 		}
 		String validJSONString = array.toString().replace("'", "\"")
 				.replace("=", ":");
+
 		return validJSONString;
 	}
 

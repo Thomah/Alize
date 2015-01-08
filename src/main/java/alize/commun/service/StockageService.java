@@ -237,6 +237,20 @@ public interface StockageService {
 	/* GESTION DES ARRETS */
 	
 	/**
+	 * Met à jour l'arret stocké en BDD
+	 * 
+	 * @name updateArret
+	 * @description  Met à jour l'arret stocké en BDD
+	 * @param id L'identifiant de l'arret à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Cyril [CS]
+	 * @date 08 janv. 2014
+	 * @version 1
+	 */
+	public void updateArret(int id, String colonne, Object valeur);
+	
+	/**
 	 * Récupère les arrets stockées en BDD
 	 * 
 	 * @name getArrets
@@ -271,6 +285,30 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Terminus> getTerminus();
+	/**
+	 * Ajoute un arrêt en BDD
+	 * 
+	 * @name ajouterArret
+	 * @description Ajoute un arrêt en BDD
+	 * @author Cyril [CS]
+	 * @date 8 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterArret();
+	
+	
+	/**
+	 * Supprime un arrêt en BDD selon son ID
+	 * 
+	 * @name supprimerArret
+	 * @description Supprime un arrêt en BDD selon son ID
+	 * @param id L'identifiant de l'arrêt à supprimer
+	 * @author Cyril [CS]
+	 * @date 8 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerArret(int id);
+	
 	/**
 	 * Récupère les arrets de la voie sélectionnée stockées en BDD
 	 * 
@@ -410,6 +448,7 @@ public interface StockageService {
 	 */
 	public void updatePeriodicite(int id, String colonne, Time valeur);
 
+<<<<<<< HEAD
 	/* INTERVALLES */
 
 	/**
@@ -422,5 +461,128 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Intervalle> getIntervalles();
+=======
+	/**
+	 * Récupère les intervalles du réseau stockés en BDD
+	 * 
+	 * @name getTempsImmobilisation
+	 * @description Récupère les intervalles du réseau stockés en BDD
+	 * @return List<Intervalle> La liste des intervalles stockes en BDD
+	 * @author Cyril [CS]
+	 * @date 06 jan. 2014
+	 * @version 1
+	 */
+	public List<Intervalle> getTempsImmobilisation();
+
+	/**
+	 * Récupère l'intervalle du réseau  stockés en BDD en fonction de son ID
+	 * 
+	 * @name getTempsImmobilisation
+	 * @description Récupère l'intervalle du réseau  stockés en BDD en fonction de son ID
+	 * @param id L'identifiant de l'intervalle
+	 * @return Intervalle L'intervalle correspondant à l'id passé en paramètre et stockes en BDD
+	 * @author Cyril [CS]
+	 * @date 06 jan. 2014
+	 * @version 1
+	 */
+	public Intervalle getTempsImmobilisationArret(int idTempsImmobilisation);
+
+	/**
+	 * Met à jour le temps d'immobilisation d'un arrêt
+	 * 
+	 * @name updateTempsImmobilisation
+	 * @description Met à jour le temps d'immobilisation d'un arrêt
+	 * @param id L'identifiant de l'arrêt
+	 * @param colonne L'attribut du temps d'immobilisation à modifier (MIN, PREF, MAX) 
+	 * @param valeur La nouvelle valeur à enregistrer.
+	 * @author Cyril [CS]
+	 * @date 07 jan. 2014
+	 * @version 1
+	 */
+	public void updateTempsImmobilisationArret(int id, String colonne, Object valeur);
+
+	/**
+	 * Renvoie 1 si l'arrêt définit par idArret est un terminus, 0 sinon
+	 * 
+	 * @name getTerminusIDArret
+	 * @description Renvoie 1 si l'arrêt définit par idArret est un terminus, 0 sinon
+	 * @param id L'identifiant de l'arrêt
+	 * @author Cyril [CS]
+	 * @date 08 jan. 2014
+	 * @version 1
+	 */
+	public boolean getEstTerminus(int idArret);
+
+	/**
+	 * Créer un terminus en BDD
+	 * @name ajouterTerminus
+	 * @description Créer un terminus en BDD
+	 * @param id L'identifiant du terminus concerné
+	 * @param idArret L'identifiant de l'arret concerné
+	 * @author Cyril [CS]
+	 * @date 08 jan. 2014
+	 * @version 1
+	 */
+	public void ajouterTerminus( int idArret);
+	
+	/**
+	 * Supprime le terminus indiqué par l'ID de son arret  en BDD
+	 * @name supprimerTerminus
+	 * @description Supprime le terminus indiqué par l'ID de son arret  en BDD
+	 * @param id L'identifiant de l'arret associer au terminus à supprimer
+	 * @author Cyril [CS]
+	 * @date 08 jan. 2014
+	 * @version 1
+	 */
+	void supprimerTerminus(int id);
+	
+	//GESTION DES DEPOTS
+	/**
+	 * Renvoie 1 si l'arrêt définit par idArret est un dépôt, 0 sinon
+	 * 
+	 * @name getTerminusIDArret
+	 * @description Renvoie 1 si l'arrêt définit par idArret est un dépôt, 0 sinon
+	 * @param id L'identifiant de l'arrêt
+	 * @author Cyril [CS]
+	 * @date 08 jan. 2014
+	 * @version 1
+	 */
+	public boolean getEstDepot(int idArret);
+
+	
+	/**
+	 * Créer un Dépôt en BDD
+	 * @name ajouterDepot
+	 * @description Créer un dépôt en BDD
+	 * @param id L'identifiant du dépôt concerné
+	 * @param idArret L'identifiant de l'arret concerné
+	 * @author Cyril [CS]
+	 * @date 08 jan. 2014
+	 * @version 1
+	 */
+	void ajouterDepot(int idArret);
+
+	
+	/**
+	 * Supprime le dépot indiqué par l'ID de son arret  en BDD
+	 * @name supprimerDepot
+	 * @description Supprime le dépot indiqué par l'ID de son arret  en BDD
+	 * @param id L'identifiant de l'arret associer au dépôt à supprimer
+	 * @author Cyril [CS]
+	 * @date 08 jan. 2014
+	 * @version 1
+	 */
+	void supprimerDepot(int id);
+
+	
+
+	
+
+	
+
+	
+
+	
+>>>>>>> modelisation-support-com
 
 }

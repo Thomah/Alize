@@ -6,6 +6,7 @@ import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.jooq.Record9;
 import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Depot;
 import alize.commun.modele.tables.pojos.Intervalle;
@@ -360,6 +362,7 @@ public class StockageServiceImpl implements StockageService {
 			arret.setEstcommercial(a.getEstcommercial());
 			arret.setEstentreedepot(a.getEstentreedepot());
 			arret.setEstsortiedepot(a.getEstsortiedepot());
+			arret.setTempsimmobilisationId(a.getTempsimmobilisationId());
 			arret.setEstlieuechangeconducteur(a.getEstlieuechangeconducteur());
 			arret.setEstoccupe(a.getEstoccupe());
 			arret.setNom(a.getNom());
@@ -433,6 +436,13 @@ public class StockageServiceImpl implements StockageService {
 	}
 	
 	@Override
+	public void supprimerArret(int id) {
+		dsl.delete(ARRET)
+		.where(ARRET.ID.equal(id))
+		.execute();	
+	}
+	
+	@Override
 	public Map<Integer, String> getTerminusVoie(int idVoie) {
 		
 		Map<Integer, String> terminus = new HashMap<Integer, String>();
@@ -450,6 +460,132 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return terminus;
+	}
+	
+	@Override
+	public void updateArret(int id, String colonne, Object valeur) {
+		ArretRecord arret = dsl.fetchOne(ARRET, ARRET.ID.equal(id));
+		
+		String s = (String) valeur;
+		if(colonne.compareTo("nom") == 0) {
+			arret.setNom(valeur.toString());
+		} else if(colonne.compareTo("estCommercial") == 0) {
+			arret.setEstcommercial(new Byte(s));
+		} else if(colonne.compareTo("estEntree") == 0) {
+			arret.setEstentreedepot(new Byte(s)); 
+		}else if(colonne.compareTo("estSortie") == 0) {
+			arret.setEstsortiedepot(new Byte(s)); 
+		}else if(colonne.compareTo("estLieuEchangeConducteur") == 0) {
+			arret.setEstlieuechangeconducteur(new Byte(s));
+		}else if(colonne.compareTo("estTerminus") == 0) {
+			if(s.compareTo("1")==0){
+				ajouterTerminus(id);
+			}else{
+				supprimerTerminus(id);
+			}
+		}else if(colonne.compareTo("estDepot") == 0) {
+			if(s.compareTo("1")==0){
+				ajouterDepot(id);
+			}else{
+				supprimerDepot(id);
+			}
+		}
+		arret.store();
+	}
+	
+
+	@Override
+	public void ajouterArret() {
+		try {
+			SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+			Date date;
+			
+			date = formater.parse("00:00:00");
+			
+			java.sql.Time time = new Time(date.getTime());
+			
+			IntervalleRecord intervalleRecord = dsl.newRecord(INTERVALLE);
+			intervalleRecord.setId(null);
+			intervalleRecord.setMin(time);
+			intervalleRecord.setPref(time);
+			intervalleRecord.setMax(time);
+			intervalleRecord.store();
+			
+			ArretRecord arretRecord = dsl.newRecord(ARRET);
+			arretRecord.setId(null);
+			arretRecord.setEstcommercial(new Byte("0"));
+			arretRecord.setEstentreedepot(new Byte("0"));
+			arretRecord.setEstsortiedepot(new Byte("0"));
+			arretRecord.setEstlieuechangeconducteur(new Byte("0"));
+			arretRecord.setNom("");
+			arretRecord.setTempsimmobilisationId(intervalleRecord.getId());
+			arretRecord.setEstoccupe(new Byte("0"));
+			arretRecord.store();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
+	@Override
+	public void updateTempsImmobilisationArret(int id, String colonne, Object valeur) {
+		IntervalleRecord intervalle = dsl.fetchOne(INTERVALLE, INTERVALLE.ID.equal(id));
+		
+		SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+		Date date;
+		try {
+			date = formater.parse((String)valeur);
+			java.sql.Time time = new Time(date.getTime());
+			if(colonne.compareTo("tpsMIN_"+id) == 0) {
+				intervalle.setMin(time); 
+			} else if(colonne.compareTo("tpsPREF_" + id) == 0) {
+				intervalle.setPref(time); 
+			} else if(colonne.compareTo("tpsMAX_" + id) == 0) {
+				intervalle.setMax(time); 
+			}
+			intervalle.store();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/* GESTION DES TEMPS D IMMOBILISATION*/
+	
+	@Override
+	public List<Intervalle> getTempsImmobilisation() {
+
+		Intervalle intervalle;
+		List<Intervalle> tempsImmobilisation = new ArrayList<Intervalle>();
+		
+		Result<IntervalleRecord> results = dsl.fetch(INTERVALLE);
+		for (IntervalleRecord i : results) {
+			intervalle = new Intervalle();
+			intervalle.setId(i.getId());
+			intervalle.setMax(i.getMax());
+			intervalle.setPref(i.getPref());
+			intervalle.setMin(i.getMin());
+			tempsImmobilisation.add(intervalle);
+		}
+		return tempsImmobilisation;
+	}
+	
+	@Override
+	public Intervalle getTempsImmobilisationArret(int idTempsImmobilisation) {
+
+		Intervalle intervalle = new Intervalle();
+		
+		Result<Record4<Integer, Time, Time, Time>> results =	dsl.select(INTERVALLE.ID, INTERVALLE.MAX, INTERVALLE.PREF, INTERVALLE.MIN)
+									.from(INTERVALLE)
+									.where(INTERVALLE.ID.equal(idTempsImmobilisation))
+									.fetch();
+		Record4<Integer, Time, Time, Time> i = results.get(0);
+		intervalle.setId(i.getValue(INTERVALLE.ID));
+		intervalle.setMax(i.getValue(INTERVALLE.MAX));
+		intervalle.setPref(i.getValue(INTERVALLE.PREF));
+		intervalle.setMin(i.getValue(INTERVALLE.MIN));
+		return intervalle;
 	}
 	
 	/* GESTION DES TRANSITIONS */
@@ -587,6 +723,7 @@ public class StockageServiceImpl implements StockageService {
 		periodiciteRecord.store();
 	}
 	
+<<<<<<< HEAD
 	/* INTERVALLES */
 	
 	@Override
@@ -606,6 +743,58 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return intervalles;
+=======
+	/* TERMINUS */
+	@Override
+	public void ajouterTerminus(int idArret) {
+		TerminusRecord terminusRecord = dsl.newRecord(TERMINUS);
+		terminusRecord.setId(null);
+		terminusRecord.setArretId(idArret);
+		terminusRecord.store();
+	}
+	
+	@Override
+	public boolean getEstTerminus(int idArret) {	
+		Result<Record2<Integer, Integer>> results = dsl.select(TERMINUS.ID, TERMINUS.ARRET_ID)
+				.from(TERMINUS)
+				.where(TERMINUS.ARRET_ID.equal(idArret))
+				.fetch();
+		return !results.isEmpty();
+	}
+	
+	@Override
+	public void supprimerTerminus(int id) {
+		dsl.delete(TERMINUS)
+		.where(TERMINUS.ARRET_ID.equal(id))
+		.execute();
+	}
+	
+	/* DEPOTS */
+	@Override
+	public boolean getEstDepot(int idArret) {	
+		Result<Record2<Integer, Integer>> results = dsl.select(DEPOT.ID, DEPOT.ARRET_ID)
+				.from(DEPOT)
+				.where(DEPOT.ARRET_ID.equal(idArret))
+				.fetch();
+		return !results.isEmpty();
+	}
+	
+	@Override
+	public void ajouterDepot(int idArret) {
+		DepotRecord depotRecord = dsl.newRecord(DEPOT);
+		depotRecord.setId(null);
+		depotRecord.setArretId(idArret);
+		depotRecord.store();
+	}
+	
+	@Override
+	public void supprimerDepot(int id) {
+		dsl.delete(DEPOT)
+		.where(DEPOT.ARRET_ID.equal(id))
+		.execute();
+>>>>>>> modelisation-support-com
 	}
 
+	
+	
 }
