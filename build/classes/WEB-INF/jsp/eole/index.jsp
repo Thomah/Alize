@@ -13,6 +13,9 @@ a {
 a:hover, a:focus {
     color: #651C00;
 }
+.progress-bar {
+    background-color: #E66D2B;
+}
 #journal-logs-scrollspy {
 	height: 400px;
 	overflow: auto;
@@ -48,9 +51,9 @@ a:hover, a:focus {
 								allouer au processus</p>
 							<div class="progress">
 								<div class="progress-bar progress-bar-striped active"
-									role="progressbar" aria-valuenow="45" aria-valuemin="0"
-									aria-valuemax="100" style="width: 45%" id="progress-bar-eole">
-									<span class="sr-only">45% Complété</span>
+									role="progressbar" aria-valuenow="0" aria-valuemin="0"
+									aria-valuemax="100" style="width: 0%" id="progress-bar-eole">
+									<span class="sr-only">0% Complété</span>
 								</div>
 							</div>
 							<nav id="journal-logs-bar"
@@ -65,26 +68,7 @@ a:hover, a:focus {
 											class="icon-bar"></span> <span class="icon-bar"></span> <span
 											class="icon-bar"></span>
 									</button>
-									<a class="navbar-brand" href="#"> Journal de Logs </a>
-								</div>
-								<div
-									class="collapse navbar-collapse bs-example-js-navbar-scrollspy">
-									<ul class="nav navbar-nav">
-										<li class=""><a href="#fat"> @fat </a></li>
-										<li class="active"><a href="#mdo"> @mdo </a></li>
-										<li class="dropdown"><a id="navbarDrop1"
-											class="dropdown-toggle" aria-expanded="false" role="button"
-											data-toggle="dropdown" href="#"> Dropdown <span
-												class="caret"></span>
-										</a>
-											<ul class="dropdown-menu" aria-labelledby="navbarDrop1"
-												role="menu">
-												<li class=""><a tabindex="-1" href="#one"> one </a></li>
-												<li class=""><a tabindex="-1" href="#two"> two </a></li>
-												<li class="divider"></li>
-												<li class=""><a tabindex="-1" href="#three"> three
-												</a></li>
-											</ul>
+									<a class="navbar-brand" href="#"> Journal</a>
 								</div>
 							</div>
 
@@ -92,55 +76,6 @@ a:hover, a:focus {
 							<div id="journal-logs-scrollspy" class="scrollspy-example"
 								data-offset="0" data-target="#journal-logs-bar"
 								data-spy="scroll">
-
-								<h4 id="fat"></h4>
-								<p>Occaecat commodo aliqua delectus. Fap craft beer deserunt
-									skateboard ea. Lomo bicycle rights adipisicing banh mi, velit
-									ea sunt next level locavore single-origin coffee in magna
-									veniam. High life id vinyl, echo park consequat quis aliquip
-									banh mi pitchfork. Vero VHS est adipisicing. Consectetur nisi
-									DIY minim messenger bag. Cred ex in, sustainable delectus
-									consectetur fanny pack iphone.</p>
-								<h4 id="mdo"></h4>
-								<p>Occaecat commodo aliqua delectus. Fap craft beer deserunt
-									skateboard ea. Lomo bicycle rights adipisicing banh mi, velit
-									ea sunt next level locavore single-origin coffee in magna
-									veniam. High life id vinyl, echo park consequat quis aliquip
-									banh mi pitchfork. Vero VHS est adipisicing. Consectetur nisi
-									DIY minim messenger bag. Cred ex in, sustainable delectus
-									consectetur fanny pack iphone.</p>
-								<h4 id="one"></h4>
-								<p>Occaecat commodo aliqua delectus. Fap craft beer deserunt
-									skateboard ea. Lomo bicycle rights adipisicing banh mi, velit
-									ea sunt next level locavore single-origin coffee in magna
-									veniam. High life id vinyl, echo park consequat quis aliquip
-									banh mi pitchfork. Vero VHS est adipisicing. Consectetur nisi
-									DIY minim messenger bag. Cred ex in, sustainable delectus
-									consectetur fanny pack iphone.</p>
-								<h4 id="two"></h4>
-								<p>Occaecat commodo aliqua delectus. Fap craft beer deserunt
-									skateboard ea. Lomo bicycle rights adipisicing banh mi, velit
-									ea sunt next level locavore single-origin coffee in magna
-									veniam. High life id vinyl, echo park consequat quis aliquip
-									banh mi pitchfork. Vero VHS est adipisicing. Consectetur nisi
-									DIY minim messenger bag. Cred ex in, sustainable delectus
-									consectetur fanny pack iphone.</p>
-								<h4 id="three"></h4>
-								<p>Occaecat commodo aliqua delectus. Fap craft beer deserunt
-									skateboard ea. Lomo bicycle rights adipisicing banh mi, velit
-									ea sunt next level locavore single-origin coffee in magna
-									veniam. High life id vinyl, echo park consequat quis aliquip
-									banh mi pitchfork. Vero VHS est adipisicing. Consectetur nisi
-									DIY minim messenger bag. Cred ex in, sustainable delectus
-									consectetur fanny pack iphone.</p>
-								<p>Occaecat commodo aliqua delectus. Fap craft beer deserunt
-									skateboard ea. Lomo bicycle rights adipisicing banh mi, velit
-									ea sunt next level locavore single-origin coffee in magna
-									veniam. High life id vinyl, echo park consequat quis aliquip
-									banh mi pitchfork. Vero VHS est adipisicing. Consectetur nisi
-									DIY minim messenger bag. Cred ex in, sustainable delectus
-									consectetur fanny pack iphone.</p>
-
 							</div>
 						</div>
 					</div>
@@ -159,7 +94,7 @@ a:hover, a:focus {
 										class="glyphicon glyphicon-calendar"></span> </span>
 								</div>
 							</div>
-							<button class="btn btn-default" onclick="lancerEole()">Calculer</button>
+							<button id="lancerEole" class="btn btn-default" onclick="lancerEole()">Calculer</button>
 						</div>
 					</div>
 					<div class="panel panel-default">
@@ -203,45 +138,79 @@ a:hover, a:focus {
 	<script
 		src="<c:url value="/resources/js/plugins/datetimepicker/bootstrap-datetimepicker.js"/>"></script>
 	<script type="text/javascript">
+		var socket;
+		connect();
 	
 		$('#dureeEole').datetimepicker({
 	        format: 'DD/MM/YYYY HH:mm',
 	        pickSeconds: false,
 	        pick12HourFormat: false            
 	    });
-		$('#journal-logs-scrollspy').scrollspy({
-			target : '#fat'
-		});
 		
-		function updateStatut(){
-		    setTimeout(function(){
-		    	$.ajax({
-		    	  	url: "/alize/eole/recupererStatut",
-		    	  	type: "POST",
-		    	  	success: function(str) {
-		    	  		document.getElementById("progress-bar-eole").setAttribute("aria-valuenow", str);
-		    	  		document.getElementById("progress-bar-eole").setAttribute("style", "width: " + str + "%");
-		    	  	}
-		    	  });
-				updateStatut();
-		    }, 1000);
+		function disconnect() {
+			if (socket != null) {
+				socket.close();
+				socket = null;
+			}
+		}
+		
+		function connect() {
+			
+			if ('WebSocket' in window){
+				socket = new WebSocket('ws://localhost:8080/alize/websocket');
+				
+				socket.onopen = function() {
+					// do something
+				};
+
+				socket.onmessage = function(event) {
+					var received_msg = event.data;
+					var data = jQuery.parseJSON(received_msg);
+										
+    				$('#journal-logs-scrollspy').html(data.journal);
+    				$('#journal-logs-scrollspy').scrollTop(document.getElementById('journal-logs-scrollspy').scrollHeight);
+
+	    	  		document.getElementById("progress-bar-eole").setAttribute("aria-valuenow", data.avancement);
+	    	  		document.getElementById("progress-bar-eole").setAttribute("style", "width: " + data.avancement + "%");
+	    	  		
+					// A changer pour une requete AJAX
+					$('#dureeEole').data("DateTimePicker").disable();
+					$('#lancerEole').attr("disabled", "disabled");
+				};
+
+				socket.onclose = function(event) {
+					// do something
+				};
+				
+    		} else {
+    		  console.log('Websocket not supported');
+    		}
+			
 		}
 		
 		function lancerEole() {
-			var finEole = document.getElementById("finEole").value;
 
-		    $.ajax({
-		    	url: "/alize/eole/calculer",
-		    	data: "finEole=" + finEole,
-		    	type: "POST",
-		    	success: function(str) {
-		    		$('#dureeEole').data("DateTimePicker").disable();
-		    		updateStatut();
-		    	}
+			var finEole = document.getElementById("finEole").value;
+			waitForSocketConnection(function(){
+				var msg = '{"finEole":"' + finEole + '"}';
+				socket.send(msg);
 		    });
+			
+			function waitForSocketConnection(callback){
+			    setTimeout(
+			        function () {
+			            if (socket.readyState === 1) {
+			                if(callback != null){
+			                    callback();
+			                }
+			                return;
+
+			            } else {
+			                waitForSocketConnection(callback);
+			            }
+			        }, 5);
+			}
 		}
-		
-		
 		
 	</script>
 </body>

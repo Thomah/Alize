@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:websocket="http://www.springframework.org/schema/websocket"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans     
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -11,8 +14,12 @@
         http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
-        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.1.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.0.xsd
+        http://www.springframework.org/schema/websocket
+        http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
 	<!-- CONFIGURATION CXF -->
 <!-- 	<import resource="classpath:META-INF/cxf/cxf.xml"/> -->
@@ -106,11 +113,28 @@
 			<null />
 		</constructor-arg>
 	</bean>
+	
+	<!-- WEBSOCKETS -->
+	
+	<bean id="websocket" class="alize.eole.websocket.handler.WebsocketEndPoint"/>
+	
+	<websocket:handlers>
+	    <websocket:mapping path="/websocket" handler="websocket"/>
+	</websocket:handlers>
 
 	<!-- SERVICES -->
 
 	<bean name="stockageService" class="alize.commun.service.StockageServiceImpl" />
 	<bean name="domService" class="alize.nau.service.DOMServiceImpl" />
+
+	<!-- THREADS -->
+	
+	<bean name="calculTask" class="alize.eole.thread.CalculTask">
+		<property name="websocket" ref="websocket" />
+	</bean>
+	<bean name="tasks" class="alize.eole.thread.Tasks">
+		<property name="calculTask" ref="calculTask" />
+	</bean>
 
 	<!-- CONTROLLEURS -->
 

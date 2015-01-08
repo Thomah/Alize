@@ -37,7 +37,6 @@ import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
-import alize.eole.thread.CalculTask;
 import alize.eole.thread.Tasks;
 
 /**
@@ -53,8 +52,6 @@ public class EoleControlleur {
 	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat(
 			"hh:mm:ss");
 	
-	private CalculTask calculs;
-
 	@Autowired
 	private StockageService stockageService;
 
@@ -73,40 +70,6 @@ public class EoleControlleur {
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
 		view.addObject(URL_PAGE_CLE, URL_INDEX);
 		return view;
-	}
-
-	/**
-	 * Lance les calculs d'Eole
-	 * 
-	 * @param finEole
-	 *            La date et l'heure limite à laquelle Eole doit finir
-	 * @return Un message indiquant le succès du lancement ou non
-	 * @author Thomas
-	 * @date 19/12/2014
-	 */
-	@RequestMapping(value = URL_INDEX + "/calculer", method = POST)
-	public @ResponseBody String calculer(@RequestParam String finEole) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-		Tasks.setCalculTask(LocalDateTime.parse(finEole, formatter));
-		return "ok";
-	}
-	
-
-	/**
-	 * Récupère le statut d'Eole
-	 * 
-	 * @return Un message indiquant le succès du lancement ou non
-	 * @author Thomas
-	 * @date 19/12/2014
-	 */
-	@RequestMapping(value = URL_INDEX + "/recupererStatut", method = POST)
-	public @ResponseBody String recupererStatut() {
-		ZonedDateTime zdtDebut = Tasks.getCalculTask().getDebutEole().atZone(ZoneId.systemDefault());
-		ZonedDateTime zdtFin = Tasks.getCalculTask().getFinEole().atZone(ZoneId.systemDefault());
-		System.out.println("FIN : " + zdtFin.toInstant().toEpochMilli());
-		double percent = (((double)(new Date()).getTime() - (double)zdtDebut.toInstant().toEpochMilli()) / ((double)zdtFin.toInstant().toEpochMilli() - (double)zdtDebut.toInstant().toEpochMilli())) * 100;
-		System.out.println("PERCENT :" + percent);
-		return Double.toString(percent);
 	}
 
 	/**
