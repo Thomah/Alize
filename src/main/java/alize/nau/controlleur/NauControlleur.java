@@ -74,106 +74,9 @@ public class NauControlleur {
 		view.addObject(URL_PAGE_CLE, URL_INDEX);
 		return view;
 	}
-<<<<<<< HEAD
 
-	@RequestMapping(value = URL_AFFICHERARRETS, method = GET)
-=======
 	
-	/*@RequestMapping(value = URL_AFFICHERARRETS, method = GET)
->>>>>>> modelisation-support-com
-	public ModelAndView afficherArrets(ModelMap model) {
-		List<List<String>> tableauArrets = new ArrayList<List<String>>();
 
-		List<Arret> listeArret = new ArrayList<Arret>();
-		Result<ArretRecord> resultArret = dsl.fetch(Tables.ARRET);
-		List<Integer> listeIDTerminus = new ArrayList<Integer>();
-		Result<TerminusRecord> resultTerminus = dsl.fetch(Tables.TERMINUS);
-		List<String> listeTempsImmobilisationPref = new ArrayList<String>();
-
-		for (ArretRecord aRec : resultArret) {
-			Arret a = new Arret();
-			a.setNom(aRec.getNom());
-			a.setId(aRec.getId());
-			a.setEstcommercial(aRec.getEstcommercial());
-			a.setEstentreedepot(aRec.getEstentreedepot());
-			a.setEstlieuechangeconducteur(aRec.getEstlieuechangeconducteur());
-			a.setEstsortiedepot(aRec.getEstsortiedepot());
-			a.setTempsimmobilisationId(aRec.getTempsimmobilisationId());
-			listeArret.add(a);
-		}
-		for (TerminusRecord tRec : resultTerminus) {
-			listeIDTerminus.add(tRec.getArretId());
-		}
-
-		Result<Record1<Time>> result = dsl
-				.select(Tables.INTERVALLE.PREF)
-				.from(Tables.INTERVALLE)
-				.join(Tables.ARRET)
-				.on(Tables.ARRET.TEMPSIMMOBILISATION_ID
-						.equal(Tables.INTERVALLE.ID)).fetch();
-		for (int i = 0; i < result.size(); i++) {
-			listeTempsImmobilisationPref.add(result.get(i).value1().toString());
-		}
-		// for(Object rec : result.toArray()){
-		//
-		// listeTempsImmobilisationPref.add(rec.toString());
-		// }
-
-		for (int i = 0; i < listeArret.size(); i++) {
-			Arret a = listeArret.get(i);
-			List<String> ligneArret = new ArrayList<String>();
-			ligneArret.add(a.getId().toString());
-			ligneArret.add(a.getNom());
-			ligneArret.add(byteToBoolean(a.getEstcommercial()).toString());
-			ligneArret.add(listeTempsImmobilisationPref.get(i));
-			ligneArret.add(byteToBoolean(a.getEstentreedepot()).toString());
-			ligneArret.add(byteToBoolean(a.getEstsortiedepot()).toString());
-			ligneArret.add(byteToBoolean(a.getEstlieuechangeconducteur())
-					.toString());
-			Boolean estTerminus = listeIDTerminus.contains(a.getId());
-			ligneArret.add(estTerminus.toString());
-			tableauArrets.add(ligneArret);
-		}
-
-		ModelAndView view = new ModelAndView(URL_MODULE + SLASH
-				+ JSP_AFFICHERARRETS);
-
-		view.addObject(URL_MODULE_CLE, URL_MODULE);
-		view.addObject(TABLEAU_ARRET_CLE, tableauArrets);
-		return view;
-	}*/
-	
-	/**
-	 * Supprimer un arrêt
-	 * 
-	 * @param idArret
-	 *            L'identifiant de l'arrêt à supprimer
-	 * @author Cyril
-	 * @date 18/12/2014
-	 */
-	/*@RequestMapping(value=URL_AFFICHERARRETS + "/supprimerArret", method=POST)
-	public @ResponseBody void ajouterPeriodicite(@RequestParam String idArret) {
-		supprimerArret(idArret);
-	}
-
-	public void supprimerArret(String id) {
-		dsl.delete(Tables.ARRET).where(
-				Tables.ARRET.ID.equal(Integer.parseInt(id)));
-	}
-
-	public Boolean byteToBoolean(Byte b) {
-		if (b == 1) {
-			return true;
-		} else {
-			return false;
-		}
-<<<<<<< HEAD
-	}
-
-=======
-	}*/
-	
->>>>>>> modelisation-support-com
 	/* GESTION DES LIGNES */
 
 	/**
@@ -821,50 +724,10 @@ public class NauControlleur {
 		stockageService.supprimerArret(id);
 		return "ok";
 	}
-	/**
-	 * Retourne en AJAX la liste des arrets au format JSON
-	 * 
-	 * @name getListeArrets
-	 * @description Retourne en AJAX la liste des arrets au format JSON
-	 * @return La liste des arrets au format JSON
-	 * @author Thomas [TH]
-	 * @date 3 jan. 2015
-	 * @version 1
-	 *//*
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = URL_ARRETS + "/get", method = POST)
-	public @ResponseBody String getListeArrets() {
-		List<Arret> arrets = stockageService.getArrets();
-		JSONArray array = new JSONArray();
-		for (Arret a : arrets) {
-			JSONObject object = new JSONObject();
-			object.put("'id'", a.getId());
-			object.put("'nom'", "'" + a.getNom() + "'");
-			object.put("'estCommercial'", "'" + a.getEstcommercial() + "'");
-			object.put("'estEntreeDepot'", "'" + a.getEstentreedepot() + "'");
-			object.put("'estSortieDepot'", "'" + a.getEstsortiedepot() + "'");
-			object.put("'estLieuEchangeConducteur'",
-					"'" + a.getEstlieuechangeconducteur() + "'");
-			object.put("'tempsImmobilisation_id'",
-					"'" + a.getTempsimmobilisationId() + "'");
-			array.add(object);
-		}
-		String validJSONString = array.toString().replace("'", "\"")
-				.replace("=", ":");
-		return validJSONString;
-<<<<<<< HEAD
-	}
+
 
 	/* TRANSITIONS */
 
-=======
-	}*/
-	
-	
-	/* TRANSITIONS */
-	
-	
->>>>>>> modelisation-support-com
 	/**
 	 * Affiche la JSP de gestion des transitions
 	 * 

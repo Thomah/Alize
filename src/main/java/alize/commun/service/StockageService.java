@@ -448,7 +448,7 @@ public interface StockageService {
 	 */
 	public void updatePeriodicite(int id, String colonne, Time valeur);
 
-<<<<<<< HEAD
+
 	/* INTERVALLES */
 
 	/**
@@ -461,7 +461,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Intervalle> getIntervalles();
-=======
+
 	/**
 	 * Récupère les intervalles du réseau stockés en BDD
 	 * 
@@ -583,6 +583,6 @@ public interface StockageService {
 	
 
 	
->>>>>>> modelisation-support-com
+
 
 }

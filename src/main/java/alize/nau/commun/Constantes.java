@@ -17,14 +17,9 @@ public class Constantes {
 	public static final String URL_LIGNES_VOIES = URL_INDEX + SLASH + "lignesvoies";
 	
 	public static final String URL_VOIES = URL_INDEX + SLASH + "voies";
-<<<<<<< HEAD
-
-	public static final String URL_AFFICHERARRETS = URL_INDEX + SLASH + "afficherArrets";
 
 	public static final String URL_VOIES_ARRETS = URL_INDEX + SLASH + "voiesarrets";
-=======
->>>>>>> modelisation-support-com
-	
+
 	public static final String URL_ARRETS = URL_INDEX + SLASH + "arrets";
 	
 	public static final String URL_TRANSITIONS = URL_INDEX + SLASH + "transitions";

@@ -723,7 +723,7 @@ public class StockageServiceImpl implements StockageService {
 		periodiciteRecord.store();
 	}
 	
-<<<<<<< HEAD
+
 	/* INTERVALLES */
 	
 	@Override
@@ -741,10 +741,11 @@ public class StockageServiceImpl implements StockageService {
 			intervalle.setMax(i.getMax());
 			intervalles.add(intervalle);
 		}
-		
 		return intervalles;
-=======
+	}
+	
 	/* TERMINUS */
+	
 	@Override
 	public void ajouterTerminus(int idArret) {
 		TerminusRecord terminusRecord = dsl.newRecord(TERMINUS);
@@ -770,6 +771,7 @@ public class StockageServiceImpl implements StockageService {
 	}
 	
 	/* DEPOTS */
+	
 	@Override
 	public boolean getEstDepot(int idArret) {	
 		Result<Record2<Integer, Integer>> results = dsl.select(DEPOT.ID, DEPOT.ARRET_ID)
@@ -792,9 +794,5 @@ public class StockageServiceImpl implements StockageService {
 		dsl.delete(DEPOT)
 		.where(DEPOT.ARRET_ID.equal(id))
 		.execute();
->>>>>>> modelisation-support-com
 	}
-
-	
-	
 }
