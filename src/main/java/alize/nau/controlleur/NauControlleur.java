@@ -1,11 +1,12 @@
 package alize.nau.controlleur;
 
 import static alize.commun.Constantes.*;
-
 import static alize.nau.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
+import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
@@ -64,7 +65,7 @@ public class NauControlleur {
 		return view;
 	}
 	
-	@RequestMapping(value = URL_AFFICHERARRETS, method = GET)
+	/*@RequestMapping(value = URL_AFFICHERARRETS, method = GET)
 	public ModelAndView afficherArrets(ModelMap model) {
 		List<List<String>> tableauArrets = new ArrayList<List<String>>();
 		
@@ -124,7 +125,7 @@ public class NauControlleur {
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
 		view.addObject(TABLEAU_ARRET_CLE, tableauArrets);
 		return view;
-	}
+	}*/
 	
 	/**
 	 * Supprimer un arrêt
@@ -134,7 +135,7 @@ public class NauControlleur {
 	 * @author Cyril
 	 * @date 18/12/2014
 	 */
-	@RequestMapping(value=URL_AFFICHERARRETS + "/supprimerArret", method=POST)
+	/*@RequestMapping(value=URL_AFFICHERARRETS + "/supprimerArret", method=POST)
 	public @ResponseBody void ajouterPeriodicite(@RequestParam String idArret) {
 		supprimerArret(idArret);
 	}
@@ -151,7 +152,7 @@ public class NauControlleur {
 		}else{
 			return false;	
 		}
-	}
+	}*/
 	
 	/* GESTION DES LIGNES */
 
@@ -497,6 +498,137 @@ public class NauControlleur {
 	
 	/* ARRETS */
 
+	/* GESTION DES VOIES */
+
+	/**
+	 * Affiche la JSP de gestion des arrets
+	 * 
+	 * @name afficherArrets
+	 * @description Affiche la JSP de gestion des arrets
+	 * @return La vue de la JSP de gestion des arrets
+	 * @author Cyril [CS]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ARRETS, method = GET)
+	public ModelAndView afficherArrets() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_ARRETS);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_ARRETS);
+		return view;
+	}
+	
+	/**
+	 * Retourne en AJAX la liste des arrets au format JSON
+	 * 
+	 * @name getListeArrets
+	 * @description Retourne en AJAX la liste des arrets au format JSON
+	 * @return La liste des arrets au format JSON
+	 * @author Cyril [CS]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_ARRETS + "/get", method = POST)
+	public @ResponseBody String getListeArrets() {
+		List<Arret> arrets = stockageService.getArrets();
+		Intervalle intervalle;
+		JSONArray array = new JSONArray();
+		for (Arret a : arrets) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", a.getId());
+			object.put("'nom'", "'" + a.getNom() + "'");
+			object.put("'estCommercial'", "'" + a.getEstcommercial() + "'");
+			intervalle = stockageService.getTempsImmobilisationArret(a.getTempsimmobilisationId());
+			object.put("'tempsImmobilisationID'", "'" + intervalle.getId() + "'");
+			object.put("'tempsImmobilisationMIN'", "'" + intervalle.getMin() + "'");
+			object.put("'tempsImmobilisationPREF'", "'" + intervalle.getPref() + "'");
+			object.put("'tempsImmobilisationMAX'", "'" + intervalle.getMax() + "'");
+			object.put("'estEntree'", "'" + a.getEstentreedepot() + "'");
+			object.put("'estSortie'", "'" + a.getEstsortiedepot() + "'");
+			object.put("'estLieuEchangeConducteur'", "'" + a.getEstlieuechangeconducteur() + "'");
+			object.put("'estTerminus'", "'" + stockageService.getEstTerminus(a.getId()) + "'");
+			object.put("'estDepot'", "'" + stockageService.getEstDepot(a.getId()) + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+	
+
+	
+	
+	/**
+	 * Met à jour en AJAX le temps d'immobilisation sélectionné
+	 * 
+	 * @name updateArret
+	 * @description Met à jour en AJAX le temps d'immobilisation sélectionné
+	 * @param id L'identifiant de l'intervalle à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @return "ok" si tout s'est bien passé
+	 * @author Cyril [CS]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ARRETS + "/updateTempsImmobilisation", method = POST)
+	public @ResponseBody String updateTempsImmobilisation(@RequestParam int id, @RequestParam String newvalue, @RequestParam String colname) {
+		stockageService.updateTempsImmobilisationArret(id, colname, newvalue);
+		return "ok" ;
+	}
+	
+	/**
+	 * Met à jour en AJAX l'arrêt sélectionné
+	 * 
+	 * @name updateArret
+	 * @description Met à jour en AJAX l'arrêt sélectionné
+	 * @param id L'identifiant de l'intervalle à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @return "ok" si tout s'est bien passé
+	 * @author Cyril [CS]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ARRETS + "/updateArret", method = POST)
+	public @ResponseBody String updateArret(@RequestParam int id, @RequestParam String newvalue, @RequestParam String colname) {
+		stockageService.updateArret(id, colname, newvalue);
+		return "ok" ;
+	}
+
+	/**
+	 * Créer en AJAX un nouvel arret
+	 * 
+	 * @name ajouter Arret
+	 * @description Créer en AJAX un nouvel arret
+	 * @return "ok" si tout s'est bien passé
+	 * @author Cyril [CS]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ARRETS + "/ajouter", method = POST)
+	public @ResponseBody String ajouterArret() {
+		stockageService.ajouterArret();
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX l'arrêt d'identifiant donné en paramètre
+	 * 
+	 * @name supprimerArret
+	 * @description Supprime en AJAX l'arrêt d'identifiant donné en paramètre
+	 * @param id L'identifiant de l'arrê à supprimer
+	 * @return "ok" si tout s'est bien passé
+	 * @author Cyril [CS]
+	 * @date 5 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ARRETS + "/supprimer", method = POST)
+	public @ResponseBody String supprimerArret(@RequestParam int id) {
+		stockageService.supprimerArret(id);
+		return "ok";
+	}
 	/**
 	 * Retourne en AJAX la liste des arrets au format JSON
 	 * 
@@ -506,7 +638,7 @@ public class NauControlleur {
 	 * @author Thomas [TH]
 	 * @date 3 jan. 2015
 	 * @version 1
-	 */
+	 *//*
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_ARRETS + "/get", method = POST)
 	public @ResponseBody String getListeArrets() {
@@ -526,10 +658,11 @@ public class NauControlleur {
 		String validJSONString = array.toString().replace("'", "\"")
 				.replace("=", ":");
 		return validJSONString;
-	}
+	}*/
 	
 	
 	/* TRANSITIONS */
+	
 	
 	/**
 	 * Affiche la JSP de gestion des transitions

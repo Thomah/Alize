@@ -33,7 +33,7 @@
 				</a>
 			</li>
 			<li>
-				<a <% out.print(classActive(urlPage, URL_AFFICHERARRETS)); %> href="<c:url value="<%=URL_AFFICHERARRETS %>" />">
+				<a <% out.print(classActive(urlPage, URL_ARRETS)); %> href="<c:url value="<%=URL_ARRETS %>" />">
 					<i class="fa fa-th-list fa-fw"></i> Arrêts
 				</a>
 			</li>

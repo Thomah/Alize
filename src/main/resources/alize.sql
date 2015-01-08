@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  localhost
--- Généré le :  Ven 05 Décembre 2014 à 09:32
+-- Généré le :  Jeu 08 Janvier 2015 à 17:11
 -- Version du serveur :  5.5.40-0+wheezy1
 -- Version de PHP :  5.4.34-0+deb7u1
 
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `arret` (
   `estLieuEchangeConducteur` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Designe un lieu darret du véhicule';
 
--- 
+--
 -- Contenu de la table `arret`
 --
 
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `conducteur` (
 
 CREATE TABLE IF NOT EXISTS `depot` (
 `id` int(11) NOT NULL,
-  `arret_id` int(11) NOT NULL
+  `arret_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Le terminus est le premier ou le dernier arrêt dune voie';
 
 --
@@ -188,8 +188,8 @@ INSERT INTO `ligne` (`id`, `typeVehicule`) VALUES
 
 CREATE TABLE IF NOT EXISTS `ligne_voie` (
 `id` int(11) NOT NULL,
-  `ligne_id` int(11) NOT NULL,
-  `voie_id` int(11) NOT NULL
+  `ligne_id` int(11) DEFAULT NULL,
+  `voie_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -226,13 +226,13 @@ CREATE TABLE IF NOT EXISTS `periodedeconduite` (
 --
 
 CREATE TABLE IF NOT EXISTS `periodicite` (
-  `id` int(11) NOT NULL,
-  `debut` time NOT NULL,
-  `fin` time NOT NULL,
-  `periode` time NOT NULL,
+`id` int(11) NOT NULL,
+  `debut` time NOT NULL DEFAULT '00:00:00',
+  `fin` time NOT NULL DEFAULT '00:00:00',
+  `periode` time NOT NULL DEFAULT '00:00:00',
   `id_voie` int(11) NOT NULL,
   `id_arret` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -285,7 +285,7 @@ CREATE TABLE IF NOT EXISTS `service` (
 
 CREATE TABLE IF NOT EXISTS `terminus` (
 `id` int(11) NOT NULL,
-  `arret_id` int(11) NOT NULL
+  `arret_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -310,9 +310,9 @@ INSERT INTO `terminus` (`id`, `arret_id`) VALUES
 
 CREATE TABLE IF NOT EXISTS `transition` (
 `id` int(11) NOT NULL,
-  `duree` time DEFAULT NULL,
-  `arretPrecedent_id` int(11) NOT NULL,
-  `arretSuivant_id` int(11) NOT NULL
+  `duree` time DEFAULT '00:00:00',
+  `arretPrecedent_id` int(11) DEFAULT NULL,
+  `arretSuivant_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Troncon entre deux arrêts';
 
 --
@@ -414,8 +414,8 @@ INSERT INTO `vehicule` (`id`, `kilometrage`, `estEnService`, `typeVehicule`) VAL
 CREATE TABLE IF NOT EXISTS `voie` (
 `id` int(11) NOT NULL,
   `direction` varchar(100) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `terminusDepart_id` int(11) NOT NULL,
-  `terminusArrivee_id` int(11) NOT NULL
+  `terminusDepart_id` int(11) DEFAULT NULL,
+  `terminusArrivee_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Partie de la ligne marqué par un sens de circulation';
 
 --
@@ -436,8 +436,8 @@ INSERT INTO `voie` (`id`, `direction`, `terminusDepart_id`, `terminusArrivee_id`
 
 CREATE TABLE IF NOT EXISTS `voie_arret` (
 `id` int(11) NOT NULL,
-  `voie_id` int(11) NOT NULL,
-  `arret_id` int(11) NOT NULL
+  `voie_id` int(11) DEFAULT NULL,
+  `arret_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Designe un lieu darret du véhicule';
 
 --
@@ -648,6 +648,11 @@ MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 ALTER TABLE `periodedeconduite`
 MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT pour la table `periodicite`
+--
+ALTER TABLE `periodicite`
+MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
 -- AUTO_INCREMENT pour la table `phase`
 --
 ALTER TABLE `phase`
@@ -692,7 +697,7 @@ ADD CONSTRAINT `associationconducteurservice_ibfk_2` FOREIGN KEY (`conducteur_id
 -- Contraintes pour la table `depot`
 --
 ALTER TABLE `depot`
-ADD CONSTRAINT `depot_ibfk_1` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `depot_ibfk_1` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
 
 --
 -- Contraintes pour la table `feuilledeservice`
@@ -704,8 +709,8 @@ ADD CONSTRAINT `feuilledeservice_ibfk_1` FOREIGN KEY (`phase_id`) REFERENCES `ph
 -- Contraintes pour la table `ligne_voie`
 --
 ALTER TABLE `ligne_voie`
-ADD CONSTRAINT `ligne_voie_ibfk_1` FOREIGN KEY (`ligne_id`) REFERENCES `ligne` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `ligne_voie_ibfk_2` FOREIGN KEY (`voie_id`) REFERENCES `voie` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `ligne_voie_ibfk_1` FOREIGN KEY (`ligne_id`) REFERENCES `ligne` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `ligne_voie_ibfk_2` FOREIGN KEY (`voie_id`) REFERENCES `voie` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `periodedeconduite`
@@ -733,14 +738,14 @@ ADD CONSTRAINT `service_ibfk_1` FOREIGN KEY (`feuilledeservice_id`) REFERENCES `
 -- Contraintes pour la table `terminus`
 --
 ALTER TABLE `terminus`
-ADD CONSTRAINT `terminus_ibfk_1` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `terminus_ibfk_1` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE SET NULL ON UPDATE NO ACTION;
 
 --
 -- Contraintes pour la table `transition`
 --
 ALTER TABLE `transition`
-ADD CONSTRAINT `transition_ibfk_1` FOREIGN KEY (`arretPrecedent_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `transition_ibfk_2` FOREIGN KEY (`arretSuivant_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `transition_ibfk_2` FOREIGN KEY (`arretSuivant_id`) REFERENCES `arret` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+ADD CONSTRAINT `transition_ibfk_1` FOREIGN KEY (`arretPrecedent_id`) REFERENCES `arret` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Contraintes pour la table `voie`
@@ -753,8 +758,8 @@ ADD CONSTRAINT `voie_ibfk_2` FOREIGN KEY (`terminusArrivee_id`) REFERENCES `term
 -- Contraintes pour la table `voie_arret`
 --
 ALTER TABLE `voie_arret`
-ADD CONSTRAINT `voie_arret_ibfk_1` FOREIGN KEY (`voie_id`) REFERENCES `voie` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-ADD CONSTRAINT `voie_arret_ibfk_2` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+ADD CONSTRAINT `voie_arret_ibfk_1` FOREIGN KEY (`voie_id`) REFERENCES `voie` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `voie_arret_ibfk_2` FOREIGN KEY (`arret_id`) REFERENCES `arret` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
