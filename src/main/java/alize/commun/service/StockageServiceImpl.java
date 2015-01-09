@@ -15,15 +15,16 @@ import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Depot;
-import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Terminus;
@@ -31,6 +32,8 @@ import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.DepotRecord;
+import alize.commun.modele.tables.records.FeuilledeservicePeriodiciteRecord;
+import alize.commun.modele.tables.records.FeuilledeserviceRecord;
 import alize.commun.modele.tables.records.IntervalleRecord;
 import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.LigneVoieRecord;
@@ -522,7 +525,6 @@ public class StockageServiceImpl implements StockageService {
 			arretRecord.setEstoccupe(new Byte("0"));
 			arretRecord.store();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -546,7 +548,6 @@ public class StockageServiceImpl implements StockageService {
 			}
 			intervalle.store();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -723,8 +724,7 @@ public class StockageServiceImpl implements StockageService {
 		periodiciteRecord.store();
 	}
 	
-
-	/* INTERVALLES */
+	/* GESTION DES INTERVALLES */
 	
 	@Override
 	public List<Intervalle> getIntervalles() {
@@ -744,7 +744,7 @@ public class StockageServiceImpl implements StockageService {
 		return intervalles;
 	}
 	
-	/* TERMINUS */
+	/* GESTION DES TERMINUS */
 	
 	@Override
 	public void ajouterTerminus(int idArret) {
@@ -770,7 +770,7 @@ public class StockageServiceImpl implements StockageService {
 		.execute();
 	}
 	
-	/* DEPOTS */
+	/* GESTION DES DEPOTS */
 	
 	@Override
 	public boolean getEstDepot(int idArret) {	
@@ -795,4 +795,142 @@ public class StockageServiceImpl implements StockageService {
 		.where(DEPOT.ARRET_ID.equal(id))
 		.execute();
 	}
+	
+	/* GESTION DES FEUILLES DE SERVICE */
+
+	@Override
+	public List<Feuilledeservice> getFDS() {
+		Feuilledeservice fds;
+		List<Feuilledeservice> fdss = new ArrayList<Feuilledeservice>();
+		
+		Result<FeuilledeserviceRecord> results = dsl.fetch(FEUILLEDESERVICE);
+		
+		for (FeuilledeserviceRecord f : results) {
+			fds = new Feuilledeservice();
+			fds.setId(f.getValue(FEUILLEDESERVICE.ID));
+			fds.setCouleur(f.getValue(FEUILLEDESERVICE.COULEUR));
+			fds.setDebutsaison(f.getValue(FEUILLEDESERVICE.DEBUTSAISON));
+			fds.setFinsaison(f.getValue(FEUILLEDESERVICE.FINSAISON));
+			fdss.add(fds);
+		}
+		
+		return fdss;
+	}
+
+	@Override
+	public void updateFDS(int id, String colname, String newvalue) {
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		FeuilledeserviceRecord f = dsl.fetchOne(FEUILLEDESERVICE, FEUILLEDESERVICE.ID.equal(id));
+
+		try {
+			if(colname.compareTo("couleur") == 0) {
+				f.setCouleur(newvalue);
+			} else if(colname.compareTo("debutSaison") == 0) {
+		        Date parsed = format.parse(newvalue);
+		        java.sql.Date sql = new java.sql.Date(parsed.getTime());
+				f.setDebutsaison(sql);
+			} else if(colname.compareTo("finSaison") == 0) {
+		        Date parsed;
+					parsed = format.parse(newvalue);
+		        java.sql.Date sql = new java.sql.Date(parsed.getTime());
+				f.setFinsaison(sql);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		f.store();
+	}
+
+	@Override
+	public void ajouterFDS() {
+		java.sql.Date sqlDate = new java.sql.Date(new Date().getTime());
+		
+		FeuilledeserviceRecord fdsRecord = dsl.newRecord(FEUILLEDESERVICE);
+		fdsRecord.setId(null);
+		fdsRecord.setDebutsaison(sqlDate);
+		fdsRecord.setFinsaison(sqlDate);
+		fdsRecord.store();
+	}
+
+	@Override
+	public void supprimerFDS(int id) {
+		dsl.delete(FEUILLEDESERVICE)
+		.where(FEUILLEDESERVICE.ID.equal(id))
+		.execute();
+	}
+
+	/* ATTRIBUTION DES PERIODICITES AUX FEUILLES DE SERVICE */
+
+	@Override
+	public List<Periodicite> getPeriodicitesNonAttribuees(int idFDS) {
+		List<Periodicite> periodicites = new ArrayList<Periodicite>();
+		Periodicite periodicite;
+		
+		Result<Record6<Integer, Integer, Integer, Time, Time, Time>> results =
+				dsl.selectDistinct(PERIODICITE.ID, PERIODICITE.ID_VOIE, PERIODICITE.ID_ARRET, PERIODICITE.DEBUT, PERIODICITE.FIN, PERIODICITE.PERIODE)
+				.from(PERIODICITE)
+				.where(PERIODICITE.ID.notIn(dsl.select(FEUILLEDESERVICE_PERIODICITE.PERIODICITE_ID)
+						.from(FEUILLEDESERVICE_PERIODICITE)
+						.where(FEUILLEDESERVICE_PERIODICITE.FEUILLEDESERVICE_ID.equal(idFDS)))
+						)
+				.fetch();
+		
+		for(Record6<Integer, Integer, Integer, Time, Time, Time> v : results) {
+			periodicite = new Periodicite();
+			periodicite.setId(v.getValue(PERIODICITE.ID));
+			periodicite.setIdVoie(v.getValue(PERIODICITE.ID_VOIE));
+			periodicite.setIdArret(v.getValue(PERIODICITE.ID_ARRET));
+			periodicite.setDebut(v.getValue(PERIODICITE.DEBUT));
+			periodicite.setFin(v.getValue(PERIODICITE.FIN));
+			periodicite.setPeriode(v.getValue(PERIODICITE.PERIODE));
+			periodicites.add(periodicite);
+		}
+		
+		return periodicites;
+	}
+
+	@Override
+	public List<Periodicite> getPeriodicitesAttribuees(int idFDS) {
+		List<Periodicite> periodicites = new ArrayList<Periodicite>();
+		Periodicite periodicite;
+		
+		Result<Record6<Integer, Integer, Integer, Time, Time, Time>> results =
+				dsl.select(PERIODICITE.ID, PERIODICITE.ID_VOIE, PERIODICITE.ID_ARRET, PERIODICITE.DEBUT, PERIODICITE.FIN, PERIODICITE.PERIODE)
+				.from(PERIODICITE, FEUILLEDESERVICE_PERIODICITE)
+				.where(FEUILLEDESERVICE_PERIODICITE.PERIODICITE_ID.equal(PERIODICITE.ID))
+				.and(FEUILLEDESERVICE_PERIODICITE.FEUILLEDESERVICE_ID.equal(idFDS))
+				.fetch();
+
+		for(Record6<Integer, Integer, Integer, Time, Time, Time> v : results) {
+			periodicite = new Periodicite();
+			periodicite.setId(v.getValue(PERIODICITE.ID));
+			periodicite.setIdVoie(v.getValue(PERIODICITE.ID_VOIE));
+			periodicite.setIdArret(v.getValue(PERIODICITE.ID_ARRET));
+			periodicite.setDebut(v.getValue(PERIODICITE.DEBUT));
+			periodicite.setFin(v.getValue(PERIODICITE.FIN));
+			periodicite.setPeriode(v.getValue(PERIODICITE.PERIODE));
+			periodicites.add(periodicite);
+		}
+		
+		return periodicites;
+	}
+
+	@Override
+	public void ajouterFDSPeriodicite(int idFDS, int idPeriodicite) {
+		FeuilledeservicePeriodiciteRecord fdsPeriodicite = dsl.newRecord(FEUILLEDESERVICE_PERIODICITE);
+		fdsPeriodicite.setId(null);
+		fdsPeriodicite.setFeuilledeserviceId(idFDS);
+		fdsPeriodicite.setPeriodiciteId(idPeriodicite);
+		fdsPeriodicite.store();
+	}
+
+	@Override
+	public void supprimerFDSPeriodicite(int idFDS, int idPeriodicite) {
+		dsl.delete(FEUILLEDESERVICE_PERIODICITE)
+		.where(FEUILLEDESERVICE_PERIODICITE.FEUILLEDESERVICE_ID.equal(idFDS))
+		.and(FEUILLEDESERVICE_PERIODICITE.PERIODICITE_ID.equal(idPeriodicite))
+		.execute();
+	}
+	
 }

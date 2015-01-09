@@ -449,7 +449,7 @@ public interface StockageService {
 	public void updatePeriodicite(int id, String colonne, Time valeur);
 
 
-	/* INTERVALLES */
+	/* GESTION DES INTERVALLES */
 
 	/**
 	 * Récupère les intervalles stockés en BDD
@@ -469,7 +469,7 @@ public interface StockageService {
 	 * @description Récupère les intervalles du réseau stockés en BDD
 	 * @return List<Intervalle> La liste des intervalles stockes en BDD
 	 * @author Cyril [CS]
-	 * @date 06 jan. 2014
+	 * @date 06 jan. 2015
 	 * @version 1
 	 */
 	public List<Intervalle> getTempsImmobilisation();
@@ -482,7 +482,7 @@ public interface StockageService {
 	 * @param id L'identifiant de l'intervalle
 	 * @return Intervalle L'intervalle correspondant à l'id passé en paramètre et stockes en BDD
 	 * @author Cyril [CS]
-	 * @date 06 jan. 2014
+	 * @date 06 jan. 2015
 	 * @version 1
 	 */
 	public Intervalle getTempsImmobilisationArret(int idTempsImmobilisation);
@@ -496,11 +496,13 @@ public interface StockageService {
 	 * @param colonne L'attribut du temps d'immobilisation à modifier (MIN, PREF, MAX) 
 	 * @param valeur La nouvelle valeur à enregistrer.
 	 * @author Cyril [CS]
-	 * @date 07 jan. 2014
+	 * @date 07 jan. 2015
 	 * @version 1
 	 */
 	public void updateTempsImmobilisationArret(int id, String colonne, Object valeur);
-
+	
+	/* GESTION DES TERMINUS */
+	
 	/**
 	 * Renvoie 1 si l'arrêt définit par idArret est un terminus, 0 sinon
 	 * 
@@ -508,7 +510,7 @@ public interface StockageService {
 	 * @description Renvoie 1 si l'arrêt définit par idArret est un terminus, 0 sinon
 	 * @param id L'identifiant de l'arrêt
 	 * @author Cyril [CS]
-	 * @date 08 jan. 2014
+	 * @date 08 jan. 2015
 	 * @version 1
 	 */
 	public boolean getEstTerminus(int idArret);
@@ -520,7 +522,7 @@ public interface StockageService {
 	 * @param id L'identifiant du terminus concerné
 	 * @param idArret L'identifiant de l'arret concerné
 	 * @author Cyril [CS]
-	 * @date 08 jan. 2014
+	 * @date 08 jan. 2015
 	 * @version 1
 	 */
 	public void ajouterTerminus( int idArret);
@@ -531,12 +533,13 @@ public interface StockageService {
 	 * @description Supprime le terminus indiqué par l'ID de son arret  en BDD
 	 * @param id L'identifiant de l'arret associer au terminus à supprimer
 	 * @author Cyril [CS]
-	 * @date 08 jan. 2014
+	 * @date 08 jan. 2015
 	 * @version 1
 	 */
 	void supprimerTerminus(int id);
 	
-	//GESTION DES DEPOTS
+	/* GESTION DES DEPOTS */
+	
 	/**
 	 * Renvoie 1 si l'arrêt définit par idArret est un dépôt, 0 sinon
 	 * 
@@ -544,12 +547,11 @@ public interface StockageService {
 	 * @description Renvoie 1 si l'arrêt définit par idArret est un dépôt, 0 sinon
 	 * @param id L'identifiant de l'arrêt
 	 * @author Cyril [CS]
-	 * @date 08 jan. 2014
+	 * @date 08 jan. 2015
 	 * @version 1
 	 */
 	public boolean getEstDepot(int idArret);
 
-	
 	/**
 	 * Créer un Dépôt en BDD
 	 * @name ajouterDepot
@@ -557,32 +559,126 @@ public interface StockageService {
 	 * @param id L'identifiant du dépôt concerné
 	 * @param idArret L'identifiant de l'arret concerné
 	 * @author Cyril [CS]
-	 * @date 08 jan. 2014
+	 * @date 08 jan. 2015
 	 * @version 1
 	 */
 	void ajouterDepot(int idArret);
 
-	
 	/**
 	 * Supprime le dépot indiqué par l'ID de son arret  en BDD
 	 * @name supprimerDepot
 	 * @description Supprime le dépot indiqué par l'ID de son arret  en BDD
 	 * @param id L'identifiant de l'arret associer au dépôt à supprimer
 	 * @author Cyril [CS]
-	 * @date 08 jan. 2014
+	 * @date 08 jan. 2015
 	 * @version 1
 	 */
 	void supprimerDepot(int id);
 
+	/* GESTION DES FEUILLES DE SERVICE */
+
+	/**
+	 * Récupère les feuilles de service stockées en BDD
+	 * 
+	 * @name getFDS
+	 * @description Récupère les feuilles de service stockées en BDD
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @param idArret L'identifiant de l'arret concerné
+	 * @return La liste des feuilles de service stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public List<Feuilledeservice> getFDS();
+
+	/**
+	 * Met à jour la feuille de service indiquée stockées en BDD
+	 * @name updateFDS
+	 * @description Met à jour la feuille de service indiquée stockées en BDD
+	 * @param id L'identifiant de la feuille de service à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public void updateFDS(int id, String colname, String newvalue);
+
+	/**
+	 * Créer une nouvelle feuille de service en BDD
+	 * 
+	 * @name ajouterFDS
+	 * @description Créer une nouvelle feuille de service en BDD
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterFDS();
+
+	/**
+	 * Supprime une feuille de service en BDD selon son ID
+	 * 
+	 * @name supprimerFDS
+	 * @description Supprime une feuille de service en BDD selon son ID
+	 * @param id L'identifiant de la feuille de service à supprimer
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerFDS(int id);
+
+	/* ATTRIBUTION DES PERIODICITES AUX FEUILLES DE SERVICE */
+
+	/**
+	 * Récupère les périodicités non attribuées à la feuille de service d'identifiant donné stockées en BDD
+	 * 
+	 * @name getPeriodicitesNonAttribuees
+	 * @description Récupère les périodicités non attribuées à la feuille de service d'identifiant donné stockées en BDD
+	 * @param idFDS L'identifiant de la feuille de service concernée
+	 * @return La liste des périodicités non attribuées à la feuille de service d'identifiant donné
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public List<Periodicite> getPeriodicitesNonAttribuees(int idFDS);
+
+	/**
+	 * Récupère les périodicités attribuées à la feuille de service d'identifiant donné stockées en BDD
+	 * 
+	 * @name getPeriodicitesAttribuees
+	 * @description Récupère les périodicités attribuées à la feuille de service d'identifiant donné stockées en BDD
+	 * @param idFDS L'identifiant de la feuille de service concernée
+	 * @return La liste des périodicités attribuées à la feuille de service d'identifiant donné
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public List<Periodicite> getPeriodicitesAttribuees(int idFDS);
+
+	/**
+	 * Ajoute une association fds / périodicité en BDD
+	 * 
+	 * @name ajouterFDSPeriodicite
+	 * @description Ajoute une association fds / périodicité en BDD
+	 * @param idFDS L'identifiant de la feuille de service
+	 * @param idPeriodicite L'identifiant de la périodicité
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterFDSPeriodicite(int idFDS, int idPeriodicite);
+
+	/**
+	 * Supprime une association fds / périodicité en BDD
+	 * 
+	 * @name supprimerFDSPeriodicite
+	 * @description Supprime une association fds / périodicité en BDD
+	 * @param idVoie L'identifiant de la voie
+	 * @param idLigne L'identifiant de la ligne
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerFDSPeriodicite(int idFDS, int idPeriodicite);
 	
-
-	
-
-	
-
-	
-
-	
-
-
 }

@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
@@ -325,5 +326,227 @@ public class EoleControlleur {
 
 		return afficherContraintes(model);
 	}
+
+	/* GESTION DES FEUILLES DE SERVICE */
+
+	/**
+	 * Affiche la JSP de gestion des feuilles de service
+	 * 
+	 * @name afficherFDS
+	 * @description Affiche la JSP de gestion des feuilles de service
+	 * @return La vue de la JSP de gestion des feuilles de service
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FDS, method = GET)
+	public ModelAndView afficherFDS() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_FDS);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_FDS);
+		return view;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des feuilles de service au format JSON
+	 * 
+	 * @name getListeFDS
+	 * @description Retourne en AJAX la liste des feuilles de service au format JSON
+	 * @return La liste des feuilles de service au format JSON
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_FDS + "/get", method = POST)
+	public @ResponseBody String getListeFDS() {
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		List<Feuilledeservice> fds = stockageService.getFDS();
+		JSONArray array = new JSONArray();
+		for (Feuilledeservice f : fds) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", f.getId());
+			object.put("'couleur'", "'" + f.getCouleur() + "'");
+			object.put("'debutSaison'", "'" + format.format(f.getDebutsaison()) + "'");
+			object.put("'finSaison'", "'" + format.format(f.getFinsaison()) + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Met à jour en AJAX la feuille de service sélectionnée
+	 * 
+	 * @name updateFDS
+	 * @description Met à jour en AJAX la feuille de service sélectionnée
+	 * @param id L'identifiant de la ligne à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @param coltype Le type de la valeur mise à jour
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FDS + "/update", method = POST)
+	public @ResponseBody String updateFDS(@RequestParam int id,
+			@RequestParam String newvalue, @RequestParam String colname) {
+		stockageService.updateFDS(id, colname, newvalue);
+		return "ok";
+	}
+
+	/**
+	 * Créer en AJAX une nouvelle feuille de service
+	 * 
+	 * @name ajouterFDS
+	 * @description Créer en AJAX une nouvelle feuille de service
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FDS + "/ajouter", method = POST)
+	public @ResponseBody String ajouterFDS() {
+		stockageService.ajouterFDS();
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX la feuille de service d'identifiant donné en paramètre
+	 * 
+	 * @name supprimerFDS
+	 * @description Supprime en AJAX la feuille de service d'identifiant donné en paramètre
+	 * @param id L'identifiant de la feuille de service à supprimer
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FDS + "/supprimer", method = POST)
+	public @ResponseBody String supprimerFDS(@RequestParam int id) {
+		stockageService.supprimerFDS(id);
+		return "ok";
+	}
+	
+	/* ATTRIBUTION DES PERIODICITES AUX FEUILLES DE SERVICE */
+	
+	/**
+	 * Affiche la JSP de gestion des attributions fds / periodicites
+	 * 
+	 * @name afficherFDSPeriodicites
+	 * @description Affiche la JSP de gestion des attributions fds / periodicites
+	 * @return La vue de la JSP de gestion des attributions fds / periodicites
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FDS_PERIODICITES, method = GET)
+	public ModelAndView afficherFDSPeriodicites() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_FDS_PERIODICITES);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_FDS_PERIODICITES);
+		return view;
+	}
+	
+	/**
+	 * Retourne en AJAX la liste des périodicités non attribuées au format JSON
+	 * 
+	 * @name getListePeriodicitesNonAttribuees
+	 * @description Retourne en AJAX la liste des périodicités non attribuées au format JSON
+	 * @param idFDS L'identifiant de la feuille de service concernée
+	 * @return La liste des périodicités non attribuées au format JSON
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_FDS_PERIODICITES + "/get/nonattribuees", method = POST)
+	public @ResponseBody String getListePeriodicitesNonAttribuees(@RequestParam int idFDS) {
+		List<Periodicite> periodicites = stockageService.getPeriodicitesNonAttribuees(idFDS);
+		JSONArray array = new JSONArray();
+		for (Periodicite p : periodicites) {
+			JSONObject object = new JSONObject();
+			object.put("'id'",p.getId());
+			object.put("'voie'", "'" + p.getIdVoie() + "'");
+			object.put("'arret'", "'" + p.getIdArret() + "'");
+			object.put("'debut'", "'" + p.getDebut() + "'");
+			object.put("'fin'", "'" + p.getFin() + "'");
+			object.put("'periode'", "'" + p.getPeriode() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des périodicités attribuées au format JSON
+	 * 
+	 * @name getListeVoiesAttribuees
+	 * @description Retourne en AJAX la liste des périodicités attribuées au format JSON
+	 * @param idFDS L'identifiant de la feuille de service concernée
+	 * @return La liste des périodicités attribuées au format JSON
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_FDS_PERIODICITES + "/get/attribuees", method = POST)
+	public @ResponseBody String getListePeriodicitesAttribuees(@RequestParam int idFDS) {
+		List<Periodicite> periodicites = stockageService.getPeriodicitesAttribuees(idFDS);
+		JSONArray array = new JSONArray();
+		for (Periodicite p : periodicites) {
+			JSONObject object = new JSONObject();
+			object.put("'id'",p.getId());
+			object.put("'voie'", "'" + p.getIdVoie() + "'");
+			object.put("'arret'", "'" + p.getIdArret() + "'");
+			object.put("'debut'", "'" + p.getDebut() + "'");
+			object.put("'fin'", "'" + p.getFin() + "'");
+			object.put("'periode'", "'" + p.getPeriode() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Créer en AJAX une nouvelle association fds / periodicites
+	 * 
+	 * @name ajouterLigneVoie
+	 * @description Créer en AJAX une nouvelle association fds / periodicites
+	 * @param idFDS L'identifiant de la feuille de service concernée
+	 * @param idPeriodicite L'identifiant de la périodicité concernée
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FDS_PERIODICITES + "/ajouter", method = POST)
+	public @ResponseBody String ajouterFDSPeriodicite(@RequestParam int idFDS, @RequestParam int idPeriodicite) {
+		stockageService.ajouterFDSPeriodicite(idFDS, idPeriodicite);
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX l'association fds / periodicites donnée en paramètre
+	 * 
+	 * @name supprimerLigne
+	 * @description Supprime en AJAX l'association fds / periodicites donnée en paramètre
+	 * @param idFDS L'identifiant de la feuille de service concernée
+	 * @param idPeriodicite L'identifiant de la périodicité concernée
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FDS_PERIODICITES + "/supprimer", method = POST)
+	public @ResponseBody String supprimerFDSPeriodicite(@RequestParam int idFDS, @RequestParam int idPeriodicite) {
+		stockageService.supprimerFDSPeriodicite(idFDS, idPeriodicite);
+		return "ok";
+	}
+
 
 }

@@ -27,6 +27,11 @@
 					<i class="fa fa-th-list fa-fw"></i> Contraintes
 				</a>
 			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_FDS)); %> href="<c:url value="<%=URL_FDS %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Feuilles de service
+				</a>
+			</li>
 		</ul>
 	</div>
 </div>
