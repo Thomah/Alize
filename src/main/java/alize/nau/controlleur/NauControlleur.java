@@ -634,7 +634,7 @@ public class NauControlleur {
 			object.put("'id'", a.getId());
 			object.put("'nom'", "'" + a.getNom() + "'");
 			object.put("'estCommercial'", "'" + a.getEstcommercial() + "'");
-			intervalle = stockageService.getTempsImmobilisationArret(a.getTempsimmobilisationId());
+			intervalle = stockageService.getTempsImmobilisation(a.getTempsimmobilisationId());
 			object.put("'tempsImmobilisationID'", "'" + intervalle.getId() + "'");
 			object.put("'tempsImmobilisationMIN'", "'" + intervalle.getMin() + "'");
 			object.put("'tempsImmobilisationPREF'", "'" + intervalle.getPref() + "'");

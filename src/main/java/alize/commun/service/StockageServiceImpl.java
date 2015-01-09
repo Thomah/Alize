@@ -193,6 +193,24 @@ public class StockageServiceImpl implements StockageService {
 		return voies;
 	}
 	
+	@Override
+	public Voie getVoie(int id) {
+		
+		Voie voie;
+		List<Voie> voies = new ArrayList<Voie>();
+		Result<Record6<Integer,String, Integer, Integer, Integer, Integer>> results = dsl.select(VOIE.ID, VOIE.DIRECTION, VOIE.TERMINUSDEPART_ID, VOIE.TERMINUSARRIVEE_ID, LIGNE_VOIE.VOIE_ID, LIGNE_VOIE.LIGNE_ID)
+									.from(VOIE)
+									.where(VOIE.ID.equal(id))
+									.fetch();
+		Record6<Integer,String, Integer, Integer, Integer, Integer> v = results.get(0);
+			voie = new Voie();
+			voie.setId(v.value1());
+			voie.setDirection(v.value2());
+			voie.setTerminusdepartId(v.value3());
+			voie.setTerminusarriveeId(v.value4());
+		return voie;
+	}
+	
 	public List<Voie> getVoiesPourLaLigne(int idLigne)
 	{
 		Voie voie;
@@ -371,6 +389,25 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return arrets;
+	}
+	
+	@Override
+	public Arret getArret(int id) {
+		Arret arret = new Arret();
+		Result<Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
+				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTOCCUPE, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
+				.from(ARRET)
+				.where(ARRET.ID.equal(id))
+				.fetch();
+		Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer> result = results.get(0);
+		arret.setId(result.getValue(ARRET.ID));
+		arret.setNom(result.getValue(ARRET.NOM));
+		arret.setEstcommercial(result.getValue(ARRET.ESTCOMMERCIAL));
+		arret.setEstentreedepot(result.getValue(ARRET.ESTENTREEDEPOT));
+		arret.setEstlieuechangeconducteur(result.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
+		arret.setEstoccupe(result.getValue(ARRET.ESTOCCUPE));
+		arret.setEstsortiedepot(result.getValue(ARRET.ESTSORTIEDEPOT));
+		return arret;
 	}
 
 	@Override
@@ -571,8 +608,10 @@ public class StockageServiceImpl implements StockageService {
 		return tempsImmobilisation;
 	}
 	
+	
+	
 	@Override
-	public Intervalle getTempsImmobilisationArret(int idTempsImmobilisation) {
+	public Intervalle getTempsImmobilisation(int idTempsImmobilisation) {
 
 		Intervalle intervalle = new Intervalle();
 		
@@ -608,6 +647,20 @@ public class StockageServiceImpl implements StockageService {
 		return transitions;
 	}
 
+	
+	@Override
+	public Transition getTransition(int idArretPrecedent) {
+		TransitionRecord transitionRecord = dsl.fetchOne(TRANSITION, TRANSITION.ARRETPRECEDENT_ID.equal(idArretPrecedent));
+		
+		Transition transition = new Transition();
+		transition.setId(transitionRecord.getId());
+		transition.setDuree(transitionRecord.getDuree());
+		transition.setArretprecedentId(transitionRecord.getArretprecedentId());
+		transition.setArretsuivantId(transitionRecord.getArretsuivantId());
+		
+		return transition;
+	}
+	
 	@Override
 	public void updateTransition(int id, String colname, String newvalue) {
 		TransitionRecord transitionRecord = dsl.fetchOne(TRANSITION, TRANSITION.ID.equal(id));
@@ -745,6 +798,21 @@ public class StockageServiceImpl implements StockageService {
 	}
 	
 	/* TERMINUS */
+	
+	@Override
+	public Terminus getTerminus(int id) {
+		Terminus t = new Terminus();
+		Result<Record2<Integer, Integer>> results = dsl.select(TERMINUS.ID, TERMINUS.ARRET_ID)
+				.from(TERMINUS)
+				.where(TERMINUS.ARRET_ID.equal(id))
+				.fetch();
+		Record2<Integer, Integer> result = results.get(0);
+		t.setId(result.value1());
+		t.setArretId(result.value2());
+		
+		return t;
+	}
+	
 	
 	@Override
 	public void ajouterTerminus(int idArret) {
