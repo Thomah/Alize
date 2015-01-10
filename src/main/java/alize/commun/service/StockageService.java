@@ -681,4 +681,54 @@ public interface StockageService {
 	 */
 	public void supprimerFDSPeriodicite(int idFDS, int idPeriodicite);
 	
+	/* GESTION DES SERVICES */
+
+	/**
+	 * Récupère les services stockés en BDD
+	 * 
+	 * @name getServices
+	 * @description Récupère les services stockés en BDD
+	 * @return La liste des services stockés en BDD
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	public List<Service> getServices();
+
+	/**
+	 * Met à jour le service indiqué stocké en BDD
+	 * @name updateService
+	 * @description Met à jour le service indiqué stocké en BDD
+	 * @param id L'identifiant du service à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	public void updateService(int id, String colname, String newvalue);
+
+	/**
+	 * Créer un nouveau service en BDD
+	 * 
+	 * @name ajouterService
+	 * @description Créer un nouveau service en BDD
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterService();
+
+	/**
+	 * Supprime un service en BDD selon son ID
+	 * 
+	 * @name supprimerService
+	 * @description Supprime un service en BDD selon son ID
+	 * @param id L'identifiant du service à supprimer
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerService(int id);
+	
 }

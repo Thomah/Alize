@@ -15,7 +15,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record6;
-import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
@@ -27,6 +26,7 @@ import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Depot;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
+import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
@@ -38,6 +38,7 @@ import alize.commun.modele.tables.records.IntervalleRecord;
 import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.PeriodiciteRecord;
+import alize.commun.modele.tables.records.ServiceRecord;
 import alize.commun.modele.tables.records.TerminusRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
 import alize.commun.modele.tables.records.VoieArretRecord;
@@ -930,6 +931,56 @@ public class StockageServiceImpl implements StockageService {
 		dsl.delete(FEUILLEDESERVICE_PERIODICITE)
 		.where(FEUILLEDESERVICE_PERIODICITE.FEUILLEDESERVICE_ID.equal(idFDS))
 		.and(FEUILLEDESERVICE_PERIODICITE.PERIODICITE_ID.equal(idPeriodicite))
+		.execute();
+	}
+
+	/* GESTION DES SERVICES */
+
+	@Override
+	public List<Service> getServices() {
+		Service service;
+		List<Service> services = new ArrayList<Service>();
+		
+		Result<ServiceRecord> results = dsl.fetch(SERVICE);
+		
+		for (ServiceRecord s : results) {
+			service = new Service();
+			service.setId(s.getValue(SERVICE.ID));
+			service.setFeuilledeserviceId(s.getValue(SERVICE.FEUILLEDESERVICE_ID));
+			services.add(service);
+		}
+		
+		return services;
+	}
+
+	@Override
+	public void updateService(int id, String colname, String newvalue) {
+		ServiceRecord s = dsl.fetchOne(SERVICE, SERVICE.ID.equal(id));
+
+		if(colname.compareTo("fds") == 0) {
+			Integer idFeuilleDeService = Integer.valueOf(newvalue);
+			if(idFeuilleDeService == 0) {
+				s.setFeuilledeserviceId(null);
+			} else {
+				s.setFeuilledeserviceId(idFeuilleDeService);
+			}
+		}
+		
+		s.store();
+	}
+
+	@Override
+	public void ajouterService() {
+		ServiceRecord serviceRecord = dsl.newRecord(SERVICE);
+		serviceRecord.setId(null);
+		serviceRecord.setFeuilledeserviceId(null);
+		serviceRecord.store();
+	}
+
+	@Override
+	public void supprimerService(int id) {
+		dsl.delete(SERVICE)
+		.where(SERVICE.ID.equal(id))
 		.execute();
 	}
 	

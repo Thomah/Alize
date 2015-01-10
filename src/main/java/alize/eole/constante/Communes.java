@@ -17,6 +17,8 @@ public class Communes {
 	public static final String URL_FDS = URL_INDEX + SLASH + "fds";
 
 	public static final String URL_FDS_PERIODICITES = URL_INDEX + SLASH + "fdsperiodicites";
+
+	public static final String URL_SERVICES = URL_INDEX + SLASH + "services";
 	
 	/* JSP */
 	
@@ -27,5 +29,7 @@ public class Communes {
 	public static final String JSP_FDS = "fds";
 
 	public static final String JSP_FDS_PERIODICITES = "fdsperiodicites";
+
+	public static final String JSP_SERVICES = "services";
 	
 }

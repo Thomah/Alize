@@ -31,6 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Periodicite;
+import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
 
@@ -327,7 +328,7 @@ public class EoleControlleur {
 		return afficherContraintes(model);
 	}
 
-	/* GESTION DES FEUILLES DE SERVICE */
+	/* GESTION DES FEUILLES DE SERVICES */
 
 	/**
 	 * Affiche la JSP de gestion des feuilles de service
@@ -430,7 +431,7 @@ public class EoleControlleur {
 		return "ok";
 	}
 	
-	/* ATTRIBUTION DES PERIODICITES AUX FEUILLES DE SERVICE */
+	/* ATTRIBUTION DES PERIODICITES AUX FEUILLES DE SERVICES */
 	
 	/**
 	 * Affiche la JSP de gestion des attributions fds / periodicites
@@ -547,6 +548,104 @@ public class EoleControlleur {
 		stockageService.supprimerFDSPeriodicite(idFDS, idPeriodicite);
 		return "ok";
 	}
+	
+	/* GESTION DES SERVICES */
 
+	/**
+	 * Affiche la JSP de gestion des services
+	 * 
+	 * @name afficherServices
+	 * @description Affiche la JSP de gestion des services
+	 * @return La vue de la JSP de gestion des services
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_SERVICES, method = GET)
+	public ModelAndView afficherServices() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_SERVICES);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_SERVICES);
+		return view;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des services au format JSON
+	 * 
+	 * @name getServices
+	 * @description Retourne en AJAX la liste des services au format JSON
+	 * @return La liste des services au format JSON
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_SERVICES + "/get", method = POST)
+	public @ResponseBody String getServices() {
+		List<Service> services = stockageService.getServices();
+		JSONArray array = new JSONArray();
+		for (Service s : services) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", s.getId());
+			object.put("'feuilledeservice_id'", "'" + s.getFeuilledeserviceId() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Met à jour en AJAX le service sélectionné
+	 * 
+	 * @name updateService
+	 * @description Met à jour en AJAX le service sélectionné
+	 * @param id L'identifiant du service à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_SERVICES + "/update", method = POST)
+	public @ResponseBody String updateService(@RequestParam int id,
+			@RequestParam String newvalue, @RequestParam String colname) {
+		stockageService.updateService(id, colname, newvalue);
+		return "ok";
+	}
+
+	/**
+	 * Créer en AJAX un nouveau service
+	 * ajouterService
+	 * @name ajouterFDS
+	 * @description Créer en AJAX un nouveau service
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_SERVICES + "/ajouter", method = POST)
+	public @ResponseBody String ajouterService() {
+		stockageService.ajouterService();
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX le service d'identifiant donné en paramètre
+	 * 
+	 * @name supprimerService
+	 * @description Supprime en AJAX le service d'identifiant donné en paramètre
+	 * @param id L'identifiant du service à supprimer
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 10 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_SERVICES + "/supprimer", method = POST)
+	public @ResponseBody String supprimerService(@RequestParam int id) {
+		stockageService.supprimerService(id);
+		return "ok";
+	}
 
 }

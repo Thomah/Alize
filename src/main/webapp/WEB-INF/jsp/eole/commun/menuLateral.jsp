@@ -29,7 +29,12 @@
 			</li>
 			<li>
 				<a <% out.print(classActive(urlPage, URL_FDS)); %> href="<c:url value="<%=URL_FDS %>" />">
-					<i class="fa fa-th-list fa-fw"></i> Feuilles de service
+					<i class="fa fa-th-list fa-fw"></i> Feuilles de services
+				</a>
+			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_SERVICES)); %> href="<c:url value="<%=URL_SERVICES %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Services
 				</a>
 			</li>
 		</ul>
