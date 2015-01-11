@@ -32,6 +32,8 @@ import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Service;
+import alize.commun.modele.tables.pojos.Vacation;
+import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
 
@@ -647,5 +649,140 @@ public class EoleControlleur {
 		stockageService.supprimerService(id);
 		return "ok";
 	}
+
+	/* GESTION DES VACATIONS */
+
+	/**
+	 * Affiche la JSP de gestion des vacations
+	 * 
+	 * @name afficherVacations
+	 * @description Affiche la JSP de gestion des vacations
+	 * @return La vue de la JSP de gestion des vacations
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VACATIONS, method = GET)
+	public ModelAndView afficherVacations() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_VACATIONS);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_VACATIONS);
+		return view;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des vacations du service indiqué au format JSON
+	 * 
+	 * @name getVacations
+	 * @description Retourne en AJAX la liste des vacations du service indiqué au format JSON
+	 * @param idService L'identifiant du service
+	 * @return La liste des vacations du service indiqué au format JSON
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_VACATIONS + "/getByService", method = POST)
+	public @ResponseBody String getVacations(@RequestParam int idService) {
+		SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+		List<Vacation> vacations = stockageService.getVacationsByService(idService);
+		JSONArray array = new JSONArray();
+		for (Vacation v : vacations) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", v.getId());
+			object.put("'heureDebut'", "'" + formater.format(v.getHeuredebut()) + "'");
+			object.put("'heureFin'", "'" + formater.format(v.getHeurefin()) + "'");
+			object.put("'arretEchangeConducteurDebut_id'", "'" + v.getArretechangeconducteurdebutId() + "'");
+			object.put("'arretEchangeConducteurFin_id'", "'" + v.getArretechangeconducteurfinId() + "'");
+			object.put("'vehicule_id'", "'" + v.getVehiculeId() + "'");
+			object.put("'service_id'", "'" + v.getServiceId() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Met à jour en AJAX la vacation sélectionnée
+	 * 
+	 * @name updateVacation
+	 * @description Met à jour en AJAX la vacation sélectionnée
+	 * @param id L'identifiant de la vacation à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VACATIONS + "/update", method = POST)
+	public @ResponseBody String updateVacation(@RequestParam int id,
+			@RequestParam String newvalue, @RequestParam String colname) {
+		stockageService.updateVacation(id, colname, newvalue);
+		return "ok";
+	}
+
+	/**
+	 * Créer en AJAX une nouvelle vacation pour le service indiqué
+	 * @name ajouterVacationParService
+	 * @description Créer en AJAX une nouvelle vacation pour le service indiqué
+	 * @param idService L'identifiant du service
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VACATIONS + "/ajouterParService", method = POST)
+	public @ResponseBody String ajouterVacationParService(@RequestParam int idService) {
+		stockageService.ajouterVacation(idService, null);
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX le service d'identifiant donné en paramètre
+	 * 
+	 * @name supprimerVacation
+	 * @description Supprime en AJAX la vacation d'identifiant donné en paramètre
+	 * @param id L'identifiant de la vacation à supprimer
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VACATIONS + "/supprimer", method = POST)
+	public @ResponseBody String supprimerVacation(@RequestParam int id) {
+		stockageService.supprimerVacation(id);
+		return "ok";
+	}
+	
+	/* GESTION DES VEHICULES */
+
+	/**
+	 * Retourne en AJAX la liste des vehicules au format JSON
+	 * 
+	 * @name getVacations
+	 * @description Retourne en AJAX la liste des vacations au format JSON
+	 * @return La liste des vacations au format JSON
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_VEHICULES + "/get", method = POST)
+	public @ResponseBody String getVehicules() {
+		List<Vehicule> vehicules = stockageService.getVehicules();
+		JSONArray array = new JSONArray();
+		for (Vehicule v : vehicules) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", v.getId());
+			object.put("'type'",  "'" + v.getTypevehicule() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+	
 
 }

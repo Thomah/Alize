@@ -15,6 +15,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
@@ -29,6 +30,8 @@ import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Transition;
+import alize.commun.modele.tables.pojos.Vacation;
+import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.DepotRecord;
@@ -41,6 +44,8 @@ import alize.commun.modele.tables.records.PeriodiciteRecord;
 import alize.commun.modele.tables.records.ServiceRecord;
 import alize.commun.modele.tables.records.TerminusRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
+import alize.commun.modele.tables.records.VacationRecord;
+import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieArretRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 
@@ -371,6 +376,27 @@ public class StockageServiceImpl implements StockageService {
 			arret.setEstoccupe(a.getEstoccupe());
 			arret.setNom(a.getNom());
 			arret.setTempsimmobilisationId(a.getTempsimmobilisationId());
+			arrets.add(arret);
+		}
+		
+		return arrets;
+	}
+	
+	@Override
+	public List<Arret> getArretsEchangesConducteurs() {
+		Arret arret;
+		List<Arret> arrets = new ArrayList<Arret>();
+		
+		Result<Record2<Integer, String>> results =
+				dsl.selectDistinct(ARRET.ID, ARRET.NOM)
+				.from(ARRET)
+				.where(ARRET.ESTLIEUECHANGECONDUCTEUR.equal((byte) 1))
+				.fetch();
+		
+		for (Record2<Integer, String> a : results) {
+			arret = new Arret();
+			arret.setId(a.getValue(ARRET.ID));
+			arret.setNom(a.getValue(ARRET.NOM));
 			arrets.add(arret);
 		}
 		
@@ -982,6 +1008,124 @@ public class StockageServiceImpl implements StockageService {
 		dsl.delete(SERVICE)
 		.where(SERVICE.ID.equal(id))
 		.execute();
+	}
+	
+	/* GESTION DES VACATIONS */
+
+	@Override
+	public List<Vacation> getVacationsByService(int idService) {
+		Vacation vacation;
+		List<Vacation> vacations = new ArrayList<Vacation>();
+		
+		Result<Record7<Integer, Time, Time, Integer, Integer, Integer, Integer>> results =
+				dsl.selectDistinct(VACATION.ID, VACATION.HEUREDEBUT, VACATION.HEUREFIN, VACATION.ARRETECHANGECONDUCTEURDEBUT_ID, VACATION.ARRETECHANGECONDUCTEURFIN_ID, VACATION.VEHICULE_ID, VACATION.SERVICE_ID)
+				.from(VACATION)
+				.where(VACATION.SERVICE_ID.equal(idService))
+				.fetch();
+		
+		for (Record7<Integer, Time, Time, Integer, Integer, Integer, Integer> v : results) {
+			vacation = new Vacation();
+			vacation.setId(v.getValue(VACATION.ID));
+			vacation.setHeuredebut(v.getValue(VACATION.HEUREDEBUT));
+			vacation.setHeurefin(v.getValue(VACATION.HEUREFIN));
+			vacation.setArretechangeconducteurdebutId(v.getValue(VACATION.ARRETECHANGECONDUCTEURDEBUT_ID));
+			vacation.setArretechangeconducteurfinId(v.getValue(VACATION.ARRETECHANGECONDUCTEURFIN_ID));
+			vacation.setVehiculeId(v.getValue(VACATION.VEHICULE_ID));
+			vacation.setServiceId(v.getValue(VACATION.SERVICE_ID));
+			vacations.add(vacation);
+		}
+		
+		return vacations;
+	}
+
+	@Override
+	public void updateVacation(int id, String colname, String newvalue) {
+		VacationRecord v = dsl.fetchOne(VACATION, VACATION.ID.equal(id));
+
+		if(colname.compareTo("heureDebut") == 0) {
+			SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+			Date date;
+			try {
+				date = formater.parse(newvalue);
+				v.setHeuredebut(new java.sql.Time(date.getTime()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else if(colname.compareTo("heureFin") == 0) {
+			SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+			Date date;
+			try {
+				date = formater.parse(newvalue);
+				v.setHeurefin(new java.sql.Time(date.getTime()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else if(colname.compareTo("arretEchangeConducteurDebut") == 0) {
+			Integer idArretEchangeConducteurDebut = Integer.valueOf(newvalue);
+			if(idArretEchangeConducteurDebut == 0) {
+				v.setArretechangeconducteurdebutId(null);
+			} else {
+				v.setArretechangeconducteurdebutId(idArretEchangeConducteurDebut);
+			}
+		} else if(colname.compareTo("arretEchangeConducteurFin") == 0) {
+			Integer idArretEchangeConducteurFin = Integer.valueOf(newvalue);
+			if(idArretEchangeConducteurFin == 0) {
+				v.setArretechangeconducteurfinId(null);
+			} else {
+				v.setArretechangeconducteurfinId(idArretEchangeConducteurFin);
+			}
+		} else if(colname.compareTo("vehicule") == 0) {
+			Integer idVehicule = Integer.valueOf(newvalue);
+			if(idVehicule == 0) {
+				v.setVehiculeId(null);
+			} else {
+				v.setVehiculeId(idVehicule);
+			}
+		} else if(colname.compareTo("service") == 0) {
+			Integer idService = Integer.valueOf(newvalue);
+			if(idService == 0) {
+				v.setServiceId(null);
+			} else {
+				v.setServiceId(idService);
+			}
+		}
+		
+		v.store();
+	}
+
+	@Override
+	public void ajouterVacation(Integer idService, Integer idVehicule) {
+		VacationRecord vacationRecord = dsl.newRecord(VACATION);
+		vacationRecord.setId(null);
+		vacationRecord.setServiceId(idService);
+		vacationRecord.setVehiculeId(idVehicule);
+		vacationRecord.store();
+	}
+
+	@Override
+	public void supprimerVacation(int id) {
+		dsl.delete(VACATION)
+		.where(VACATION.ID.equal(id))
+		.execute();
+	}
+	
+	/* GESTION DES VEHICULES */
+
+	@Override
+	public List<Vehicule> getVehicules() {
+		Vehicule vehicule;
+		List<Vehicule> vehicules = new ArrayList<Vehicule>();
+		
+		Result<VehiculeRecord> results = dsl.fetch(VEHICULE);
+		
+		for (VehiculeRecord v : results) {
+			vehicule = new Vehicule();
+			vehicule.setId(v.getValue(VEHICULE.ID));
+			vehicule.setTypevehicule(v.getValue(VEHICULE.TYPEVEHICULE));
+			vehicules.add(vehicule);
+		}
+		
+		return vehicules;
 	}
 	
 }

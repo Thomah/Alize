@@ -581,8 +581,6 @@ public class NauControlleur {
 
 	/* ARRETS */
 
-	/* GESTION DES VOIES */
-
 	/**
 	 * Affiche la JSP de gestion des arrets
 	 * 
@@ -638,9 +636,31 @@ public class NauControlleur {
 				.replace("=", ":");
 		return validJSONString;
 	}
-	
-
-	
+	/**
+	 * Retourne en AJAX la liste des arrets où les échanges conducteur sont possibles au format JSON
+	 * 
+	 * @name getListeArretsEchangesConducteurs
+	 * @description Retourne en AJAX la liste des arrets où les échanges conducteur sont possibles au format JSON
+	 * @return La liste des arrets où les échanges conducteur sont possibles au format JSON
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_ARRETS + "/getEchangesConducteurs", method = POST)
+	public @ResponseBody String getListeArretsEchangesConducteurs() {
+		List<Arret> arrets = stockageService.getArretsEchangesConducteurs();
+		JSONArray array = new JSONArray();
+		for (Arret a : arrets) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", a.getId());
+			object.put("'nom'", "'" + a.getNom() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
 	
 	/**
 	 * Met à jour en AJAX le temps d'immobilisation sélectionné

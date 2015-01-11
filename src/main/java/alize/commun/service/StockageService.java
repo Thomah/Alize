@@ -261,6 +261,18 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Arret> getArrets();
+	
+	/**
+	 * Récupère les arrets où les échanges conducteurs sont possibles stockées en BDD
+	 * 
+	 * @name getArretsEchangesConducteurs
+	 * @description Récupère les arrets où les échanges conducteurs sont possibles stockées en BDD
+	 * @return La liste des arrets stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 11 déc. 2014
+	 * @version 1
+	 */
+	public List<Arret> getArretsEchangesConducteurs();
 
 	/**
 	 * Récupère les dépôts stockées en BDD
@@ -730,5 +742,72 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void supprimerService(int id);
+
+	/* GESTION DES VACATIONS */
+
+	/**
+	 * Récupère les vacations du service indiqué stockées en BDD
+	 * 
+	 * @name getVacationsByService
+	 * @description Récupère les vacations du service indiqué stockées en BDD
+	 * @param idService L'identifiant du service
+	 * @return La liste des vacations du service indiqué stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	public List<Vacation> getVacationsByService(int idService);
+
+	/**
+	 * Met à jour la vacation indiquée stockée en BDD
+	 * @name updateVacation
+	 * @description Met à jour la vacation indiquée stockée en BDD
+	 * @param id L'identifiant de la vacation à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	public void updateVacation(int id, String colname, String newvalue);
+
+	/**
+	 * Créer une nouvelle vacation en BDD
+	 * 
+	 * @name ajouterVacation
+	 * @description Créer une nouvelle vacation en BDD
+	 * @param idService L'identifiant du service associé
+	 * @param idVehicule L'identifiant du véhicule associé
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterVacation(Integer idService, Integer idVehicule);
+
+	/**
+	 * Supprime une vacation en BDD selon son ID
+	 * 
+	 * @name supprimerVacation
+	 * @description Supprime une vacation en BDD selon son ID
+	 * @param id L'identifiant de la vacation à supprimer
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerVacation(int id);
+	
+	/* GESTION DES VEHICULES */
+
+	/**
+	 * Récupère les véhicules stockés en BDD
+	 * 
+	 * @name getVehicules
+	 * @description Récupère les véhicules stockés en BDD
+	 * @return La liste des vacations stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	public List<Vehicule> getVehicules();
 	
 }
