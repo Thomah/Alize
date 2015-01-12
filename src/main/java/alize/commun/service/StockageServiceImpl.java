@@ -19,8 +19,10 @@ import org.jooq.Record7;
 import org.jooq.Record8;
 import org.jooq.Record9;
 import org.jooq.Result;
+import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import alize.commun.modele.tables.pojos.Conducteur;
 import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Arret;
@@ -34,6 +36,8 @@ import alize.commun.modele.tables.pojos.Vacation;
 import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
+import alize.commun.modele.tables.records.AssociationconducteurserviceRecord;
+import alize.commun.modele.tables.records.ConducteurRecord;
 import alize.commun.modele.tables.records.DepotRecord;
 import alize.commun.modele.tables.records.FeuilledeservicePeriodiciteRecord;
 import alize.commun.modele.tables.records.FeuilledeserviceRecord;
@@ -1167,5 +1171,83 @@ public class StockageServiceImpl implements StockageService {
 		.where(VEHICULE.ID.equal(id))
 		.execute();
 	}
+
+	/* GESTION DES ASSOCIATIONS SERVICES - CONDUCTEURS */
 	
+	@Override
+	public void updateServiceConducteur(int idService, String date, String colname, String newvalue) {
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
+		java.sql.Date dateSQL = null;
+		try {
+			dateSQL = new java.sql.Date(format.parse(date).getTime());
+		} catch (DataAccessException | ParseException e) {
+			e.printStackTrace();
+		}
+
+		AssociationconducteurserviceRecord cs = dsl.fetchOne(ASSOCIATIONCONDUCTEURSERVICE, 
+				ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID.equal(idService)
+				.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(dateSQL)));
+		
+		
+		if(newvalue.matches("[0-9]+")) {
+			int newvalueInt = Integer.valueOf(newvalue);
+			if(colname.compareTo("conducteur") == 0) {
+				if(newvalueInt == 0) {
+					supprimerServiceConducteur(idService, dateSQL);
+				} else {
+					if(cs != null) {
+						cs.setConducteurId(newvalueInt);
+					} else {
+						ajouterServiceConducteur(idService, dateSQL, newvalueInt);
+					}
+				}
+			}
+		}
+		
+		if(cs != null) {
+			cs.store();
+		}
+	}
+	
+
+	@Override
+	public void ajouterServiceConducteur(int idService, java.sql.Date dateSQL, int idConducteur) {
+		AssociationconducteurserviceRecord cs = dsl.newRecord(ASSOCIATIONCONDUCTEURSERVICE);
+		cs.setId(null);
+		cs.setDate(dateSQL);
+		cs.setServiceId(idService);
+		cs.setConducteurId(idConducteur);
+		cs.store();
+	}
+
+	@Override
+	public void supprimerServiceConducteur(int idService, java.sql.Date dateSQL) {
+		dsl.delete(ASSOCIATIONCONDUCTEURSERVICE)
+		.where(ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID.equal(idService)
+				.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(dateSQL)))
+		.execute();
+	}
+
+	/* GESTION DES CONDUCTEURS */
+
+	@Override
+	public List<Conducteur> getConducteurs() {
+		Conducteur conducteur;
+		List<Conducteur> conducteurs = new ArrayList<Conducteur>();
+		
+		Result<ConducteurRecord> results = dsl.fetch(CONDUCTEUR);
+		
+		for (ConducteurRecord c : results) {
+			conducteur = new Conducteur();
+			conducteur.setId(c.getValue(CONDUCTEUR.ID));
+			conducteur.setNom(c.getValue(CONDUCTEUR.NOM));
+			conducteur.setTelephone(c.getValue(CONDUCTEUR.TELEPHONE));
+			conducteurs.add(conducteur);
+		}
+		
+		return conducteurs;
+	}
+
+
 }

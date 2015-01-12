@@ -2,6 +2,7 @@ package alize.commun.service;
 
 import alize.commun.modele.tables.pojos.*;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 import java.util.Map;
@@ -846,5 +847,62 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void supprimerVehicule(int id);
+	
+	/* GESTION DES ASSOCIATIONS SERVICES - CONDUCTEURS */
+	
+	/**
+	 * Met à jour l'association service - conducteur indiquée stockée en BDD
+	 * @name updateVehicule
+	 * @description Met à jour l'association service - conducteur indiquée stockée en BDD
+	 * @param id L'identifiant du service à mettre à jour
+	 * @param date La date concernée
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	public void updateServiceConducteur(int idService, String date, String colname, String newvalue);
+	
+	/**
+	 * Créer une nouvelle association service - conducteur en BDD
+	 * 
+	 * @name ajouterServiceConducteur
+	 * @description Créer une nouvelle association service - conducteur en BDD
+	 * @param idService L'identifiant du service associé
+	 * @param dateSQL La date du jour concerné
+	 * @param idConducteur L'identifiant du conducteur associé
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterServiceConducteur(int idService, Date dateSQL, int idConducteur);
+	
+	/**
+	 * Supprime une association service - conducteur en BDD selon son ID
+	 * 
+	 * @name supprimerVehicule
+	 * @description Supprime une association service - conducteur en BDD selon son ID
+	 * @param idService L'identifiant du véhicule à supprimer
+	 * @param dateSQL La date concernée
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerServiceConducteur(int idService, Date dateSQL);
+	
+	/* GESTION DES CONDUCTEURS */
+
+	/**
+	 * Récupère les conducteurs stockés en BDD
+	 * 
+	 * @name getConducteurs
+	 * @description Récupère les conducteurs stockés en BDD
+	 * @return La liste des conducteurs stockés en BDD
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	public List<Conducteur> getConducteurs();
 	
 }

@@ -141,5 +141,6 @@
 	<context:component-scan base-package="alize.commun.controlleur" />
 	<context:component-scan base-package="alize.nau.controlleur" />
 	<context:component-scan base-package="alize.eole.controlleur" />
+	<context:component-scan base-package="alize.orion.controlleur" />
 
 </beans>

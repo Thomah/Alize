@@ -17,14 +17,10 @@
 				<div class="col-lg-12">
 					<h1 class="page-header">Bienvenue</h1>
 				</div>
-				<!-- /.col-lg-12 -->
 			</div>
-			<!-- /.row -->
 		</div>
-		<!-- /#page-wrapper -->
 
 	</div>
-	<!-- /#wrapper -->
 	
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
 	
