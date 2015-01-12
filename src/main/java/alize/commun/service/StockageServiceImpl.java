@@ -1013,26 +1013,35 @@ public class StockageServiceImpl implements StockageService {
 	/* GESTION DES VACATIONS */
 
 	@Override
-	public List<Vacation> getVacationsByService(int idService) {
+	public List<Vacation> getVacations(int idService, int idVehicule) {
 		Vacation vacation;
 		List<Vacation> vacations = new ArrayList<Vacation>();
+		Result<Record7<Integer, Time, Time, Integer, Integer, Integer, Integer>> results = null;
 		
-		Result<Record7<Integer, Time, Time, Integer, Integer, Integer, Integer>> results =
-				dsl.selectDistinct(VACATION.ID, VACATION.HEUREDEBUT, VACATION.HEUREFIN, VACATION.ARRETECHANGECONDUCTEURDEBUT_ID, VACATION.ARRETECHANGECONDUCTEURFIN_ID, VACATION.VEHICULE_ID, VACATION.SERVICE_ID)
-				.from(VACATION)
-				.where(VACATION.SERVICE_ID.equal(idService))
-				.fetch();
+		if(idService != 0) {
+			results = dsl.selectDistinct(VACATION.ID, VACATION.HEUREDEBUT, VACATION.HEUREFIN, VACATION.ARRETECHANGECONDUCTEURDEBUT_ID, VACATION.ARRETECHANGECONDUCTEURFIN_ID, VACATION.VEHICULE_ID, VACATION.SERVICE_ID)
+					.from(VACATION)
+					.where(VACATION.SERVICE_ID.equal(idService))
+					.fetch();
+		} else if(idVehicule != 0) {
+			results = dsl.selectDistinct(VACATION.ID, VACATION.HEUREDEBUT, VACATION.HEUREFIN, VACATION.ARRETECHANGECONDUCTEURDEBUT_ID, VACATION.ARRETECHANGECONDUCTEURFIN_ID, VACATION.VEHICULE_ID, VACATION.SERVICE_ID)
+					.from(VACATION)
+					.where(VACATION.VEHICULE_ID.equal(idVehicule))
+					.fetch();
+		}
 		
-		for (Record7<Integer, Time, Time, Integer, Integer, Integer, Integer> v : results) {
-			vacation = new Vacation();
-			vacation.setId(v.getValue(VACATION.ID));
-			vacation.setHeuredebut(v.getValue(VACATION.HEUREDEBUT));
-			vacation.setHeurefin(v.getValue(VACATION.HEUREFIN));
-			vacation.setArretechangeconducteurdebutId(v.getValue(VACATION.ARRETECHANGECONDUCTEURDEBUT_ID));
-			vacation.setArretechangeconducteurfinId(v.getValue(VACATION.ARRETECHANGECONDUCTEURFIN_ID));
-			vacation.setVehiculeId(v.getValue(VACATION.VEHICULE_ID));
-			vacation.setServiceId(v.getValue(VACATION.SERVICE_ID));
-			vacations.add(vacation);
+		if(results != null) {
+			for (Record7<Integer, Time, Time, Integer, Integer, Integer, Integer> v : results) {
+				vacation = new Vacation();
+				vacation.setId(v.getValue(VACATION.ID));
+				vacation.setHeuredebut(v.getValue(VACATION.HEUREDEBUT));
+				vacation.setHeurefin(v.getValue(VACATION.HEUREFIN));
+				vacation.setArretechangeconducteurdebutId(v.getValue(VACATION.ARRETECHANGECONDUCTEURDEBUT_ID));
+				vacation.setArretechangeconducteurfinId(v.getValue(VACATION.ARRETECHANGECONDUCTEURFIN_ID));
+				vacation.setVehiculeId(v.getValue(VACATION.VEHICULE_ID));
+				vacation.setServiceId(v.getValue(VACATION.SERVICE_ID));
+				vacations.add(vacation);
+			}
 		}
 		
 		return vacations;
@@ -1094,11 +1103,17 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	@Override
-	public void ajouterVacation(Integer idService, Integer idVehicule) {
+	public void ajouterVacation(int idService, int idVehicule) {
 		VacationRecord vacationRecord = dsl.newRecord(VACATION);
 		vacationRecord.setId(null);
-		vacationRecord.setServiceId(idService);
-		vacationRecord.setVehiculeId(idVehicule);
+		if(idService == 0)
+			vacationRecord.setServiceId(null);
+		else
+			vacationRecord.setServiceId(idService);
+		if(idVehicule == 0)
+			vacationRecord.setVehiculeId(null);
+		else
+			vacationRecord.setVehiculeId(idVehicule);
 		vacationRecord.store();
 	}
 
@@ -1126,6 +1141,31 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return vehicules;
+	}
+
+	@Override
+	public void updateVehicule(int id, String colname, String newvalue) {
+		VehiculeRecord v = dsl.fetchOne(VEHICULE, VEHICULE.ID.equal(id));
+
+		if(colname.compareTo("typeVehicule") == 0) {
+			v.setTypevehicule(newvalue);
+		}
+		
+		v.store();
+	}
+
+	@Override
+	public void ajouterVehicule() {
+		VehiculeRecord vehiculeRecord = dsl.newRecord(VEHICULE);
+		vehiculeRecord.setId(null);
+		vehiculeRecord.store();
+	}
+
+	@Override
+	public void supprimerVehicule(int id) {
+		dsl.delete(VEHICULE)
+		.where(VEHICULE.ID.equal(id))
+		.execute();
 	}
 	
 }

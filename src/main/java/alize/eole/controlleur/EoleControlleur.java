@@ -653,39 +653,58 @@ public class EoleControlleur {
 	/* GESTION DES VACATIONS */
 
 	/**
-	 * Affiche la JSP de gestion des vacations
+	 * Affiche la JSP de gestion des vacations d'un service donné en paramètre
 	 * 
-	 * @name afficherVacations
-	 * @description Affiche la JSP de gestion des vacations
-	 * @return La vue de la JSP de gestion des vacations
+	 * @name afficherVacationsService
+	 * @description Affiche la JSP de gestion des vacations d'un service donné en paramètre
+	 * @return La vue de la JSP de gestion des vacations d'un service donné en paramètre
 	 * @author Thomas [TH]
 	 * @date 11 jan. 2015
+	 * @version 2
+	 */
+	@RequestMapping(value = URL_VACATIONS + "service", method = GET)
+	public ModelAndView afficherVacationsService() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_VACATIONS_SERVICE);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_VACATIONS);
+		return view;
+	}
+	
+	/**
+	 * Affiche la JSP de gestion des vacations d'un véhicule donné en paramètre
+	 * 
+	 * @name afficherVacationsVehicule
+	 * @description Affiche la JSP de gestion des vacations d'un véhicule donné en paramètre
+	 * @return La vue de la JSP de gestion des vacations d'un véhicule donné en paramètre
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
 	 * @version 1
 	 */
-	@RequestMapping(value = URL_VACATIONS, method = GET)
-	public ModelAndView afficherVacations() {
-		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_VACATIONS);
+	@RequestMapping(value = URL_VACATIONS + "vehicule", method = GET)
+	public ModelAndView afficherVacationsVehicule() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_VACATIONS_VEHICULE);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
 		view.addObject(URL_PAGE_CLE, URL_VACATIONS);
 		return view;
 	}
 
 	/**
-	 * Retourne en AJAX la liste des vacations du service indiqué au format JSON
+	 * Retourne en AJAX la liste des vacations pour le service et le véhicule indiqués au format JSON
 	 * 
 	 * @name getVacations
-	 * @description Retourne en AJAX la liste des vacations du service indiqué au format JSON
+	 * @description Retourne en AJAX la liste des vacations pour le service et le véhicule indiqués au format JSON
 	 * @param idService L'identifiant du service
-	 * @return La liste des vacations du service indiqué au format JSON
+	 * @param idService L'identifiant du véhicule
+	 * @return La liste des vacations pour le service et le véhicule indiqués au format JSON
 	 * @author Thomas [TH]
 	 * @date 11 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = URL_VACATIONS + "/getByService", method = POST)
-	public @ResponseBody String getVacations(@RequestParam int idService) {
+	@RequestMapping(value = URL_VACATIONS + "/get", method = POST)
+	public @ResponseBody String getVacations(@RequestParam int idService, @RequestParam int idVehicule) {
 		SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
-		List<Vacation> vacations = stockageService.getVacationsByService(idService);
+		List<Vacation> vacations = stockageService.getVacations(idService, idVehicule);
 		JSONArray array = new JSONArray();
 		for (Vacation v : vacations) {
 			JSONObject object = new JSONObject();
@@ -724,18 +743,19 @@ public class EoleControlleur {
 	}
 
 	/**
-	 * Créer en AJAX une nouvelle vacation pour le service indiqué
-	 * @name ajouterVacationParService
-	 * @description Créer en AJAX une nouvelle vacation pour le service indiqué
+	 * Créer en AJAX une nouvelle vacation pour le service et le véhicule indiqués
+	 * @name ajouterVacation
+	 * @description Créer en AJAX une nouvelle vacation pour le service et le véhicule indiqués
 	 * @param idService L'identifiant du service
+	 * @param idVehicule L'identifiant du véhicule
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
 	 * @date 11 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	@RequestMapping(value = URL_VACATIONS + "/ajouterParService", method = POST)
-	public @ResponseBody String ajouterVacationParService(@RequestParam int idService) {
-		stockageService.ajouterVacation(idService, null);
+	@RequestMapping(value = URL_VACATIONS + "/ajouter", method = POST)
+	public @ResponseBody String ajouterVacation(@RequestParam int idService, @RequestParam int idVehicule) {
+		stockageService.ajouterVacation(idService, idVehicule);
 		return "ok";
 	}
 
@@ -757,7 +777,25 @@ public class EoleControlleur {
 	}
 	
 	/* GESTION DES VEHICULES */
-
+	
+	/**
+	 * Affiche la JSP de gestion des véhicules
+	 * 
+	 * @name afficherVehicules
+	 * @description Affiche la JSP de gestion des véhicules
+	 * @return La vue de la JSP de gestion des véhicules
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VEHICULES, method = GET)
+	public ModelAndView afficherVehicules() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_VEHICULES);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_VEHICULES);
+		return view;
+	}
+	
 	/**
 	 * Retourne en AJAX la liste des vehicules au format JSON
 	 * 
@@ -784,5 +822,56 @@ public class EoleControlleur {
 		return validJSONString;
 	}
 	
+	/**
+	 * Met à jour en AJAX le véhicule sélectionné
+	 * 
+	 * @name updateVehicule
+	 * @description Met à jour en AJAX le véhicule sélectionné
+	 * @param id L'identifiant du véhicule à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VEHICULES + "/update", method = POST)
+	public @ResponseBody String updateVehicule(@RequestParam int id,
+			@RequestParam String newvalue, @RequestParam String colname) {
+		stockageService.updateVehicule(id, colname, newvalue);
+		return "ok";
+	}
+
+	/**
+	 * Créer en AJAX un nouveau véhicule
+	 * @name ajouterVehicule
+	 * @description Créer en AJAX un nouveau véhicule
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VEHICULES + "/ajouter", method = POST)
+	public @ResponseBody String ajouterVehicule() {
+		stockageService.ajouterVehicule();
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX le véhicule d'identifiant donné en paramètre
+	 * 
+	 * @name supprimerVehicule
+	 * @description Supprime en AJAX le véhicule d'identifiant donné en paramètre
+	 * @param id L'identifiant du véhicule à supprimer
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_VEHICULES + "/supprimer", method = POST)
+	public @ResponseBody String supprimerVehicule(@RequestParam int id) {
+		stockageService.supprimerVehicule(id);
+		return "ok";
+	}
 
 }

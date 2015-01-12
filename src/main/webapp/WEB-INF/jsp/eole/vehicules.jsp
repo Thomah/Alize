@@ -23,7 +23,7 @@ a:hover, a:focus {
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Services</h1>
+					<h1 class="page-header">Véhicules</h1>
 					<div class="panel panel-default">
 	                        <div class="panel-heading">
 	                            <i class="fa fa-bar-chart-o fa-fw"></i> Plannification
@@ -31,9 +31,9 @@ a:hover, a:focus {
 	                        <!-- /.panel-heading -->
 	                        <div class="panel-body">
                                	<div class="btn-group" role="group">
-                               		<button type="button" class="btn btn-default" onclick="ajouterService()"><span class="glyphicon glyphicon-plus"></span> Ajouter</button>
+                               		<button type="button" class="btn btn-default" onclick="ajouterVehicule()"><span class="glyphicon glyphicon-plus"></span> Ajouter</button>
                                	</div>
-	                        	<div id="servicesContent" class="table-responsive">
+	                        	<div id="vehiculesContent" class="table-responsive">
 	                            </div>
 	                        </div>
 	                        <!-- /.panel-body -->
@@ -52,118 +52,68 @@ a:hover, a:focus {
 	<script src="<c:url value="/resources/js/plugins/editablegrid/editablegrid.js"/>"></script>
 	<script type="text/javascript">
 	window.onload = function() {
-		getServices();
+		getVehicules();
 	}
 	
-	function getServices() {
+	function getVehicules() {
 	    $.ajax({
-	    	url: "/alize/eole/services/get",
+	    	url: "/alize/eole/vehicules/get",
 	    	type: "POST",
 	    	success: function(str) {
    		    	var metadata = [];
    		     	metadata.push({name: "id", label: "ID", datatype: "int", editable: false});
-   		     	metadata.push({name: "fds", label: "Feuille de services", datatype: "html", editable: false});
+   		     	metadata.push({name: "typeVehicule", label: "Type", datatype: "string", editable: true});
    		     	metadata.push({name: "affecterVacations", label: "Affecter les vacations", datatype: "html", editable: false});
    		     	metadata.push({name: "supprimer", label: "Supprimer", datatype: "html", editable: false});
    		     	
 				var data = [];
-	    		var services = jQuery.parseJSON( str );
+	    		var vehicules = jQuery.parseJSON( str );
    		    	var index;
-   		    	var optionsSelectFDS = getOptionsSelectFDS();
-	    		for(index = 0; index < services.length; ++index)
+	    		for(index = 0; index < vehicules.length; ++index)
 	    		{
 	    		     data.push({
-	    		    	 id: services[index].id, 
+	    		    	 id: vehicules[index].id, 
 	    		    	 values: {
-	    		    		 "id": services[index].id, 
-	    		    		 "fds": "<div class='form-group'><select class='form-control selectFDS' id='fds_" + services[index].id + "' onchange='updateFDS(" + services[index].id + ")' data-selected='" + services[index].feuilledeservice_id + "'>" + optionsSelectFDS + "</select></div>", 
-	    		    		 "affecterVacations":"<a href='vacationsservice?service=" + services[index].id + "'><span class='glyphicon glyphicon-cog' aria-label='Affecter vacations'></span></a>", 
-	    		    		 "supprimer":"<a href='#' onclick='supprimerService(" + services[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
+	    		    		 "id": vehicules[index].id, 
+	    		    		 "typeVehicule": vehicules[index].type, 
+	    		    		 "affecterVacations":"<a href='vacationsvehicule?vehicule=" + vehicules[index].id + "'><span class='glyphicon glyphicon-cog' aria-label='Affecter vacations'></span></a>", 
+	    		    		 "supprimer":"<a href='#' onclick='supprimerVehicule(" + vehicules[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
 	    		    		 }
 	    		     });
 	    		}
 	    		
-	    		editableGrid = new EditableGrid("GridServices", {
+	    		editableGrid = new EditableGrid("GridVehicules", {
 	    			modelChanged: function(rowIndex, columnIndex, oldValue, newValue, row) {
 	    	   	    	updateCellValue(this, rowIndex, columnIndex, oldValue, newValue, row);
 	    	       	}
 	    	 	});
 	    		editableGrid.load({"metadata": metadata, "data": data});
-	    		editableGrid.renderGrid("servicesContent", "table table-bordered table-hover table-striped");
-	    		
-	    		selectFDS();
+	    		editableGrid.renderGrid("vehiculesContent", "table table-bordered table-hover table-striped");
 	    	}
 	    });
 	}
-
-	function getOptionsSelectFDS() {
-	    var chaineOptions = "<option value='0'></option>";
-		$.ajax({
-	    	url: "/alize/eole/fds/get",
-	    	type: "POST",
-	    	async: false,
-	    	success: function(str) {
-	    		var data = [];
-	    		var fds = jQuery.parseJSON( str );
-   		    	var index;
-	    		for(index = 0; index < fds.length; ++index)
-	    		{
-	    			chaineOptions+= "<option value='" + fds[index].id + "'>" + fds[index].couleur + "</option>";
-	    		}
-	    	}
-	    });
-		return chaineOptions;
-	}
 	
-	function selectFDS() {
-		$('.selectFDS').each(function(i, obj) {
-			var id = $(obj).attr('id').substring(15);
-			var fdsSelectionne = $(obj).attr("data-selected");
-    		$(obj).children("[value=" + fdsSelectionne + "]").attr("selected", true);
-		});
-	}
 	
-	function ajouterService() {
+	function ajouterVehicule() {
 	    $.ajax({
-	    	url: "/alize/eole/services/ajouter",
+	    	url: "/alize/eole/vehicules/ajouter",
 	    	type: "POST",
 	    	success: function(str) {
-	    		getServices();
+	    		getVehicules();
 	    	}
 	    });
 	}
 	
-	function supprimerService(id) {
+	function supprimerVehicule(id) {
 
 	    $.ajax({
-	    	url: "/alize/eole/services/supprimer",
+	    	url: "/alize/eole/vehicules/supprimer",
 	    	data: "id=" + id,
 	    	type: "POST",
 	    	success: function(str) {
-	    		getServices();
+	    		getVehicules();
 	    	}
 	    });
-	}
-	
-	function updateFDS(idService) {
-		var colname = "fds";
-		var newvalue = $('#fds_' + idService).val();
-		
-		$.ajax({
-			url: '/alize/eole/services/update',
-			type: 'POST',
-	    	data: "id=" + idService + 
-	    		"&newvalue=" + newvalue + 
-   				"&colname=" + colname,
-			success: function (response) 
-			{ 
-				// reset old value if failed then highlight row
-				var success = response == "ok" || !isNaN(parseInt(response)); // by default, a sucessfull reponse can be "ok" or a database id
-			    highlight(idService, success ? "ok" : "error"); 
-			},
-			error: function(XMLHttpRequest, textStatus, exception) { alert("Ajax failure"); },
-			async: true
-		});
 	}
 	
 	function updateCellValue(editableGrid, rowIndex, columnIndex, oldValue, newValue, row, onResponse)
@@ -173,7 +123,7 @@ a:hover, a:focus {
 		var colname = editableGrid.getColumnName(columnIndex);
 		
 		$.ajax({
-			url: '/alize/eole/services/update',
+			url: '/alize/eole/vehicules/update',
 			type: 'POST',
 	    	data: "id=" + id + 
 	    		"&newvalue=" + newvalue + 

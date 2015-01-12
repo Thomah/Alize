@@ -23,7 +23,7 @@ a:hover, a:focus {
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Vacations pour le service : <%=request.getParameter("service") %></h1>
+					<h1 class="page-header">Vacations pour le véhicule : <%=request.getParameter("vehicule") %></h1>
 					<div class="panel panel-default">
 	                        <div class="panel-heading">
 	                            <i class="fa fa-bar-chart-o fa-fw"></i> Plannification
@@ -51,18 +51,19 @@ a:hover, a:focus {
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
 	<script src="<c:url value="/resources/js/plugins/editablegrid/editablegrid.js"/>"></script>
 	<script type="text/javascript">
-	var idService;
+	var idVehicule;
 	
 	window.onload = function() {
-		idService = getUrlParameter('service');
+		idVehicule = getUrlParameter('vehicule');
 		getVacations();
 	}
 	
 	function getVacations() {
 	    $.ajax({
-	    	url: "/alize/eole/vacations/getByService",
+	    	url: "/alize/eole/vacations/get",
 	    	type: "POST",
-	    	data: "idService=" + idService,
+	    	data: "idService=0" + 
+				"&idVehicule=" + idVehicule,
 	    	success: function(str) {
    		    	var metadata = [];
    		     	metadata.push({name: "id", label: "ID", datatype: "int", editable: false});
@@ -183,22 +184,23 @@ a:hover, a:focus {
 
 	function selectVehicule() {
 		$('.selectVehicule').each(function(i, obj) {
-			var vehiculeSelectionne = $(obj).attr("data-selected");
-    		$(obj).children("[value=" + vehiculeSelectionne + "]").attr("selected", true);
+    		$(obj).children("[value=" + idVehicule + "]").attr("selected", true);
 		});
 	}
 
 	function selectService() {
 		$('.selectService').each(function(i, obj) {
-    		$(obj).children("[value=" + idService + "]").attr("selected", true);
+			var serviceSelectionne = $(obj).attr("data-selected");
+    		$(obj).children("[value=" + serviceSelectionne + "]").attr("selected", true);
 		});
 	}
 	
 	function ajouterVacation() {
 	    $.ajax({
-	    	url: "/alize/eole/vacations/ajouterParService",
+	    	url: "/alize/eole/vacations/ajouter",
 	    	type: "POST",
-	    	data: "idService=" + idService,
+	    	data: "idService=0" + 
+				"&idVehicule=" + idVehicule,
 	    	success: function(str) {
 	    		getVacations();
 	    	}

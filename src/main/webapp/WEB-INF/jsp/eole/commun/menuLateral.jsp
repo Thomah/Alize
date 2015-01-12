@@ -37,6 +37,11 @@
 					<i class="fa fa-th-list fa-fw"></i> Services
 				</a>
 			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_VEHICULES)); %> href="<c:url value="<%=URL_VEHICULES %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Véhicules
+				</a>
+			</li>
 		</ul>
 	</div>
 </div>

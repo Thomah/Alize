@@ -36,8 +36,10 @@ public class Communes {
 	
 	public static final String JSP_SERVICES = "services";
 	
-	public static final String JSP_VACATIONS = "vacations";
-	
 	public static final String JSP_VEHICULES = "vehicules";
+	
+	public static final String JSP_VACATIONS_SERVICE = "vacationsservice";
+	
+	public static final String JSP_VACATIONS_VEHICULE = "vacationsvehicule";
 	
 }

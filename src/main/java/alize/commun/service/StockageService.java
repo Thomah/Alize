@@ -746,17 +746,18 @@ public interface StockageService {
 	/* GESTION DES VACATIONS */
 
 	/**
-	 * Récupère les vacations du service indiqué stockées en BDD
+	 * Récupère les vacations pour le service et le véhicule indiqués stockées en BDD
 	 * 
-	 * @name getVacationsByService
-	 * @description Récupère les vacations du service indiqué stockées en BDD
+	 * @name getVacations
+	 * @description Récupère les vacations pour le service et le véhicule indiqués stockées en BDD
 	 * @param idService L'identifiant du service
-	 * @return La liste des vacations du service indiqué stockées en BDD
+	 * @param idVehicule L'identifiant du véhicule
+	 * @return La liste des vacations pour le service et le véhicule indiqués stockées en BDD
 	 * @author Thomas [TH]
 	 * @date 11 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	public List<Vacation> getVacationsByService(int idService);
+	public List<Vacation> getVacations(int idService, int idVehicule);
 
 	/**
 	 * Met à jour la vacation indiquée stockée en BDD
@@ -780,9 +781,9 @@ public interface StockageService {
 	 * @param idVehicule L'identifiant du véhicule associé
 	 * @author Thomas [TH]
 	 * @date 11 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	public void ajouterVacation(Integer idService, Integer idVehicule);
+	public void ajouterVacation(int idService, int idVehicule);
 
 	/**
 	 * Supprime une vacation en BDD selon son ID
@@ -809,5 +810,41 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Vehicule> getVehicules();
+
+	/**
+	 * Met à jour le véhicule indiqué stockée en BDD
+	 * @name updateVehicule
+	 * @description Met à jour le véhicule indiqué stockée en BDD
+	 * @param id L'identifiant du véhicule à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	public void updateVehicule(int id, String colname, String newvalue);
+
+	/**
+	 * Créer un nouveau véhicule en BDD
+	 * 
+	 * @name ajouterVehicule
+	 * @description Créer un nouveau véhicule en BDD
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterVehicule();
+
+	/**
+	 * Supprime un véhicule en BDD selon son ID
+	 * 
+	 * @name supprimerVehicule
+	 * @description Supprime un véhicule en BDD selon son ID
+	 * @param id L'identifiant du véhicule à supprimer
+	 * @author Thomas [TH]
+	 * @date 12 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerVehicule(int id);
 	
 }
