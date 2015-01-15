@@ -18,7 +18,7 @@ public class Constantes {
 	
 	public static final String URL_VOIES = URL_INDEX + SLASH + "voies";
 
-	public static final String URL_VOIES_ARRETS = URL_INDEX + SLASH + "voiesarrets";
+	public static final String URL_VOIES_TRANSITIONS = URL_INDEX + SLASH + "voiestransitions";
 
 	public static final String URL_ARRETS = URL_INDEX + SLASH + "arrets";
 	
@@ -36,7 +36,7 @@ public class Constantes {
 	
 	public static final String JSP_VOIES = "voies";
 
-	public static final String JSP_VOIES_ARRETS = "voiesarrets";
+	public static final String JSP_VOIES_TRANSITIONS = "voiestransitions";
 	
 	public static final String JSP_ARRETS = "arrets";
 

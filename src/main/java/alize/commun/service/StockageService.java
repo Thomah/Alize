@@ -1,6 +1,17 @@
 package alize.commun.service;
 
-import alize.commun.modele.tables.pojos.*;
+import alize.commun.modele.*;
+import alize.commun.modele.tables.pojos.Conducteur;
+import alize.commun.modele.tables.pojos.Depot;
+import alize.commun.modele.tables.pojos.Feuilledeservice;
+import alize.commun.modele.tables.pojos.Intervalle;
+import alize.commun.modele.tables.pojos.Ligne;
+import alize.commun.modele.tables.pojos.Periodicite;
+import alize.commun.modele.tables.pojos.Service;
+import alize.commun.modele.tables.pojos.Terminus;
+import alize.commun.modele.tables.pojos.Vacation;
+import alize.commun.modele.tables.pojos.Vehicule;
+import alize.commun.util.ListArret;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -145,7 +156,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Voie> getVoiesPourLaLigne(int idLigne);
-
+	
 	/**
 	 * Met à jour la ligne stockée en BDD
 	 * 
@@ -183,57 +194,57 @@ public interface StockageService {
 	 */
 	public void supprimerVoie(int id);
 
-	/* ATTRIBUTION DES ARRETS AUX VOIES */
+	/* ATTRIBUTION DES TRANSITIONS AUX VOIES */
 
 	/**
-	 * Récupère les arrets non attribués à la voie d'identifiant donné stockées en BDD
+	 * Récupère les transitions non attribuées à la voie d'identifiant donné stockées en BDD
 	 * 
-	 * @name getArretsNonAttribues
-	 * @description Récupère les arrets non attribués à la voie d'identifiant donné stockées en BDD
-	 * @return La liste des arrets non attribués à la voie d'identifiant donné
+	 * @name getTransitionsNonAttribues
+	 * @description Récupère les transitions non attribuées à la voie d'identifiant donné stockées en BDD
+	 * @return La liste des transitions non attribuées à la voie d'identifiant donné
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	public Map<Arret, String> getArretsNonAttribues(int idVoie);
+	public Map<Transition, String> getTransitionsNonAttribuees(int idVoie);
 
 	/**
-	 * Récupère les arrets attribués à la voie d'identifiant donné stockées en BDD
+	 * Récupère les transitions attribuées à la voie d'identifiant donné stockées en BDD
 	 * 
-	 * @name getArretsNonAttribues
-	 * @description Récupère les arrets attribués à la voie d'identifiant donné stockées en BDD
-	 * @return La liste des arrets attribués à la voie d'identifiant donné
+	 * @name getTransitionsAttribuees
+	 * @description Récupère les transitions attribuées à la voie d'identifiant donné stockées en BDD
+	 * @return La liste des transitions attribuées à la voie d'identifiant donné
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	public Map<Arret, String> getArretsAttribues(int idVoie);
+	public Map<Transition, String> getTransitionsAttribuees(int idVoie);
 
 	/**
-	 * Ajoute une association voies / arrets en BDD
+	 * Ajoute une association voie / transition en BDD
 	 * 
-	 * @name ajouterLigneVoie
-	 * @description Ajoute une association voies / arrets en BDD
+	 * @name ajouterVoieTransition
+	 * @description Ajoute une association voie / transition en BDD
 	 * @param idVoie L'identifiant de la voie
-	 * @param idArret L'identifiant de l'arrêt
+	 * @param idTransition L'identifiant de la transition
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	public void ajouterVoieArret(int idVoie, int idArret);
+	public void ajouterVoieTransition(int idVoie, int idTransition);
 
 	/**
-	 * Supprime une association voies / arrets en BDD
+	 * Supprime une association voie / transition en BDD
 	 * 
-	 * @name supprimerVoieArret
-	 * @description Supprimer une association voies / arrets en BDD
+	 * @name supprimerVoieTransition
+	 * @description Supprimer une association voie / transition en BDD
 	 * @param idVoie L'identifiant de la voie
-	 * @param idArret L'identifiant de l'arrêt
+	 * @param idTransition L'identifiant de la transition
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	public void supprimerVoieArret(int idVoie, int idArret);
+	public void supprimerVoieTransition(int idVoie, int idTransition);
 	
 	/* GESTION DES ARRETS */
 	
@@ -917,5 +928,20 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Conducteur> getConducteurs();
+	
+	/* GESTION DU DIAGRAMME DE LIGNE */
+
+	/**
+	 * Récupère les arrets d'une ligne pour être affichés sur un diagramme de ligne
+	 * 
+	 * @name getArretsDiagramme
+	 * @description Récupère les arrets d'une ligne pour être affichés sur un diagramme de ligne
+	 * @param idLigne L'identifiant de la ligne
+	 * @return La liste des arrets d'une ligne
+	 * @author Thomas [TH]
+	 * @date 15 jan. 2015
+	 * @version 1
+	 */
+	public ListArret getArretsDiagramme(int idLigne);
 	
 }

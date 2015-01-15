@@ -8,7 +8,7 @@ import static alize.commun.modele.tables.Ligne.*;
 import static alize.commun.modele.tables.LigneVoie.*;
 import static alize.commun.modele.tables.Reseau.*;
 import static alize.commun.modele.tables.Voie.*;
-import static alize.commun.modele.tables.VoieArret.*;
+import static alize.commun.modele.tables.VoieTransition.*;
 import static alize.commun.modele.tables.Terminus.*;
 import static alize.commun.modele.tables.Transition.*;
 
@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 
@@ -35,13 +37,11 @@ import org.jooq.DSLContext;
 import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Depot;
 import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Terminus;
-import alize.commun.modele.tables.pojos.Transition;
-import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.DepotRecord;
 import alize.commun.modele.tables.records.IntervalleRecord;
@@ -50,7 +50,7 @@ import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.ReseauRecord;
 import alize.commun.modele.tables.records.TerminusRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
-import alize.commun.modele.tables.records.VoieArretRecord;
+import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 import alize.commun.service.StockageService;
 
@@ -213,15 +213,15 @@ public class DOMServiceImpl implements DOMService {
 					ligneVoie.setVoieId(voie.getId());
 					ligneVoie.store();
 					
-					listElementsArrets = courant.getChild("arrets").getChildren();
+					listElementsArrets = courant.getChild("transitions").getChildren();
 					i3 = listElementsArrets.iterator();
 					while(i3.hasNext()) {
 						enfant = (Element) i3.next();
-						VoieArretRecord voieArret = dsl.newRecord(VOIE_ARRET);
-						voieArret.setId(null);
-						voieArret.setVoieId(voie.getId());
-						voieArret.setArretId(Integer.valueOf(enfant.getAttributeValue("ref")));
-						voieArret.store();
+						VoieTransitionRecord voieTransition = dsl.newRecord(VOIE_TRANSITION);
+						voieTransition.setId(null);
+						voieTransition.setVoieId(voie.getId());
+						voieTransition.setTransitionId(Integer.valueOf(enfant.getAttributeValue("ref")));
+						voieTransition.store();
 					}
 				}
 			}
@@ -341,15 +341,15 @@ public class DOMServiceImpl implements DOMService {
 				voie.setAttribute(new Attribute("direction",v.getDirection().toString()));
 				
 				// Ajout des arrets
-				List<Arret> listeVoieArrets = stockageService.getArretsPourLaVoie(v.getId());
-				Element voieArrets = new Element("arrets");
-				Element voieArret;
-				for(Arret a : listeVoieArrets) {
-					voieArret = new Element("Arret");
-					voieArret.setAttribute(new Attribute("ref", a.getId().toString()));
-					voieArrets.addContent(voieArret);
+				Map<Transition, String> listeVoieTransitions = stockageService.getTransitionsAttribuees(v.getId());
+				Element voieTransitions = new Element("transitions");
+				Element voieTransition;
+				for(Entry<Transition, String> t : listeVoieTransitions.entrySet()) {
+					voieTransition = new Element("Transition");
+					voieTransition.setAttribute(new Attribute("ref", t.getKey().getId().toString()));
+					voieTransitions.addContent(voieTransition);
 				}
-				voie.addContent(voieArrets);
+				voie.addContent(voieTransitions);
 
 				// Ajout du terminus de départ
 				Element terminusDepart = new Element("terminusDepart");

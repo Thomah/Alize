@@ -42,6 +42,11 @@
 					<i class="fa fa-th-list fa-fw"></i> Véhicules
 				</a>
 			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_DIAGRAMME_LIGNE)); %> href="<c:url value="<%=URL_DIAGRAMME_LIGNE %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Diagramme de ligne
+				</a>
+			</li>
 		</ul>
 	</div>
 </div>
