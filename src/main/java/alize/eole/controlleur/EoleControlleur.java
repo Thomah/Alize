@@ -178,7 +178,6 @@ public class EoleControlleur {
 			object.put("'estCommercial'", a.getEstcommercial());
 			object.put("'estEntreeDepot'", a.getEstentreedepot());
 			object.put("'estSortieDepot'", a.getEstsortiedepot());
-			object.put("'estOccupe'", a.getEstoccupe());
 			object.put("'estLieuEchangeConducteur'",
 					a.getEstlieuechangeconducteur());
 			array.add(object);

@@ -18,7 +18,6 @@ import org.jooq.Record4;
 import org.jooq.Record6;
 import org.jooq.Record7;
 import org.jooq.Record8;
-import org.jooq.Record9;
 import org.jooq.Result;
 import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -378,7 +377,6 @@ public class StockageServiceImpl implements StockageService {
 			arret.setEstsortiedepot(a.getEstsortiedepot());
 			arret.setTempsimmobilisationId(a.getTempsimmobilisationId());
 			arret.setEstlieuechangeconducteur(a.getEstlieuechangeconducteur());
-			arret.setEstoccupe(a.getEstoccupe());
 			arret.setNom(a.getNom());
 			arret.setTempsimmobilisationId(a.getTempsimmobilisationId());
 			arrets.add(arret);
@@ -447,22 +445,21 @@ public class StockageServiceImpl implements StockageService {
 		Arret arret;
 		List<Arret> arrets = new ArrayList<Arret>();
 		
-		Result<Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
-				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTOCCUPE, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
+		Result<Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
+				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
 				.from(ARRET)
 				.join(VOIE_ARRET)
 				.on(ARRET.ID.equal(VOIE_ARRET.ARRET_ID))
 				.where(VOIE_ARRET.VOIE_ID.equal(idVoie))
 				.fetch();
 		
-		for (Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer> a : results) {
+		for (Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer> a : results) {
 			arret = new Arret();
 			arret.setId(a.getValue(ARRET.ID));
 			arret.setNom(a.getValue(ARRET.NOM));
 			arret.setEstcommercial(a.getValue(ARRET.ESTCOMMERCIAL));
 			arret.setEstentreedepot(a.getValue(ARRET.ESTENTREEDEPOT));
 			arret.setEstlieuechangeconducteur(a.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
-			arret.setEstoccupe(a.getValue(ARRET.ESTOCCUPE));
 			arret.setEstsortiedepot(a.getValue(ARRET.ESTSORTIEDEPOT));
 			arrets.add(arret);
 		}
@@ -554,7 +551,6 @@ public class StockageServiceImpl implements StockageService {
 			arretRecord.setEstlieuechangeconducteur(new Byte("0"));
 			arretRecord.setNom("");
 			arretRecord.setTempsimmobilisationId(intervalleRecord.getId());
-			arretRecord.setEstoccupe(new Byte("0"));
 			arretRecord.store();
 		} catch (ParseException e) {
 			e.printStackTrace();
