@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -983,6 +984,43 @@ public class StockageServiceImpl implements StockageService {
 		return services;
 	}
 
+	@Override
+	public Map<Service, Integer> getServices(String date) {
+		Map<Service, Integer> services = new LinkedHashMap<Service, Integer>();
+		Service service;
+
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
+		java.sql.Date dateSQL = null;
+		try {
+			dateSQL = new java.sql.Date(format.parse(date).getTime());
+		} catch (DataAccessException | ParseException e) {
+			e.printStackTrace();
+		}
+		
+		Result<Record2<Integer, Integer>> results = dsl.selectDistinct(SERVICE.ID, ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID)
+				.from(SERVICE)
+				.leftOuterJoin(ASSOCIATIONCONDUCTEURSERVICE)
+				.on(
+						SERVICE.ID.equal(ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID)
+						.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(dateSQL))
+				)
+				.fetch();
+		
+		for (Record2<Integer, Integer> s : results) {
+			service = new Service();
+			service.setId(s.getValue(SERVICE.ID));
+			
+			Integer conducteurId = s.getValue(ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID);
+			if(conducteurId == null) {
+				conducteurId = 0;
+			}
+			
+			services.put(service, conducteurId);
+		}
+		
+		return services;
+	}
+	
 	@Override
 	public void updateService(int id, String colname, String newvalue) {
 		ServiceRecord s = dsl.fetchOne(SERVICE, SERVICE.ID.equal(id));

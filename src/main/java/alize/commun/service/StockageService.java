@@ -709,6 +709,19 @@ public interface StockageService {
 	public List<Service> getServices();
 
 	/**
+	 * Récupère les services tous les services avec les conducteurs associés à la date indiquée stockés en BDD
+	 * 
+	 * @name getServices
+	 * @description Récupère les services tous les services avec les conducteurs associés à la date indiquée stockés en BDD
+	 * @param La date souhaitée
+	 * @return La liste des services tous les services avec les conducteurs associés à la date indiquée stockés en BDD
+	 * @author Thomas [TH]
+	 * @date 15 jan. 2015
+	 * @version 1
+	 */
+	public Map<Service, Integer> getServices(String date);
+	
+	/**
 	 * Met à jour le service indiqué stocké en BDD
 	 * @name updateService
 	 * @description Met à jour le service indiqué stocké en BDD

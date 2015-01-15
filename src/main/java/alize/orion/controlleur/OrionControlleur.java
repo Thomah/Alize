@@ -5,6 +5,8 @@ import static alize.orion.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import alize.commun.modele.tables.pojos.Conducteur;
 import alize.commun.modele.tables.pojos.Service;
+import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
 
 /**
@@ -64,12 +67,14 @@ public class OrionControlleur {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_SERVICES + "/get", method = POST)
-	public @ResponseBody String getServices() {
-		List<Service> services = stockageService.getServices();
+	public @ResponseBody String getServices(@RequestParam String date) {
+		Map<Service, Integer> services = stockageService.getServices(date);
 		JSONArray array = new JSONArray();
-		for (Service s : services) {
+		for (Entry<Service, Integer> s : services.entrySet()) {
+			Service service = s.getKey();
 			JSONObject object = new JSONObject();
-			object.put("'id'", s.getId());
+			object.put("'id'", service.getId());
+			object.put("'conducteur'", s.getValue());
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")

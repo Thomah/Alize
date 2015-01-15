@@ -9,10 +9,10 @@
 <link type="text/css" rel="stylesheet" href="<c:url value="/resources/css/plugins/datepicker/datepicker3.css"/>" />
 <style>
 a {
-	color: #FF4141;
+	color: #A800FF;
 }
 a:hover, a:focus {
-    color: #651C00;
+    color: #A57EFF;
 }
 .datepicker {
 	margin-left: auto;
@@ -72,14 +72,14 @@ a:hover, a:focus {
 	        }).on('changeDate', function(e){
 		        console.log(e);
 		        dateSelectionnee = e.date;
+				getServices();
 		    });
 	    
-		getServices();
-		
 		function getServices() {
 		    $.ajax({
 		    	url: "/alize/orion/services/get",
 		    	type: "POST",
+		    	data: "date=" + dateSelectionnee.toLocaleString(),
 		    	success: function(str) {
 	   		    	var metadata = [];
 	   		     	metadata.push({name: "id", label: "ID", datatype: "int", editable: false});
