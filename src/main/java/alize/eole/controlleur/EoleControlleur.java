@@ -18,12 +18,6 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.util.XMLResourceDescriptor;
-import org.jdom2.DocType;
-import org.jdom2.Document;
-import org.jdom2.Element;
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Feuilledeservice;
-import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Vacation;
