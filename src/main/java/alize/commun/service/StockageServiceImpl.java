@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,28 +16,40 @@ import org.jooq.DSLContext;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record6;
+import org.jooq.Record7;
 import org.jooq.Record8;
-import org.jooq.Record9;
 import org.jooq.Result;
+import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import alize.commun.modele.tables.pojos.Conducteur;
+import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Depot;
-import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
+import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Transition;
+import alize.commun.modele.tables.pojos.Vacation;
+import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.modele.tables.records.ArretRecord;
+import alize.commun.modele.tables.records.AssociationconducteurserviceRecord;
+import alize.commun.modele.tables.records.ConducteurRecord;
 import alize.commun.modele.tables.records.DepotRecord;
+import alize.commun.modele.tables.records.FeuilledeservicePeriodiciteRecord;
+import alize.commun.modele.tables.records.FeuilledeserviceRecord;
 import alize.commun.modele.tables.records.IntervalleRecord;
 import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.PeriodiciteRecord;
+import alize.commun.modele.tables.records.ServiceRecord;
 import alize.commun.modele.tables.records.TerminusRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
+import alize.commun.modele.tables.records.VacationRecord;
+import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieArretRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 
@@ -382,7 +395,6 @@ public class StockageServiceImpl implements StockageService {
 			arret.setEstsortiedepot(a.getEstsortiedepot());
 			arret.setTempsimmobilisationId(a.getTempsimmobilisationId());
 			arret.setEstlieuechangeconducteur(a.getEstlieuechangeconducteur());
-			arret.setEstoccupe(a.getEstoccupe());
 			arret.setNom(a.getNom());
 			arret.setTempsimmobilisationId(a.getTempsimmobilisationId());
 			arrets.add(arret);
@@ -392,22 +404,42 @@ public class StockageServiceImpl implements StockageService {
 	}
 	
 	@Override
+
 	public Arret getArret(int id) {
 		Arret arret = new Arret();
-		Result<Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
-				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTOCCUPE, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
+		Result<Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
+				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
 				.from(ARRET)
 				.where(ARRET.ID.equal(id))
 				.fetch();
-		Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer> result = results.get(0);
+		Record8<Integer, String, Byte, Byte,  Byte, Byte, Integer, Integer> result = results.get(0);
 		arret.setId(result.getValue(ARRET.ID));
 		arret.setNom(result.getValue(ARRET.NOM));
 		arret.setEstcommercial(result.getValue(ARRET.ESTCOMMERCIAL));
 		arret.setEstentreedepot(result.getValue(ARRET.ESTENTREEDEPOT));
 		arret.setEstlieuechangeconducteur(result.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
-		arret.setEstoccupe(result.getValue(ARRET.ESTOCCUPE));
 		arret.setEstsortiedepot(result.getValue(ARRET.ESTSORTIEDEPOT));
 		return arret;
+	}
+	
+	public List<Arret> getArretsEchangesConducteurs() {
+		Arret arret;
+		List<Arret> arrets = new ArrayList<Arret>();
+		
+		Result<Record2<Integer, String>> results =
+				dsl.selectDistinct(ARRET.ID, ARRET.NOM)
+				.from(ARRET)
+				.where(ARRET.ESTLIEUECHANGECONDUCTEUR.equal((byte) 1))
+				.fetch();
+		
+		for (Record2<Integer, String> a : results) {
+			arret = new Arret();
+			arret.setId(a.getValue(ARRET.ID));
+			arret.setNom(a.getValue(ARRET.NOM));
+			arrets.add(arret);
+		}
+		
+		return arrets;
 	}
 
 	@Override
@@ -449,22 +481,21 @@ public class StockageServiceImpl implements StockageService {
 		Arret arret;
 		List<Arret> arrets = new ArrayList<Arret>();
 		
-		Result<Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
-				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTOCCUPE, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
+		Result<Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
+				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
 				.from(ARRET)
 				.join(VOIE_ARRET)
 				.on(ARRET.ID.equal(VOIE_ARRET.ARRET_ID))
 				.where(VOIE_ARRET.VOIE_ID.equal(idVoie))
 				.fetch();
 		
-		for (Record9<Integer, String, Byte, Byte, Byte, Byte, Byte, Integer, Integer> a : results) {
+		for (Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer> a : results) {
 			arret = new Arret();
 			arret.setId(a.getValue(ARRET.ID));
 			arret.setNom(a.getValue(ARRET.NOM));
 			arret.setEstcommercial(a.getValue(ARRET.ESTCOMMERCIAL));
 			arret.setEstentreedepot(a.getValue(ARRET.ESTENTREEDEPOT));
 			arret.setEstlieuechangeconducteur(a.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
-			arret.setEstoccupe(a.getValue(ARRET.ESTOCCUPE));
 			arret.setEstsortiedepot(a.getValue(ARRET.ESTSORTIEDEPOT));
 			arrets.add(arret);
 		}
@@ -556,10 +587,8 @@ public class StockageServiceImpl implements StockageService {
 			arretRecord.setEstlieuechangeconducteur(new Byte("0"));
 			arretRecord.setNom("");
 			arretRecord.setTempsimmobilisationId(intervalleRecord.getId());
-			arretRecord.setEstoccupe(new Byte("0"));
 			arretRecord.store();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -583,7 +612,6 @@ public class StockageServiceImpl implements StockageService {
 			}
 			intervalle.store();
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -776,8 +804,7 @@ public class StockageServiceImpl implements StockageService {
 		periodiciteRecord.store();
 	}
 	
-
-	/* INTERVALLES */
+	/* GESTION DES INTERVALLES */
 	
 	@Override
 	public List<Intervalle> getIntervalles() {
@@ -797,7 +824,7 @@ public class StockageServiceImpl implements StockageService {
 		return intervalles;
 	}
 	
-	/* TERMINUS */
+	/* GESTION DES TERMINUS */
 	
 	@Override
 	public Terminus getTerminus(int id) {
@@ -838,7 +865,7 @@ public class StockageServiceImpl implements StockageService {
 		.execute();
 	}
 	
-	/* DEPOTS */
+	/* GESTION DES DEPOTS */
 	
 	@Override
 	public boolean getEstDepot(int idArret) {	
@@ -863,4 +890,465 @@ public class StockageServiceImpl implements StockageService {
 		.where(DEPOT.ARRET_ID.equal(id))
 		.execute();
 	}
+	
+	/* GESTION DES FEUILLES DE SERVICE */
+
+	@Override
+	public List<Feuilledeservice> getFDS() {
+		Feuilledeservice fds;
+		List<Feuilledeservice> fdss = new ArrayList<Feuilledeservice>();
+		
+		Result<FeuilledeserviceRecord> results = dsl.fetch(FEUILLEDESERVICE);
+		
+		for (FeuilledeserviceRecord f : results) {
+			fds = new Feuilledeservice();
+			fds.setId(f.getValue(FEUILLEDESERVICE.ID));
+			fds.setCouleur(f.getValue(FEUILLEDESERVICE.COULEUR));
+			fds.setDebutsaison(f.getValue(FEUILLEDESERVICE.DEBUTSAISON));
+			fds.setFinsaison(f.getValue(FEUILLEDESERVICE.FINSAISON));
+			fdss.add(fds);
+		}
+		
+		return fdss;
+	}
+
+	@Override
+	public void updateFDS(int id, String colname, String newvalue) {
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		FeuilledeserviceRecord f = dsl.fetchOne(FEUILLEDESERVICE, FEUILLEDESERVICE.ID.equal(id));
+
+		try {
+			if(colname.compareTo("couleur") == 0) {
+				f.setCouleur(newvalue);
+			} else if(colname.compareTo("debutSaison") == 0) {
+		        Date parsed = format.parse(newvalue);
+		        java.sql.Date sql = new java.sql.Date(parsed.getTime());
+				f.setDebutsaison(sql);
+			} else if(colname.compareTo("finSaison") == 0) {
+		        Date parsed;
+					parsed = format.parse(newvalue);
+		        java.sql.Date sql = new java.sql.Date(parsed.getTime());
+				f.setFinsaison(sql);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		f.store();
+	}
+
+	@Override
+	public void ajouterFDS() {
+		java.sql.Date sqlDate = new java.sql.Date(new Date().getTime());
+		
+		FeuilledeserviceRecord fdsRecord = dsl.newRecord(FEUILLEDESERVICE);
+		fdsRecord.setId(null);
+		fdsRecord.setDebutsaison(sqlDate);
+		fdsRecord.setFinsaison(sqlDate);
+		fdsRecord.store();
+	}
+
+	@Override
+	public void supprimerFDS(int id) {
+		dsl.delete(FEUILLEDESERVICE)
+		.where(FEUILLEDESERVICE.ID.equal(id))
+		.execute();
+	}
+
+	/* ATTRIBUTION DES PERIODICITES AUX FEUILLES DE SERVICE */
+
+	@Override
+	public List<Periodicite> getPeriodicitesNonAttribuees(int idFDS) {
+		List<Periodicite> periodicites = new ArrayList<Periodicite>();
+		Periodicite periodicite;
+		
+		Result<Record6<Integer, Integer, Integer, Time, Time, Time>> results =
+				dsl.selectDistinct(PERIODICITE.ID, PERIODICITE.ID_VOIE, PERIODICITE.ID_ARRET, PERIODICITE.DEBUT, PERIODICITE.FIN, PERIODICITE.PERIODE)
+				.from(PERIODICITE)
+				.where(PERIODICITE.ID.notIn(dsl.select(FEUILLEDESERVICE_PERIODICITE.PERIODICITE_ID)
+						.from(FEUILLEDESERVICE_PERIODICITE)
+						.where(FEUILLEDESERVICE_PERIODICITE.FEUILLEDESERVICE_ID.equal(idFDS)))
+						)
+				.fetch();
+		
+		for(Record6<Integer, Integer, Integer, Time, Time, Time> v : results) {
+			periodicite = new Periodicite();
+			periodicite.setId(v.getValue(PERIODICITE.ID));
+			periodicite.setIdVoie(v.getValue(PERIODICITE.ID_VOIE));
+			periodicite.setIdArret(v.getValue(PERIODICITE.ID_ARRET));
+			periodicite.setDebut(v.getValue(PERIODICITE.DEBUT));
+			periodicite.setFin(v.getValue(PERIODICITE.FIN));
+			periodicite.setPeriode(v.getValue(PERIODICITE.PERIODE));
+			periodicites.add(periodicite);
+		}
+		
+		return periodicites;
+	}
+
+	@Override
+	public List<Periodicite> getPeriodicitesAttribuees(int idFDS) {
+		List<Periodicite> periodicites = new ArrayList<Periodicite>();
+		Periodicite periodicite;
+		
+		Result<Record6<Integer, Integer, Integer, Time, Time, Time>> results =
+				dsl.select(PERIODICITE.ID, PERIODICITE.ID_VOIE, PERIODICITE.ID_ARRET, PERIODICITE.DEBUT, PERIODICITE.FIN, PERIODICITE.PERIODE)
+				.from(PERIODICITE, FEUILLEDESERVICE_PERIODICITE)
+				.where(FEUILLEDESERVICE_PERIODICITE.PERIODICITE_ID.equal(PERIODICITE.ID))
+				.and(FEUILLEDESERVICE_PERIODICITE.FEUILLEDESERVICE_ID.equal(idFDS))
+				.fetch();
+
+		for(Record6<Integer, Integer, Integer, Time, Time, Time> v : results) {
+			periodicite = new Periodicite();
+			periodicite.setId(v.getValue(PERIODICITE.ID));
+			periodicite.setIdVoie(v.getValue(PERIODICITE.ID_VOIE));
+			periodicite.setIdArret(v.getValue(PERIODICITE.ID_ARRET));
+			periodicite.setDebut(v.getValue(PERIODICITE.DEBUT));
+			periodicite.setFin(v.getValue(PERIODICITE.FIN));
+			periodicite.setPeriode(v.getValue(PERIODICITE.PERIODE));
+			periodicites.add(periodicite);
+		}
+		
+		return periodicites;
+	}
+
+	@Override
+	public void ajouterFDSPeriodicite(int idFDS, int idPeriodicite) {
+		FeuilledeservicePeriodiciteRecord fdsPeriodicite = dsl.newRecord(FEUILLEDESERVICE_PERIODICITE);
+		fdsPeriodicite.setId(null);
+		fdsPeriodicite.setFeuilledeserviceId(idFDS);
+		fdsPeriodicite.setPeriodiciteId(idPeriodicite);
+		fdsPeriodicite.store();
+	}
+
+	@Override
+	public void supprimerFDSPeriodicite(int idFDS, int idPeriodicite) {
+		dsl.delete(FEUILLEDESERVICE_PERIODICITE)
+		.where(FEUILLEDESERVICE_PERIODICITE.FEUILLEDESERVICE_ID.equal(idFDS))
+		.and(FEUILLEDESERVICE_PERIODICITE.PERIODICITE_ID.equal(idPeriodicite))
+		.execute();
+	}
+
+	/* GESTION DES SERVICES */
+
+	@Override
+	public List<Service> getServices() {
+		Service service;
+		List<Service> services = new ArrayList<Service>();
+		
+		Result<ServiceRecord> results = dsl.fetch(SERVICE);
+		
+		for (ServiceRecord s : results) {
+			service = new Service();
+			service.setId(s.getValue(SERVICE.ID));
+			service.setFeuilledeserviceId(s.getValue(SERVICE.FEUILLEDESERVICE_ID));
+			services.add(service);
+		}
+		
+		return services;
+	}
+
+	@Override
+	public Map<Service, Integer> getServices(String date) {
+		Map<Service, Integer> services = new LinkedHashMap<Service, Integer>();
+		Service service;
+
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
+		java.sql.Date dateSQL = null;
+		try {
+			dateSQL = new java.sql.Date(format.parse(date).getTime());
+		} catch (DataAccessException | ParseException e) {
+			e.printStackTrace();
+		}
+		
+		Result<Record2<Integer, Integer>> results = dsl.selectDistinct(SERVICE.ID, ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID)
+				.from(SERVICE)
+				.leftOuterJoin(ASSOCIATIONCONDUCTEURSERVICE)
+				.on(
+						SERVICE.ID.equal(ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID)
+						.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(dateSQL))
+				)
+				.fetch();
+		
+		for (Record2<Integer, Integer> s : results) {
+			service = new Service();
+			service.setId(s.getValue(SERVICE.ID));
+			
+			Integer conducteurId = s.getValue(ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID);
+			if(conducteurId == null) {
+				conducteurId = 0;
+			}
+			
+			services.put(service, conducteurId);
+		}
+		
+		return services;
+	}
+	
+	@Override
+	public void updateService(int id, String colname, String newvalue) {
+		ServiceRecord s = dsl.fetchOne(SERVICE, SERVICE.ID.equal(id));
+
+		if(colname.compareTo("fds") == 0) {
+			Integer idFeuilleDeService = Integer.valueOf(newvalue);
+			if(idFeuilleDeService == 0) {
+				s.setFeuilledeserviceId(null);
+			} else {
+				s.setFeuilledeserviceId(idFeuilleDeService);
+			}
+		}
+		
+		s.store();
+	}
+
+	@Override
+	public void ajouterService() {
+		ServiceRecord serviceRecord = dsl.newRecord(SERVICE);
+		serviceRecord.setId(null);
+		serviceRecord.setFeuilledeserviceId(null);
+		serviceRecord.store();
+	}
+
+	@Override
+	public void supprimerService(int id) {
+		dsl.delete(SERVICE)
+		.where(SERVICE.ID.equal(id))
+		.execute();
+	}
+	
+	/* GESTION DES VACATIONS */
+
+	@Override
+	public List<Vacation> getVacations(int idService, int idVehicule) {
+		Vacation vacation;
+		List<Vacation> vacations = new ArrayList<Vacation>();
+		Result<Record7<Integer, Time, Time, Integer, Integer, Integer, Integer>> results = null;
+		
+		if(idService != 0) {
+			results = dsl.selectDistinct(VACATION.ID, VACATION.HEUREDEBUT, VACATION.HEUREFIN, VACATION.ARRETECHANGECONDUCTEURDEBUT_ID, VACATION.ARRETECHANGECONDUCTEURFIN_ID, VACATION.VEHICULE_ID, VACATION.SERVICE_ID)
+					.from(VACATION)
+					.where(VACATION.SERVICE_ID.equal(idService))
+					.fetch();
+		} else if(idVehicule != 0) {
+			results = dsl.selectDistinct(VACATION.ID, VACATION.HEUREDEBUT, VACATION.HEUREFIN, VACATION.ARRETECHANGECONDUCTEURDEBUT_ID, VACATION.ARRETECHANGECONDUCTEURFIN_ID, VACATION.VEHICULE_ID, VACATION.SERVICE_ID)
+					.from(VACATION)
+					.where(VACATION.VEHICULE_ID.equal(idVehicule))
+					.fetch();
+		}
+		
+		if(results != null) {
+			for (Record7<Integer, Time, Time, Integer, Integer, Integer, Integer> v : results) {
+				vacation = new Vacation();
+				vacation.setId(v.getValue(VACATION.ID));
+				vacation.setHeuredebut(v.getValue(VACATION.HEUREDEBUT));
+				vacation.setHeurefin(v.getValue(VACATION.HEUREFIN));
+				vacation.setArretechangeconducteurdebutId(v.getValue(VACATION.ARRETECHANGECONDUCTEURDEBUT_ID));
+				vacation.setArretechangeconducteurfinId(v.getValue(VACATION.ARRETECHANGECONDUCTEURFIN_ID));
+				vacation.setVehiculeId(v.getValue(VACATION.VEHICULE_ID));
+				vacation.setServiceId(v.getValue(VACATION.SERVICE_ID));
+				vacations.add(vacation);
+			}
+		}
+		
+		return vacations;
+	}
+
+	@Override
+	public void updateVacation(int id, String colname, String newvalue) {
+		VacationRecord v = dsl.fetchOne(VACATION, VACATION.ID.equal(id));
+
+		if(colname.compareTo("heureDebut") == 0) {
+			SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+			Date date;
+			try {
+				date = formater.parse(newvalue);
+				v.setHeuredebut(new java.sql.Time(date.getTime()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else if(colname.compareTo("heureFin") == 0) {
+			SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
+			Date date;
+			try {
+				date = formater.parse(newvalue);
+				v.setHeurefin(new java.sql.Time(date.getTime()));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		} else if(colname.compareTo("arretEchangeConducteurDebut") == 0) {
+			Integer idArretEchangeConducteurDebut = Integer.valueOf(newvalue);
+			if(idArretEchangeConducteurDebut == 0) {
+				v.setArretechangeconducteurdebutId(null);
+			} else {
+				v.setArretechangeconducteurdebutId(idArretEchangeConducteurDebut);
+			}
+		} else if(colname.compareTo("arretEchangeConducteurFin") == 0) {
+			Integer idArretEchangeConducteurFin = Integer.valueOf(newvalue);
+			if(idArretEchangeConducteurFin == 0) {
+				v.setArretechangeconducteurfinId(null);
+			} else {
+				v.setArretechangeconducteurfinId(idArretEchangeConducteurFin);
+			}
+		} else if(colname.compareTo("vehicule") == 0) {
+			Integer idVehicule = Integer.valueOf(newvalue);
+			if(idVehicule == 0) {
+				v.setVehiculeId(null);
+			} else {
+				v.setVehiculeId(idVehicule);
+			}
+		} else if(colname.compareTo("service") == 0) {
+			Integer idService = Integer.valueOf(newvalue);
+			if(idService == 0) {
+				v.setServiceId(null);
+			} else {
+				v.setServiceId(idService);
+			}
+		}
+		
+		v.store();
+	}
+
+	@Override
+	public void ajouterVacation(int idService, int idVehicule) {
+		VacationRecord vacationRecord = dsl.newRecord(VACATION);
+		vacationRecord.setId(null);
+		if(idService == 0)
+			vacationRecord.setServiceId(null);
+		else
+			vacationRecord.setServiceId(idService);
+		if(idVehicule == 0)
+			vacationRecord.setVehiculeId(null);
+		else
+			vacationRecord.setVehiculeId(idVehicule);
+		vacationRecord.store();
+	}
+
+	@Override
+	public void supprimerVacation(int id) {
+		dsl.delete(VACATION)
+		.where(VACATION.ID.equal(id))
+		.execute();
+	}
+	
+	/* GESTION DES VEHICULES */
+
+	@Override
+	public List<Vehicule> getVehicules() {
+		Vehicule vehicule;
+		List<Vehicule> vehicules = new ArrayList<Vehicule>();
+		
+		Result<VehiculeRecord> results = dsl.fetch(VEHICULE);
+		
+		for (VehiculeRecord v : results) {
+			vehicule = new Vehicule();
+			vehicule.setId(v.getValue(VEHICULE.ID));
+			vehicule.setTypevehicule(v.getValue(VEHICULE.TYPEVEHICULE));
+			vehicules.add(vehicule);
+		}
+		
+		return vehicules;
+	}
+
+	@Override
+	public void updateVehicule(int id, String colname, String newvalue) {
+		VehiculeRecord v = dsl.fetchOne(VEHICULE, VEHICULE.ID.equal(id));
+
+		if(colname.compareTo("typeVehicule") == 0) {
+			v.setTypevehicule(newvalue);
+		}
+		
+		v.store();
+	}
+
+	@Override
+	public void ajouterVehicule() {
+		VehiculeRecord vehiculeRecord = dsl.newRecord(VEHICULE);
+		vehiculeRecord.setId(null);
+		vehiculeRecord.store();
+	}
+
+	@Override
+	public void supprimerVehicule(int id) {
+		dsl.delete(VEHICULE)
+		.where(VEHICULE.ID.equal(id))
+		.execute();
+	}
+
+	/* GESTION DES ASSOCIATIONS SERVICES - CONDUCTEURS */
+	
+	@Override
+	public void updateServiceConducteur(int idService, String date, String colname, String newvalue) {
+		
+		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyy HH:mm:ss");
+		java.sql.Date dateSQL = null;
+		try {
+			dateSQL = new java.sql.Date(format.parse(date).getTime());
+		} catch (DataAccessException | ParseException e) {
+			e.printStackTrace();
+		}
+
+		AssociationconducteurserviceRecord cs = dsl.fetchOne(ASSOCIATIONCONDUCTEURSERVICE, 
+				ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID.equal(idService)
+				.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(dateSQL)));
+		
+		
+		if(newvalue.matches("[0-9]+")) {
+			int newvalueInt = Integer.valueOf(newvalue);
+			if(colname.compareTo("conducteur") == 0) {
+				if(newvalueInt == 0) {
+					supprimerServiceConducteur(idService, dateSQL);
+				} else {
+					if(cs != null) {
+						cs.setConducteurId(newvalueInt);
+					} else {
+						ajouterServiceConducteur(idService, dateSQL, newvalueInt);
+					}
+				}
+			}
+		}
+		
+		if(cs != null) {
+			cs.store();
+		}
+	}
+	
+
+	@Override
+	public void ajouterServiceConducteur(int idService, java.sql.Date dateSQL, int idConducteur) {
+		AssociationconducteurserviceRecord cs = dsl.newRecord(ASSOCIATIONCONDUCTEURSERVICE);
+		cs.setId(null);
+		cs.setDate(dateSQL);
+		cs.setServiceId(idService);
+		cs.setConducteurId(idConducteur);
+		cs.store();
+	}
+
+	@Override
+	public void supprimerServiceConducteur(int idService, java.sql.Date dateSQL) {
+		dsl.delete(ASSOCIATIONCONDUCTEURSERVICE)
+		.where(ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID.equal(idService)
+				.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(dateSQL)))
+		.execute();
+	}
+
+	/* GESTION DES CONDUCTEURS */
+
+	@Override
+	public List<Conducteur> getConducteurs() {
+		Conducteur conducteur;
+		List<Conducteur> conducteurs = new ArrayList<Conducteur>();
+		
+		Result<ConducteurRecord> results = dsl.fetch(CONDUCTEUR);
+		
+		for (ConducteurRecord c : results) {
+			conducteur = new Conducteur();
+			conducteur.setId(c.getValue(CONDUCTEUR.ID));
+			conducteur.setNom(c.getValue(CONDUCTEUR.NOM));
+			conducteur.setTelephone(c.getValue(CONDUCTEUR.TELEPHONE));
+			conducteurs.add(conducteur);
+		}
+		
+		return conducteurs;
+	}
+
+
 }

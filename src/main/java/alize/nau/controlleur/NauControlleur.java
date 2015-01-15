@@ -6,11 +6,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import alize.commun.modele.tables.pojos.Arret;
 import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
-import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Voie;
-import alize.commun.modele.tables.records.ArretRecord;
-import alize.commun.modele.tables.records.TerminusRecord;
 import alize.nau.service.DOMService;
 
 import java.io.File;
@@ -18,8 +15,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,10 +23,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jooq.Record1;
-import org.jooq.Result;
-
-import alize.commun.modele.Tables;
 import alize.commun.service.StockageService;
 
 import org.jooq.DSLContext;
@@ -40,7 +31,6 @@ import org.jooq.tools.json.JSONObject;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -74,8 +64,6 @@ public class NauControlleur {
 		view.addObject(URL_PAGE_CLE, URL_INDEX);
 		return view;
 	}
-
-	
 
 	/* GESTION DES LIGNES */
 
@@ -593,8 +581,6 @@ public class NauControlleur {
 
 	/* ARRETS */
 
-	/* GESTION DES VOIES */
-
 	/**
 	 * Affiche la JSP de gestion des arrets
 	 * 
@@ -650,9 +636,31 @@ public class NauControlleur {
 				.replace("=", ":");
 		return validJSONString;
 	}
-	
-
-	
+	/**
+	 * Retourne en AJAX la liste des arrets où les échanges conducteur sont possibles au format JSON
+	 * 
+	 * @name getListeArretsEchangesConducteurs
+	 * @description Retourne en AJAX la liste des arrets où les échanges conducteur sont possibles au format JSON
+	 * @return La liste des arrets où les échanges conducteur sont possibles au format JSON
+	 * @author Thomas [TH]
+	 * @date 11 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_ARRETS + "/getEchangesConducteurs", method = POST)
+	public @ResponseBody String getListeArretsEchangesConducteurs() {
+		List<Arret> arrets = stockageService.getArretsEchangesConducteurs();
+		JSONArray array = new JSONArray();
+		for (Arret a : arrets) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", a.getId());
+			object.put("'nom'", "'" + a.getNom() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
 	
 	/**
 	 * Met à jour en AJAX le temps d'immobilisation sélectionné
