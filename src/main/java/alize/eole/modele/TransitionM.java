@@ -1,6 +1,6 @@
-package alize.eole.model;
+package alize.eole.modele;
 
-public class Transition extends Lieu{
+public class TransitionM extends LieuM{
 	
 	private alize.commun.modele.tables.pojos.Transition transitionBDD;
 	

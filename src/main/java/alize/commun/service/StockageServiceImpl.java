@@ -55,8 +55,7 @@ import alize.commun.modele.tables.records.VoieRecord;
 
 public class StockageServiceImpl implements StockageService {
 
-	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat(
-			"hh:mm:ss");
+	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat("hh:mm:ss");
 	
 	@Autowired
 	private DSLContext dsl;
@@ -407,12 +406,12 @@ public class StockageServiceImpl implements StockageService {
 
 	public Arret getArret(int id) {
 		Arret arret = new Arret();
-		Result<Record8<Integer, String, Byte, Byte, Byte, Byte, Integer, Integer>> results = 
-				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTSORTIEDEPOT, VOIE_ARRET.ARRET_ID, VOIE_ARRET.VOIE_ID)
+		Result<Record6<Integer, String, Byte, Byte, Byte, Byte>> results = 
+				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTSORTIEDEPOT)
 				.from(ARRET)
 				.where(ARRET.ID.equal(id))
 				.fetch();
-		Record8<Integer, String, Byte, Byte,  Byte, Byte, Integer, Integer> result = results.get(0);
+		Record6<Integer, String, Byte, Byte,  Byte, Byte> result = results.get(0);
 		arret.setId(result.getValue(ARRET.ID));
 		arret.setNom(result.getValue(ARRET.NOM));
 		arret.setEstcommercial(result.getValue(ARRET.ESTCOMMERCIAL));
@@ -454,8 +453,8 @@ public class StockageServiceImpl implements StockageService {
 			depot.setId(d.getId());
 			depot.setArretId(d.getArretId());
 			depots.add(depot);
+			
 		}
-		
 		return depots;
 	}
 
