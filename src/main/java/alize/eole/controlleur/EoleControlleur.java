@@ -28,14 +28,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Vacation;
 import alize.commun.modele.tables.pojos.Vehicule;
-import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
+import alize.commun.util.ListArret;
 
 /**
  * Controlleur principal du module Eole
@@ -159,12 +159,10 @@ public class EoleControlleur {
 
 	/**
 	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
-	 * 
-	 * @param idVoie
-	 *            L'identifiant de la voie souhaitée
+	 * @param idVoie L'identifiant de la voie souhaitée
 	 * @return La liste des arrets au format JSON
 	 * @author Thomas
-	 * @date 21/11/2014
+	 * @date 21 nov. 2014
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_CONTRAINTES + "/selectVoie", method = POST)
@@ -175,11 +173,6 @@ public class EoleControlleur {
 			JSONObject object = new JSONObject();
 			object.put("'id'", a.getId());
 			object.put("'nom'", "'" + a.getNom() + "'");
-			object.put("'estCommercial'", a.getEstcommercial());
-			object.put("'estEntreeDepot'", a.getEstentreedepot());
-			object.put("'estSortieDepot'", a.getEstsortiedepot());
-			object.put("'estLieuEchangeConducteur'",
-					a.getEstlieuechangeconducteur());
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")
@@ -872,5 +865,54 @@ public class EoleControlleur {
 		stockageService.supprimerVehicule(id);
 		return "ok";
 	}
+	
+	/* GENERATION DU DIAGRAMME DE LIGNE */
 
+	/**
+	 * Affiche la JSP du diagramme de ligne
+	 * 
+	 * @name afficherDiagrammeLigne
+	 * @description Affiche la JSP du diagramme de ligne
+	 * @return La vue de la JSP du diagramme de ligne
+	 * @author Thomas [TH]
+	 * @date 15 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_DIAGRAMME_LIGNE, method = GET)
+	public ModelAndView afficherDiagrammeLigne() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_DIAGRAMME_LIGNE);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_DIAGRAMME_LIGNE);
+		view.addObject("lignes", stockageService.getLignes());
+		return view;
+	}
+	
+	/**
+	 * Retourne en AJAX les données nécessaires pour afficher le diagramme de la ligne sélectionnée
+	 * 
+	 * @name getData
+	 * @description Retourne en AJAX les données nécessaires pour afficher le diagramme de la ligne sélectionnée
+	 * @param idLigne L'identifiant de la ligne
+	 * @return Les données nécessaires pour afficher le diagramme de la ligne sélectionnée
+	 * @author Thomas [TH]
+	 * @date 15 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_DIAGRAMME_LIGNE + "/get", method = POST)
+	public @ResponseBody String getData(@RequestParam int idLigne) {
+		
+		ListArret arrets = stockageService.getArretsDiagramme(idLigne);
+		JSONArray array = new JSONArray();
+		for (Arret a : arrets) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", a.getId());
+			object.put("'nom'", "'" + a.getNom() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+	
 }

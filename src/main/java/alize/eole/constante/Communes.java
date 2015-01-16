@@ -24,6 +24,8 @@ public class Communes {
 
 	public static final String URL_VEHICULES = URL_INDEX + SLASH + "vehicules";
 	
+	public static final String URL_DIAGRAMME_LIGNE = URL_INDEX + SLASH + "diagrammeligne";
+	
 	/* JSP */
 	
 	public static final String JSP_INDEX = "index";
@@ -41,5 +43,7 @@ public class Communes {
 	public static final String JSP_VACATIONS_SERVICE = "vacationsservice";
 	
 	public static final String JSP_VACATIONS_VEHICULE = "vacationsvehicule";
+	
+	public static final String JSP_DIAGRAMME_LIGNE = "diagrammeligne";
 	
 }

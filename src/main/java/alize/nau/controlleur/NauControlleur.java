@@ -3,11 +3,9 @@ package alize.nau.controlleur;
 import static alize.commun.Constantes.*;
 import static alize.nau.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
-import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
-import alize.commun.modele.tables.pojos.Transition;
-import alize.commun.modele.tables.pojos.Voie;
 import alize.nau.service.DOMService;
 
 import java.io.File;
@@ -449,48 +447,38 @@ public class NauControlleur {
 	 * @date 5 jan. 2015
 	 * @version 1
 	 */
-	@RequestMapping(value = URL_VOIES_ARRETS, method = GET)
+	@RequestMapping(value = URL_VOIES_TRANSITIONS, method = GET)
 	public ModelAndView afficherVoiesArrets() {
-		ModelAndView view = new ModelAndView(URL_MODULE + SLASH
-				+ JSP_VOIES_ARRETS);
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_VOIES_TRANSITIONS);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
-		view.addObject(URL_PAGE_CLE, URL_VOIES_ARRETS);
+		view.addObject(URL_PAGE_CLE, URL_VOIES_TRANSITIONS);
 		return view;
 	}
 
 	/**
-	 * Retourne en AJAX la liste des arrets non attribués au format JSON
+	 * Retourne en AJAX la liste des transitions non attribuées au format JSON
 	 * 
-	 * @name getListeArretsNonAttribues
-	 * @description Retourne en AJAX la liste des arrets non attribués au format
-	 *              JSON
-	 * @param idVoie
-	 *            L'identifiant de la voie concernée
-	 * @return La liste des voies non attribuées au format JSON
+	 * @name getListeTransitionsNonAttribuees
+	 * @description Retourne en AJAX la liste des transitions non attribuées au format JSON
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @return La liste des transitions non attribuées au format JSON
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = URL_VOIES_ARRETS + "/get/nonattribues", method = POST)
-	public @ResponseBody String getListeArretsNonAttribues(
-			@RequestParam int idVoie) {
-		Map<Arret, String> arrets = stockageService
-				.getArretsNonAttribues(idVoie);
-		Arret a;
+	@RequestMapping(value = URL_VOIES_TRANSITIONS + "/get/nonattribuees", method = POST)
+	public @ResponseBody String getListeTransitionsNonAttribuees(@RequestParam int idVoie) {
+		Map<Transition, String> transitions = stockageService.getTransitionsNonAttribuees(idVoie);
+		Transition t;
 		JSONArray array = new JSONArray();
 
-		for (Entry<Arret, String> arret : arrets.entrySet()) {
+		for (Entry<Transition, String> transition : transitions.entrySet()) {
 			JSONObject object = new JSONObject();
-			a = arret.getKey();
-			object.put("'id'", a.getId());
-			object.put("'statut'", "'" + arret.getValue() + "'");
-			object.put("'nom'", "'" + a.getNom() + "'");
-			object.put("'estCommercial'", "'" + a.getEstcommercial() + "'");
-			object.put("'estEntreeDepot'", "'" + a.getEstentreedepot() + "'");
-			object.put("'estSortieDepot'", "'" + a.getEstsortiedepot() + "'");
-			object.put("'estLieuEchangeConducteur'",
-					"'" + a.getEstsortiedepot() + "'");
+			t = transition.getKey();
+			object.put("'id'", t.getId());
+			object.put("'duree'", "'" + t.getDuree().toLocalTime().toString() + "'");
+			object.put("'arrets'", "'" + transition.getValue() + "'");
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")
@@ -499,36 +487,27 @@ public class NauControlleur {
 	}
 
 	/**
-	 * Retourne en AJAX la liste des arrets attribuées au format JSON
+	 * Retourne en AJAX la liste des transitions attribuées au format JSON
 	 * 
-	 * @name getListeArretsAttribues
-	 * @description Retourne en AJAX la liste des arrets attribués au format
-	 *              JSON
-	 * @param idVoie
-	 *            L'identifiant de la voie concernée
+	 * @name getListeTransitionsAttribuees
+	 * @description Retourne en AJAX la liste des transitions attribuées au format JSON
+	 * @param idVoie L'identifiant de la voie concernée
 	 * @return La liste des voies attribuées au format JSON
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = URL_VOIES_ARRETS + "/get/attribues", method = POST)
-	public @ResponseBody String getListeArretsAttribues(@RequestParam int idVoie) {
-		Map<Arret, String> arrets = stockageService.getArretsAttribues(idVoie);
-		Arret a;
+	@RequestMapping(value = URL_VOIES_TRANSITIONS + "/get/attribuees", method = POST)
+	public @ResponseBody String getListeTransitionsAttribuees(@RequestParam int idVoie) {
+		List<Transition> transitions = stockageService.getTransitionsAttribuees(idVoie);
 		JSONArray array = new JSONArray();
 
-		for (Entry<Arret, String> arret : arrets.entrySet()) {
+		for (Transition t : transitions) {
 			JSONObject object = new JSONObject();
-			a = arret.getKey();
-			object.put("'id'", a.getId());
-			object.put("'statut'", "'" + arret.getValue() + "'");
-			object.put("'nom'", "'" + a.getNom() + "'");
-			object.put("'estCommercial'", "'" + a.getEstcommercial() + "'");
-			object.put("'estEntreeDepot'", "'" + a.getEstentreedepot() + "'");
-			object.put("'estSortieDepot'", "'" + a.getEstsortiedepot() + "'");
-			object.put("'estLieuEchangeConducteur'",
-					"'" + a.getEstsortiedepot() + "'");
+			object.put("'id'", t.getId());
+			object.put("'duree'", "'" + t.getDuree().toLocalTime().toString() + "'");
+			object.put("'arrets'", "'" + t.getArretPrecedent().getNom() + " -> " + t.getArretSuivant().getNom() + "'");
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")
@@ -537,45 +516,38 @@ public class NauControlleur {
 	}
 
 	/**
-	 * Créer en AJAX une nouvelle association voie / arret
+	 * Créer en AJAX une nouvelle association voie / transition
 	 * 
-	 * @name ajouterVoieArret
-	 * @description Créer en AJAX une nouvelle association voie / arret
-	 * @param idVoie
-	 *            L'identifiant de la voie concernée
-	 * @param idArret
-	 *            L'identifiant de l'arrêt concernée
+	 * @name ajouterVoieTransition
+	 * @description Créer en AJAX une nouvelle association voie / transition
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @param idTransition L'identifiant de la transition concernée
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	@RequestMapping(value = URL_VOIES_ARRETS + "/ajouter", method = POST)
-	public @ResponseBody String ajouterVoieArret(@RequestParam int idVoie,
-			@RequestParam int idArret) {
-		stockageService.ajouterVoieArret(idVoie, idArret);
+	@RequestMapping(value = URL_VOIES_TRANSITIONS + "/ajouter", method = POST)
+	public @ResponseBody String ajouterVoieTransition(@RequestParam int idVoie, @RequestParam int idTransition) {
+		stockageService.ajouterVoieTransition(idVoie, idTransition);
 		return "ok";
 	}
 
 	/**
-	 * Supprime en AJAX l'association voie / arret donnée en paramètre
+	 * Supprime en AJAX l'association voie / transition donnée en paramètre
 	 * 
-	 * @name supprimerVoieArret
-	 * @description Supprime en AJAX l'association voie / arret donnée en
-	 *              paramètre
-	 * @param idVoie
-	 *            L'identifiant de la voie concernée
-	 * @param idArret
-	 *            L'identifiant de l'arrêt concernée
+	 * @name supprimerVoieTransition
+	 * @description Supprime en AJAX l'association voie / transition donnée en paramètre
+	 * @param idVoie L'identifiant de la voie concernée
+	 * @param idTransition L'identifiant de la transition concernée
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
 	 * @version 1
 	 */
-	@RequestMapping(value = URL_VOIES_ARRETS + "/supprimer", method = POST)
-	public @ResponseBody String supprimerVoieArret(@RequestParam int idVoie,
-			@RequestParam int idArret) {
-		stockageService.supprimerVoieArret(idVoie, idArret);
+	@RequestMapping(value = URL_VOIES_TRANSITIONS + "/supprimer", method = POST)
+	public @ResponseBody String supprimerVoieTransition(@RequestParam int idVoie, @RequestParam int idTransition) {
+		stockageService.supprimerVoieTransition(idVoie, idTransition);
 		return "ok";
 	}
 
