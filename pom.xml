@@ -223,6 +223,9 @@
 							<daos>true</daos>
 						</generate>
 						<name>org.jooq.util.DefaultGenerator</name>
+						<strategy>
+							<name>alize.commun.modele.AsInDatabaseStrategy</name>
+						</strategy>
 						<database>
 							<name>org.jooq.util.mysql.MySQLDatabase</name>
 							<includes>.*</includes>
