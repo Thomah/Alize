@@ -138,7 +138,7 @@ public interface StockageService {
 	 * 
 	 * @name getVoies
 	 * @description Récupère les voies stockées en BDD
-	 * @return List<Voie> La liste des voies stockées en BDD
+	 * @return La liste des voies stockées en BDD
 	 * @author Thomas [TH]
 	 * @date 1 déc. 2014
 	 * @version 1
@@ -150,12 +150,25 @@ public interface StockageService {
 	 * 
 	 * @name getVoiesPourLaLigne
 	 * @description Récupère les voies de la ligne sélectionnée stockées en BDD
-	 * @return List<Voie> La liste des voies de la ligne sélectionnée stockées en BDD
+	 * @return La liste des voies de la ligne sélectionnée stockées en BDD
 	 * @author Thomas [TH]
 	 * @date 4 déc. 2014
 	 * @version 1
 	 */
 	public List<Voie> getVoiesPourLaLigne(int idLigne);
+	
+	/**
+	 * Récupère les informations stockées en BDD sur la voie indiquée par son id
+	 * 
+	 * @name getVoie
+	 * @description Récupère les informations stockées en BDD sur la voie indiquée par son id
+	 * @param id L'identifiant de la voie
+	 * @return La voie indiquée par son id stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 16 jan. 2014
+	 * @version 1
+	 */
+	public Voie getVoie(int idVoie);
 	
 	/**
 	 * Met à jour la ligne stockée en BDD
@@ -216,9 +229,9 @@ public interface StockageService {
 	 * @return La liste des transitions attribuées à la voie d'identifiant donné
 	 * @author Thomas [TH]
 	 * @date 5 jan. 2015
-	 * @version 2
+	 * @version 3
 	 */
-	public Map<Transition, String> getTransitionsAttribuees(int idVoie);
+	public List<Transition> getTransitionsAttribuees(int idVoie);
 
 	/**
 	 * Ajoute une association voie / transition en BDD

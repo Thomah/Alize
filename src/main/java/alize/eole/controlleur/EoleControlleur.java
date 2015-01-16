@@ -159,12 +159,10 @@ public class EoleControlleur {
 
 	/**
 	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
-	 * 
-	 * @param idVoie
-	 *            L'identifiant de la voie souhaitée
+	 * @param idVoie L'identifiant de la voie souhaitée
 	 * @return La liste des arrets au format JSON
 	 * @author Thomas
-	 * @date 21/11/2014
+	 * @date 21 nov. 2014
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_CONTRAINTES + "/selectVoie", method = POST)
@@ -175,11 +173,6 @@ public class EoleControlleur {
 			JSONObject object = new JSONObject();
 			object.put("'id'", a.getId());
 			object.put("'nom'", "'" + a.getNom() + "'");
-			object.put("'estCommercial'", a.getEstcommercial());
-			object.put("'estEntreeDepot'", a.getEstentreedepot());
-			object.put("'estSortieDepot'", a.getEstsortiedepot());
-			object.put("'estLieuEchangeConducteur'",
-					a.getEstlieuechangeconducteur());
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")

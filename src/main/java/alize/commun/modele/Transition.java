@@ -7,6 +7,12 @@ public class Transition extends alize.commun.modele.tables.pojos.Transition {
 	private Arret arretPrecedent;
 	private Arret arretSuivant;
 	
+	public Transition() {
+		super();
+		arretPrecedent = new Arret();
+		arretSuivant = new Arret();
+	}
+	
 	public Arret getArretPrecedent() {
 		return arretPrecedent;
 	}

@@ -500,16 +500,14 @@ public class NauControlleur {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_VOIES_TRANSITIONS + "/get/attribuees", method = POST)
 	public @ResponseBody String getListeTransitionsAttribuees(@RequestParam int idVoie) {
-		Map<Transition, String> transitions = stockageService.getTransitionsAttribuees(idVoie);
-		Transition t;
+		List<Transition> transitions = stockageService.getTransitionsAttribuees(idVoie);
 		JSONArray array = new JSONArray();
 
-		for (Entry<Transition, String> transition : transitions.entrySet()) {
+		for (Transition t : transitions) {
 			JSONObject object = new JSONObject();
-			t = transition.getKey();
 			object.put("'id'", t.getId());
 			object.put("'duree'", "'" + t.getDuree().toLocalTime().toString() + "'");
-			object.put("'arrets'", "'" + transition.getValue() + "'");
+			object.put("'arrets'", "'" + t.getArretPrecedent().getNom() + " -> " + t.getArretSuivant().getNom() + "'");
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")

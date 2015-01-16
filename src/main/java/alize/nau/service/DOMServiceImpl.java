@@ -21,8 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 
@@ -341,12 +339,12 @@ public class DOMServiceImpl implements DOMService {
 				voie.setAttribute(new Attribute("direction",v.getDirection().toString()));
 				
 				// Ajout des arrets
-				Map<Transition, String> listeVoieTransitions = stockageService.getTransitionsAttribuees(v.getId());
+				List<Transition> listeVoieTransitions = stockageService.getTransitionsAttribuees(v.getId());
 				Element voieTransitions = new Element("transitions");
 				Element voieTransition;
-				for(Entry<Transition, String> t : listeVoieTransitions.entrySet()) {
+				for(Transition t : listeVoieTransitions) {
 					voieTransition = new Element("Transition");
-					voieTransition.setAttribute(new Attribute("ref", t.getKey().getId().toString()));
+					voieTransition.setAttribute(new Attribute("ref", t.getId().toString()));
 					voieTransitions.addContent(voieTransition);
 				}
 				voie.addContent(voieTransitions);

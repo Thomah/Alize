@@ -19,7 +19,6 @@ import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record6;
 import org.jooq.Record7;
-import org.jooq.Record8;
 import org.jooq.Result;
 import org.jooq.exception.DataAccessException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,6 +232,19 @@ public class StockageServiceImpl implements StockageService {
 	}
 	
 	@Override
+	public Voie getVoie(int idVoie) {
+		Voie voie = new Voie();
+		VoieRecord voieRecord = dsl.fetchOne(VOIE, VOIE.ID.equal(idVoie));
+		
+		voie.setId(idVoie);
+		voie.setDirection(voieRecord.getDirection());
+		voie.setTerminusdepartId(voieRecord.getTerminusdepartId());
+		voie.setTerminusarriveeId(voieRecord.getTerminusarriveeId());
+		
+		return voie;
+	}
+	
+	@Override
 	public void updateVoie(int id, String colonne, Object valeur) {
 		VoieRecord voieRecord = dsl.fetchOne(VOIE, VOIE.ID.equal(id));
 		
@@ -297,13 +309,12 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	@Override
-	public Map<Transition, String> getTransitionsAttribuees(int idVoie) {
-		Map<Transition, String> transitions = new HashMap<Transition, String>();
+	public List<Transition> getTransitionsAttribuees(int idVoie) {
+		List<Transition> transitions = new ArrayList<Transition>();
 		Transition transition;
-		String status = "";
 		
-		Result<Record4<Integer, Time, String, String>> results =
-				dsl.selectDistinct(TRANSITION.ID, TRANSITION.DUREE, ARRET.as("arretprecedent").NOM, ARRET.as("arretsuivant").NOM)
+		Result<Record6<Integer, Time, Integer, Integer, String, String>> results =
+				dsl.selectDistinct(TRANSITION.ID, TRANSITION.DUREE, TRANSITION.ARRETPRECEDENT_ID, TRANSITION.ARRETSUIVANT_ID, ARRET.as("arretprecedent").NOM, ARRET.as("arretsuivant").NOM)
 				.from(TRANSITION, VOIE_TRANSITION, ARRET.as("arretprecedent"), ARRET.as("arretsuivant"))
 				.where(TRANSITION.ARRETPRECEDENT_ID.equal(ARRET.as("arretprecedent").ID))
 				.and(TRANSITION.ARRETSUIVANT_ID.equal(ARRET.as("arretsuivant").ID))
@@ -311,14 +322,20 @@ public class StockageServiceImpl implements StockageService {
 				.and(VOIE_TRANSITION.TRANSITION_ID.equal(TRANSITION.ID))
 				.fetch();
 		
-		for(Record4<Integer, Time, String, String> r : results) {
+		for(Record6<Integer, Time, Integer, Integer, String, String> r : results) {
 			transition = new Transition();
 			transition.setId(r.getValue(TRANSITION.ID));
 			transition.setDuree(r.getValue(TRANSITION.DUREE));
+			transition.setArretprecedentId(r.getValue(TRANSITION.ARRETPRECEDENT_ID));
+			transition.setArretsuivantId(r.getValue(TRANSITION.ARRETSUIVANT_ID));
 			
-			status = r.getValue(ARRET.as("arretprecedent").NOM) + "-> " + r.getValue(ARRET.as("arretsuivant").NOM);
+			transition.getArretPrecedent().setId(r.getValue(TRANSITION.ARRETPRECEDENT_ID));
+			transition.getArretPrecedent().setNom(r.getValue(ARRET.as("arretprecedent").NOM));
 			
-			transitions.put(transition, status);
+			transition.getArretSuivant().setId(r.getValue(TRANSITION.ARRETSUIVANT_ID));
+			transition.getArretSuivant().setNom(r.getValue(ARRET.as("arretsuivant").NOM));
+			
+			transitions.add(transition);
 		}
 		
 		return transitions;
@@ -422,26 +439,51 @@ public class StockageServiceImpl implements StockageService {
 	}
 	@Override
 	public List<Arret> getArretsPourLaVoie(int idVoie) {
-		
-		Arret arret;
+
+		Voie v = getVoie(idVoie);
+		List<Transition> transitions = getTransitionsAttribuees(idVoie);
 		List<Arret> arrets = new ArrayList<Arret>();
 		
-		Result<Record6<Integer, String, Byte, Byte, Byte, Byte>> results = 
-				dsl.selectDistinct(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTSORTIEDEPOT)
-				.from(ARRET, VOIE_TRANSITION, TRANSITION)
-				.where(TRANSITION.ARRETPRECEDENT_ID.equal(ARRET.ID).or(TRANSITION.ARRETSUIVANT_ID.equal(ARRET.ID)))
-				.and(VOIE_TRANSITION.VOIE_ID.equal(idVoie))
-				.fetch();
+		boolean trouve = false;
+		int k = 0;
+		int nTransitionsTotal = transitions.size();
+
+		// Recherche du terminus de départ
+		while(k < nTransitionsTotal && !trouve) {
+			if(transitions.get(k).getArretprecedentId() == v.getTerminusdepartId()) {
+				trouve = true;
+			}
+			k++;
+		}
 		
-		for (Record6<Integer, String, Byte, Byte, Byte, Byte> r : results) {
-			arret = new Arret();
-			arret.setId(r.getValue(ARRET.ID));
-			arret.setNom(r.getValue(ARRET.NOM));
-			arret.setEstcommercial(r.getValue(ARRET.ESTCOMMERCIAL));
-			arret.setEstentreedepot(r.getValue(ARRET.ESTENTREEDEPOT));
-			arret.setEstlieuechangeconducteur(r.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
-			arret.setEstsortiedepot(r.getValue(ARRET.ESTSORTIEDEPOT));
-			arrets.add(arret);
+		if(trouve) {
+			arrets.add(transitions.get(k-1).getArretPrecedent());
+			arrets.add(transitions.get(k-1).getArretSuivant());
+			transitions.remove(k-1);
+			nTransitionsTotal--;
+		
+			int kArrets = 1;
+			while(nTransitionsTotal > 0) {
+				
+				trouve = false;
+				k = 0;
+
+				// Recherche de l'arret suivant
+				while(!trouve && k < nTransitionsTotal) {
+					if(transitions.get(k).getArretprecedentId() == arrets.get(kArrets).getId()) {
+						trouve = true;
+					}
+					k++;
+				}
+				
+				if(trouve) {
+					arrets.add(transitions.get(k-1).getArretSuivant());
+					transitions.remove(k-1);
+					nTransitionsTotal--;
+					kArrets++;
+				}
+				
+			}
 		}
 		
 		return arrets;
