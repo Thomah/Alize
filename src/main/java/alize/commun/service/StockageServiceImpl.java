@@ -15,8 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.jooq.DSLContext;
+import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
+import org.jooq.Record5;
 import org.jooq.Record6;
 import org.jooq.Record7;
 import org.jooq.Result;
@@ -41,6 +43,7 @@ import alize.commun.modele.tables.records.DepotRecord;
 import alize.commun.modele.tables.records.FeuilledeservicePeriodiciteRecord;
 import alize.commun.modele.tables.records.FeuilledeserviceRecord;
 import alize.commun.modele.tables.records.IntervalleRecord;
+import alize.commun.modele.tables.records.LieuRecord;
 import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.PeriodiciteRecord;
@@ -114,28 +117,22 @@ public class StockageServiceImpl implements StockageService {
 		Voie voie;
 		String terminus;
 		
-		Result<Record4<Integer, String, String, String>> results =
-				dsl.selectDistinct(VOIE.ID, VOIE.DIRECTION, ARRET.as("arretdepart").NOM, ARRET.as("arretarrivee").NOM)
-				.from(VOIE, LIGNE_VOIE, ARRET.as("arretdepart"), ARRET.as("arretarrivee"))
-				.where(
-						LIGNE_VOIE.VOIE_ID.equal(VOIE.ID)
-						.or(VOIE.ID.notIn(
-							dsl.select(LIGNE_VOIE.VOIE_ID)
-							.from(LIGNE_VOIE)
-							)
-						))
-				.and(VOIE.TERMINUSDEPART_ID.equal(ARRET.as("arretdepart").ID))
-				.and(VOIE.TERMINUSARRIVEE_ID.equal(ARRET.as("arretarrivee").ID))
-				.and(VOIE.ID.notIn(dsl.select(LIGNE_VOIE.VOIE_ID)
-						.from(LIGNE_VOIE)
-						.where(LIGNE_VOIE.LIGNE_ID.equal(idLigne)))
-						)
+		Result<Record5<Integer, String, String, String, Byte>> results =
+				dsl.selectDistinct(VOIE.ID, VOIE.DIRECTION, ARRET.as("arretdepart").NOM, ARRET.as("arretarrivee").NOM, VOIE.ESTCOMMERCIALE)
+				.from(VOIE)
+				.leftOuterJoin(ARRET.as("arretdepart")).on(ARRET.as("arretdepart").ID.equal(VOIE.TERMINUSDEPART_ID))
+				.leftOuterJoin(ARRET.as("arretarrivee")).on(ARRET.as("arretarrivee").ID.equal(VOIE.TERMINUSARRIVEE_ID))
+				.where(VOIE.ID.notIn(dsl.select(LIGNE_VOIE.VOIE_ID)
+					.from(LIGNE_VOIE)
+					.where(LIGNE_VOIE.LIGNE_ID.equal(idLigne)))
+					)
 				.fetch();
 		
-		for(Record4<Integer, String, String, String> v : results) {
+		for(Record5<Integer, String, String, String, Byte> v : results) {
 			voie = new Voie();
 			voie.setId(v.getValue(VOIE.ID));
 			voie.setDirection(v.getValue(VOIE.DIRECTION));
+			voie.setEstcommerciale(v.getValue(VOIE.ESTCOMMERCIALE));
 			terminus = v.getValue(ARRET.as("arretdepart").NOM) + " -> " + v.getValue(ARRET.as("arretarrivee").NOM);
 			voies.put(voie, terminus);
 		}
@@ -149,19 +146,19 @@ public class StockageServiceImpl implements StockageService {
 		Voie voie;
 		String terminus;
 		
-		Result<Record4<Integer, String, String, String>> results =
-				dsl.select(VOIE.ID, VOIE.DIRECTION, ARRET.as("arretdepart").NOM, ARRET.as("arretarrivee").NOM)
-				.from(VOIE, LIGNE_VOIE, ARRET.as("arretdepart"), ARRET.as("arretarrivee"))
-				.where(LIGNE_VOIE.VOIE_ID.equal(VOIE.ID))
-				.and(VOIE.TERMINUSDEPART_ID.equal(ARRET.as("arretdepart").ID))
-				.and(VOIE.TERMINUSARRIVEE_ID.equal(ARRET.as("arretarrivee").ID))
-				.and(LIGNE_VOIE.LIGNE_ID.equal(idLigne))
+		Result<Record5<Integer, String, String, String, Byte>> results =
+				dsl.selectDistinct(VOIE.ID, VOIE.DIRECTION, ARRET.as("arretdepart").NOM, ARRET.as("arretarrivee").NOM, VOIE.ESTCOMMERCIALE)
+				.from(VOIE)
+				.leftOuterJoin(ARRET.as("arretdepart")).on(ARRET.as("arretdepart").ID.equal(VOIE.ID))
+				.leftOuterJoin(ARRET.as("arretarrivee")).on(ARRET.as("arretarrivee").ID.equal(VOIE.ID))
+				.join(LIGNE_VOIE).on(LIGNE_VOIE.VOIE_ID.equal(VOIE.ID).and(LIGNE_VOIE.LIGNE_ID.equal(idLigne)))
 				.fetch();
 		
-		for(Record4<Integer, String, String, String> v : results) {
+		for(Record5<Integer, String, String, String, Byte> v : results) {
 			voie = new Voie();
 			voie.setId(v.getValue(VOIE.ID));
 			voie.setDirection(v.getValue(VOIE.DIRECTION));
+			voie.setEstcommerciale(v.getValue(VOIE.ESTCOMMERCIALE));
 			terminus = v.getValue(ARRET.as("arretdepart").NOM) + " -> " + v.getValue(ARRET.as("arretarrivee").NOM);
 			voies.put(voie, terminus);
 		}
@@ -169,10 +166,8 @@ public class StockageServiceImpl implements StockageService {
 		return voies;
 	}
 	
-
 	public void ajouterLigneVoie(int idVoie, int idLigne) {
 		LigneVoieRecord ligneVoieRecord = dsl.newRecord(LIGNE_VOIE);
-		ligneVoieRecord.setId(null);
 		ligneVoieRecord.setLigneId(idLigne);
 		ligneVoieRecord.setVoieId(idVoie);
 		ligneVoieRecord.store();
@@ -414,7 +409,6 @@ public class StockageServiceImpl implements StockageService {
 		for (DepotRecord d : results) {
 			depot = new Depot();
 			depot.setId(d.getId());
-			depot.setArretId(d.getArretId());
 			depots.add(depot);
 		}
 		
@@ -431,7 +425,6 @@ public class StockageServiceImpl implements StockageService {
 		for (TerminusRecord t : results) {
 			terminus = new Terminus();
 			terminus.setId(t.getId());
-			terminus.setArretId(t.getArretId());
 			listeTerminus.add(terminus);
 		}
 		
@@ -491,9 +484,9 @@ public class StockageServiceImpl implements StockageService {
 
 	@Override
 	public void supprimerArret(int id) {
-		dsl.delete(ARRET)
-		.where(ARRET.ID.equal(id))
-		.execute();	
+		dsl.delete(LIEU)
+		.where(LIEU.ID.equal(id))
+		.execute();
 	}
 	
 	@Override
@@ -507,14 +500,14 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		Result<Record2<Integer, String>> results =
-				dsl.select(TERMINUS.ARRET_ID, ARRET.NOM)
+				dsl.select(TERMINUS.ID, ARRET.NOM)
 				.from(TERMINUS)
-				.join(ARRET).on(TERMINUS.ARRET_ID.equal(ARRET.ID))
-				.where(TERMINUS.ARRET_ID.in(idArrets))
+				.join(ARRET).on(TERMINUS.ID.equal(ARRET.ID))
+				.where(TERMINUS.ID.in(idArrets))
 				.fetch();
 		
 		for(Record2<Integer, String> t : results) {
-			terminus.put(t.getValue(TERMINUS.ARRET_ID), t.getValue(ARRET.NOM));
+			terminus.put(t.getValue(TERMINUS.ID), t.getValue(ARRET.NOM));
 		}
 		
 		return terminus;
@@ -569,8 +562,11 @@ public class StockageServiceImpl implements StockageService {
 			intervalleRecord.setMax(time);
 			intervalleRecord.store();
 			
+			LieuRecord lieuRecord = dsl.newRecord(LIEU);
+			lieuRecord.insert();
+			
 			ArretRecord arretRecord = dsl.newRecord(ARRET);
-			arretRecord.setId(null);
+			arretRecord.setId(lieuRecord.getId());
 			arretRecord.setEstcommercial(new Byte("0"));
 			arretRecord.setEstentreedepot(new Byte("0"));
 			arretRecord.setEstsortiedepot(new Byte("0"));
@@ -803,16 +799,15 @@ public class StockageServiceImpl implements StockageService {
 	@Override
 	public void ajouterTerminus(int idArret) {
 		TerminusRecord terminusRecord = dsl.newRecord(TERMINUS);
-		terminusRecord.setId(null);
-		terminusRecord.setArretId(idArret);
+		terminusRecord.setId(idArret);
 		terminusRecord.store();
 	}
 	
 	@Override
 	public boolean getEstTerminus(int idArret) {	
-		Result<Record2<Integer, Integer>> results = dsl.select(TERMINUS.ID, TERMINUS.ARRET_ID)
+		Result<Record1<Integer>> results = dsl.select(TERMINUS.ID)
 				.from(TERMINUS)
-				.where(TERMINUS.ARRET_ID.equal(idArret))
+				.where(TERMINUS.ID.equal(idArret))
 				.fetch();
 		return !results.isEmpty();
 	}
@@ -820,7 +815,7 @@ public class StockageServiceImpl implements StockageService {
 	@Override
 	public void supprimerTerminus(int id) {
 		dsl.delete(TERMINUS)
-		.where(TERMINUS.ARRET_ID.equal(id))
+		.where(TERMINUS.ID.equal(id))
 		.execute();
 	}
 	
@@ -828,9 +823,9 @@ public class StockageServiceImpl implements StockageService {
 	
 	@Override
 	public boolean getEstDepot(int idArret) {	
-		Result<Record2<Integer, Integer>> results = dsl.select(DEPOT.ID, DEPOT.ARRET_ID)
+		Result<Record1<Integer>> results = dsl.select(DEPOT.ID)
 				.from(DEPOT)
-				.where(DEPOT.ARRET_ID.equal(idArret))
+				.where(DEPOT.ID.equal(idArret))
 				.fetch();
 		return !results.isEmpty();
 	}
@@ -838,15 +833,14 @@ public class StockageServiceImpl implements StockageService {
 	@Override
 	public void ajouterDepot(int idArret) {
 		DepotRecord depotRecord = dsl.newRecord(DEPOT);
-		depotRecord.setId(null);
-		depotRecord.setArretId(idArret);
+		depotRecord.setId(idArret);
 		depotRecord.store();
 	}
 	
 	@Override
 	public void supprimerDepot(int id) {
 		dsl.delete(DEPOT)
-		.where(DEPOT.ARRET_ID.equal(id))
+		.where(DEPOT.ID.equal(id))
 		.execute();
 	}
 	

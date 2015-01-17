@@ -4,6 +4,7 @@ import static alize.commun.Constantes.RACINE;
 import static alize.commun.modele.tables.Arret.*;
 import static alize.commun.modele.tables.Depot.*;
 import static alize.commun.modele.tables.Intervalle.*;
+import static alize.commun.modele.tables.Lieu.*;
 import static alize.commun.modele.tables.Ligne.*;
 import static alize.commun.modele.tables.LigneVoie.*;
 import static alize.commun.modele.tables.Reseau.*;
@@ -43,6 +44,7 @@ import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.DepotRecord;
 import alize.commun.modele.tables.records.IntervalleRecord;
+import alize.commun.modele.tables.records.LieuRecord;
 import alize.commun.modele.tables.records.LigneRecord;
 import alize.commun.modele.tables.records.LigneVoieRecord;
 import alize.commun.modele.tables.records.ReseauRecord;
@@ -124,10 +126,14 @@ public class DOMServiceImpl implements DOMService {
 			// Importation des arrets
 			listElements = racine.getChild("arrets").getChildren();
 			i = listElements.iterator();
+			LieuRecord lieu = dsl.newRecord(LIEU);
 			ArretRecord arret = dsl.newRecord(ARRET);
 
 			while (i.hasNext()) {
 				courant = (Element) i.next();
+				lieu.setId(Integer.valueOf(courant.getAttributeValue("id")));
+				lieu.store();
+				
 				arret.setId(Integer.valueOf(courant.getAttributeValue("id")));
 				arret.setNom(courant.getAttributeValue("nom"));
 				arret.setEstcommercial((byte) courant.getAttributeValue("estCommercial").compareTo("1"));
@@ -145,8 +151,7 @@ public class DOMServiceImpl implements DOMService {
 
 			while (i.hasNext()) {
 				courant = (Element) i.next();
-				depot.setId(null);
-				depot.setArretId(Integer.valueOf(courant.getAttributeValue("ref")));
+				depot.setId(Integer.valueOf(courant.getAttributeValue("ref")));
 				depot.store();
 			}
 			
@@ -157,8 +162,7 @@ public class DOMServiceImpl implements DOMService {
 
 			while (i.hasNext()) {
 				courant = (Element) i.next();
-				terminus.setId(null);
-				terminus.setArretId(Integer.valueOf(courant.getAttributeValue("ref")));
+				terminus.setId(Integer.valueOf(courant.getAttributeValue("ref")));
 				terminus.store();
 			}
 			
@@ -183,18 +187,18 @@ public class DOMServiceImpl implements DOMService {
 					courant = (Element) i2.next();
 					
 					terminusDepartArretId = Integer.valueOf(courant.getChild("terminusDepart").getChild("Terminus").getAttributeValue("ref"));
-					terminus = (TerminusRecord) dsl.select().from(TERMINUS).where(TERMINUS.ARRET_ID.equal(terminusDepartArretId)).fetchOne();
+					terminus = (TerminusRecord) dsl.select().from(TERMINUS).where(TERMINUS.ID.equal(terminusDepartArretId)).fetchOne();
 					if(terminus == null) {
 						terminus = dsl.newRecord(TERMINUS);
-						terminus.setArretId(terminusDepartArretId);
+						terminus.setId(terminusDepartArretId);
 						terminus.store();
 					}
 					
 					terminusArriveeArretId = Integer.valueOf(courant.getChild("terminusArrivee").getChild("Terminus").getAttributeValue("ref"));
-					terminus = (TerminusRecord) dsl.select().from(TERMINUS).where(TERMINUS.ARRET_ID.equal(terminusArriveeArretId)).fetchOne();
+					terminus = (TerminusRecord) dsl.select().from(TERMINUS).where(TERMINUS.ID.equal(terminusArriveeArretId)).fetchOne();
 					if(terminus == null) {
 						terminus = dsl.newRecord(TERMINUS);
-						terminus.setArretId(terminusArriveeArretId);
+						terminus.setId(terminusArriveeArretId);
 						terminus.store();
 					}
 
@@ -227,12 +231,16 @@ public class DOMServiceImpl implements DOMService {
 			// Importation des transitions
 			listElements = racine.getChild("transitions").getChildren();
 			i = listElements.iterator();
+			lieu = dsl.newRecord(LIEU);
 			TransitionRecord transition = dsl.newRecord(TRANSITION);
 			
 			SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
 
 			while (i.hasNext()) {
 				courant = (Element) i.next();
+				lieu.setId(Integer.valueOf(courant.getAttributeValue("id")));
+				lieu.store();
+				
 				transition.setId(Integer.valueOf(courant.getAttributeValue("id")));
 				
 				try {
@@ -305,7 +313,7 @@ public class DOMServiceImpl implements DOMService {
 		Element depot;
 		for(Depot d : listeDepots) {
 			depot = new Element("Depot");
-			depot.setAttribute(new Attribute("ref", d.getArretId().toString()));
+			depot.setAttribute(new Attribute("ref", d.getId().toString()));
 			depots.addContent(depot);
 		}
 		doc.getRootElement().addContent(depots);
@@ -316,7 +324,7 @@ public class DOMServiceImpl implements DOMService {
 		Element term;
 		for(Terminus t : listeTerminus) {
 			term = new Element("Terminus");
-			term.setAttribute(new Attribute("ref",t.getArretId().toString()));
+			term.setAttribute(new Attribute("ref",t.getId().toString()));
 			terminus.addContent(term);
 		}
 		doc.getRootElement().addContent(terminus);
