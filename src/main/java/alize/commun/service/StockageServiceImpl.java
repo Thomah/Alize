@@ -544,7 +544,7 @@ public class StockageServiceImpl implements StockageService {
 			}else{
 				supprimerDepot(id);
 			}
-		} else if(colonne.compareTo("estEnFaceDe") == 0) {
+
 			
 			Integer enFaceDe = Integer.valueOf(Integer.valueOf(valeur.toString()));
 			if(enFaceDe != 0) {
