@@ -57,6 +57,7 @@
    		     	metadata.push({name: "direction", label: "Direction", datatype: "string", editable: true});
    		     	metadata.push({name: "terminusDepart", label: "Terminus Départ", datatype: "html", editable: false});
    		     	metadata.push({name: "terminusArrivee", label: "Terminus Arrivée", datatype: "html", editable: false});
+   		     	metadata.push({name: "estCommerciale", label: "Commerciale", datatype: "boolean", editable: true});
    		     	metadata.push({name: "affecterTransitions", label: "Affecter les arrets", datatype: "html", editable: false});
    		     	metadata.push({datatype: "html", editable: false});
    		     	
@@ -72,6 +73,7 @@
 	    		    		 "direction": voies[index].direction, 
 	    		    		 "terminusDepart": "<div class='form-group'><select class='form-control selectTerminus' id='terminusDepart_" + voies[index].id + "' onchange='updateTerminus(" + voies[index].id + ", \"Depart\")' data-selected='" + voies[index].terminusDepart_id + "'></select></div>", 
 	    		    		 "terminusArrivee": "<div class='form-group'><select class='form-control' id='terminusArrivee_" + voies[index].id + "' onchange='updateTerminus(" + voies[index].id + ", \"Arrivee\")' data-selected='" + voies[index].terminusArrivee_id + "'></select></div>", 
+	    		    		 "estCommerciale": voies[index].estCommerciale, 
 	    		    		 "affecterTransitions":"<a href='voiestransitions?voie=" + voies[index].id + "'><span class='glyphicon glyphicon-cog' aria-label='Affecter transitions'></span></a>", 
 	    		    		 "":"<a href='#' onclick='supprimerVoie(" + voies[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
 	    		    		 }

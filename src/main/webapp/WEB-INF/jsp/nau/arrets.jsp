@@ -62,11 +62,13 @@
    		     	metadata.push({name: "estLieuEchangeConducteur", label: "Echange Conducteurs", datatype: "boolean", editable: true});
    		    	metadata.push({name: "estTerminus", label: "Terminus", datatype: "boolean", editable: true});
    		    	metadata.push({name: "estDepot", label: "Dépôt", datatype: "boolean", editable: true});
+   		    	metadata.push({name: "estEnFaceDe", label: "En face de", datatype: "html", editable: false});
    		     	metadata.push({datatype: "html", editable: false});
    		     	
 				var data = [];
 	    		var arrets = jQuery.parseJSON( str );
    		    	var index;
+   		    	var optionsSelectArret = getOptionsSelectArret();
 	    		for(index = 0; index < arrets.length; ++index)
 	    		{
 	    		     data.push({
@@ -81,6 +83,7 @@
 	    		    		 "estLieuEchangeConducteur": arrets[index].estLieuEchangeConducteur,
 	    		    		 "estTerminus": arrets[index].estTerminus,
 	    		    		 "estDepot": arrets[index].estDepot,
+	    		    		 "estEnFaceDe": "<div class='form-group'><select class='form-control selectArret' id='estEnFaceDe_" + arrets[index].id + "' onchange='updateArret(" + arrets[index].id + ")' data-selected='" + arrets[index].estEnFaceDe + "'>" + optionsSelectArret + "</select></div>",
 	    		    		 "":"<a href='#' onclick='supprimerArret(" + arrets[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
 	    		    		 }
 	    		     });
@@ -94,9 +97,57 @@
 	    		editableGrid.load({"metadata": metadata, "data": data});
 	    		editableGrid.renderGrid("voiesContent", "table table-bordered table-hover table-striped");
 	    		
-	    	
+	    		selectArrets();
 	    	}
 	    });
+	}
+	
+	function getOptionsSelectArret() {
+	    var chaineOptions = "<option value='0'>Aucun</option>";
+		$.ajax({
+	    	url: "/alize/nau/arrets/get",
+	    	type: "POST",
+	    	async: false,
+	    	success: function(str) {
+	    		var data = [];
+	    		var arrets = jQuery.parseJSON( str );
+   		    	var index;
+	    		for(index = 0; index < arrets.length; ++index)
+	    		{
+	    			chaineOptions+= "<option value='" + arrets[index].id + "'>" + arrets[index].nom + "</option>";
+	    		}
+	    	}
+	    });
+		return chaineOptions;
+	}
+	
+	function selectArrets() {
+		$('.selectArret').each(function(i, obj) {
+			var id = $(obj).attr('id').substring(12);
+			var arretSelectionne = $(obj).attr("data-selected");
+    		$(obj).children("[value=" + arretSelectionne + "]").attr("selected", true);
+		});
+	}
+	
+	function updateArret(idArret) {
+		var colname = "estEnFaceDe";
+		var newvalue = $('#estEnFaceDe_' + idArret).val();
+		
+		$.ajax({
+			url: '/alize/nau/arrets/updateArret',
+			type: 'POST',
+	    	data: "id=" + idArret + 
+	    		"&newvalue=" + newvalue + 
+   				"&colname=" + colname,
+			success: function (response) 
+			{ 
+				// reset old value if failed then highlight row
+				var success = response == "ok" || !isNaN(parseInt(response)); // by default, a sucessfull reponse can be "ok" or a database id
+			    highlight(idVoie, success ? "ok" : "error"); 
+			},
+			error: function(XMLHttpRequest, textStatus, exception) { alert("Ajax failure"); },
+			async: true
+		});
 	}
 	
 	function updateTempsImmobilisation(idTempsImmobilisation, particule, idArret) {
@@ -120,8 +171,6 @@
 		});
 	}
 	
-	
-	
 	function ajouterArret() {
 	    $.ajax({
 	    	url: "/alize/nau/arrets/ajouter",
@@ -142,8 +191,6 @@
 	    	}
 	    });
 	}
-	
-	
 	
 	function updateCellValue(editableGrid, rowIndex, columnIndex, oldValue, newValue, row, onResponse)
 	{

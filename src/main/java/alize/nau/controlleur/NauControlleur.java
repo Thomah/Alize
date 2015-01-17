@@ -337,10 +337,9 @@ public class NauControlleur {
 			JSONObject object = new JSONObject();
 			object.put("'id'", v.getId());
 			object.put("'direction'", "'" + v.getDirection() + "'");
-			object.put("'terminusDepart_id'", "'" + v.getTerminusdepartId()
-					+ "'");
-			object.put("'terminusArrivee_id'", "'" + v.getTerminusarriveeId()
-					+ "'");
+			object.put("'terminusDepart_id'", "'" + v.getTerminusdepartId() + "'");
+			object.put("'terminusArrivee_id'", "'" + v.getTerminusarriveeId() + "'");
+			object.put("'estCommerciale'", "'" + v.getEstcommerciale() + "'");
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")
@@ -602,6 +601,7 @@ public class NauControlleur {
 			object.put("'estLieuEchangeConducteur'", "'" + a.getEstlieuechangeconducteur() + "'");
 			object.put("'estTerminus'", "'" + stockageService.getEstTerminus(a.getId()) + "'");
 			object.put("'estDepot'", "'" + stockageService.getEstDepot(a.getId()) + "'");
+			object.put("'estEnFaceDe'", "'" + a.getEstenfacede() + "'");
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")

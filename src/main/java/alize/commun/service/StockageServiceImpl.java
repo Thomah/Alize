@@ -195,6 +195,7 @@ public class StockageServiceImpl implements StockageService {
 			voie.setDirection(v.getDirection());
 			voie.setTerminusarriveeId(v.getTerminusarriveeId());
 			voie.setTerminusdepartId(v.getTerminusdepartId());
+			voie.setEstcommerciale(v.getEstcommerciale());
 			voies.add(voie);
 		}
 		
@@ -249,6 +250,8 @@ public class StockageServiceImpl implements StockageService {
 			voieRecord.setTerminusdepartId(Integer.valueOf(valeur.toString()));
 		} else if(colonne.compareTo("terminusArrivee_id") == 0) {
 			voieRecord.setTerminusarriveeId(Integer.valueOf(valeur.toString()));
+		} else if(colonne.compareTo("estCommerciale") == 0) {
+			voieRecord.setEstcommerciale(Byte.valueOf(valeur.toString()));
 		}
 		
 		voieRecord.store();
@@ -372,6 +375,7 @@ public class StockageServiceImpl implements StockageService {
 			arret.setEstlieuechangeconducteur(a.getEstlieuechangeconducteur());
 			arret.setNom(a.getNom());
 			arret.setTempsimmobilisationId(a.getTempsimmobilisationId());
+			arret.setEstenfacede(a.getEstenfacede());
 			arrets.add(arret);
 		}
 		
@@ -524,21 +528,29 @@ public class StockageServiceImpl implements StockageService {
 			arret.setEstcommercial(new Byte(s));
 		} else if(colonne.compareTo("estEntree") == 0) {
 			arret.setEstentreedepot(new Byte(s)); 
-		}else if(colonne.compareTo("estSortie") == 0) {
+		} else if(colonne.compareTo("estSortie") == 0) {
 			arret.setEstsortiedepot(new Byte(s)); 
-		}else if(colonne.compareTo("estLieuEchangeConducteur") == 0) {
+		} else if(colonne.compareTo("estLieuEchangeConducteur") == 0) {
 			arret.setEstlieuechangeconducteur(new Byte(s));
-		}else if(colonne.compareTo("estTerminus") == 0) {
+		} else if(colonne.compareTo("estTerminus") == 0) {
 			if(s.compareTo("1")==0){
 				ajouterTerminus(id);
 			}else{
 				supprimerTerminus(id);
 			}
-		}else if(colonne.compareTo("estDepot") == 0) {
+		} else if(colonne.compareTo("estDepot") == 0) {
 			if(s.compareTo("1")==0){
 				ajouterDepot(id);
 			}else{
 				supprimerDepot(id);
+			}
+		} else if(colonne.compareTo("estEnFaceDe") == 0) {
+			
+			Integer enFaceDe = Integer.valueOf(Integer.valueOf(valeur.toString()));
+			if(enFaceDe != 0) {
+				arret.setEstenfacede(enFaceDe);
+			} else {
+				arret.setEstenfacede(null);
 			}
 		}
 		arret.store();
@@ -563,7 +575,8 @@ public class StockageServiceImpl implements StockageService {
 			intervalleRecord.store();
 			
 			LieuRecord lieuRecord = dsl.newRecord(LIEU);
-			lieuRecord.insert();
+			lieuRecord.setId(null);
+			lieuRecord.store();
 			
 			ArretRecord arretRecord = dsl.newRecord(ARRET);
 			arretRecord.setId(lieuRecord.getId());
@@ -578,7 +591,6 @@ public class StockageServiceImpl implements StockageService {
 			e.printStackTrace();
 		}
 	}
-
 	
 	@Override
 	public void updateTempsImmobilisationArret(int id, String colonne, Object valeur) {
