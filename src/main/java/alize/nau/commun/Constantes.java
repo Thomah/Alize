@@ -23,6 +23,8 @@ public class Constantes {
 	public static final String URL_ARRETS = URL_INDEX + SLASH + "arrets";
 	
 	public static final String URL_TRANSITIONS = URL_INDEX + SLASH + "transitions";
+	
+	public static final String URL_ZONES_DE_CROISEMENT = URL_INDEX + SLASH + "zonesdecroisement";
 
 	public static final String URL_IMPORTER_EXPORTER = URL_INDEX + SLASH + "importexport";
 
@@ -41,7 +43,9 @@ public class Constantes {
 	public static final String JSP_ARRETS = "arrets";
 
 	public static final String JSP_TRANSITIONS = "transitions";
-	
+
+	public static final String JSP_ZONES_DE_CROISEMENT = "zonesdecroisement";
+
 	public static final String JSP_IMPORTER_EXPORTER = "importexport";
 	
 	/* CLE */

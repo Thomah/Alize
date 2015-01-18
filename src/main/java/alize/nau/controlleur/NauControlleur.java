@@ -6,6 +6,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
+import alize.commun.modele.tables.pojos.Zonedecroisement;
 import alize.nau.service.DOMService;
 
 import java.io.File;
@@ -814,6 +815,106 @@ public class NauControlleur {
 		return "ok";
 	}
 
+	/* GESTION DES ZONES DE CROISEMENT */
+	
+
+	/**
+	 * Affiche la JSP de gestion des zones de croisement
+	 * 
+	 * @name afficherZonesDeCroisement
+	 * @description Affiche la JSP de gestion des zones de croisement
+	 * @return La vue de la JSP de gestion des zones de croisement
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ZONES_DE_CROISEMENT, method = GET)
+	public ModelAndView afficherZonesDeCroisement() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_ZONES_DE_CROISEMENT);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_ZONES_DE_CROISEMENT);
+		return view;
+	}
+
+	/**
+	 * Retourne en AJAX la liste des zones de croisement au format JSON
+	 * 
+	 * @name getListeZonesDeCroisement
+	 * @description Retourne en AJAX la liste des zones de croisement au format JSON
+	 * @return La liste des zones de croisement au format JSON
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2015
+	 * @version 1
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = URL_ZONES_DE_CROISEMENT + "/get", method = POST)
+	public @ResponseBody String getListeZonesDeCroisement() {
+		List<Zonedecroisement> zonesdecroisement = stockageService.getZonesDeCroisement();
+		JSONArray array = new JSONArray();
+		for (Zonedecroisement z : zonesdecroisement) {
+			JSONObject object = new JSONObject();
+			object.put("'id'", z.getId());
+			object.put("'nom'", "'" + z.getNom() + "'");
+			array.add(object);
+		}
+		String validJSONString = array.toString().replace("'", "\"")
+				.replace("=", ":");
+		return validJSONString;
+	}
+
+	/**
+	 * Met à jour en AJAX la zone de croisement sélectionnée
+	 * 
+	 * @name updateZoneDeCroisement
+	 * @description Met à jour en AJAX la zone de croisement sélectionnée
+	 * @param id L'identifiant de la zone de croisement à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ZONES_DE_CROISEMENT + "/update", method = POST)
+	public @ResponseBody String updateZoneDeCroisement(@RequestParam int id,
+			@RequestParam String newvalue, @RequestParam String colname) {
+		stockageService.updateZoneDeCroisement(id, colname, newvalue);
+		return "ok";
+	}
+
+	/**
+	 * Créer en AJAX une nouvelle zone de croisement
+	 * 
+	 * @name ajouterZoneDeCroisement
+	 * @description Créer en AJAX une nouvelle zone de croisement
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ZONES_DE_CROISEMENT + "/ajouter", method = POST)
+	public @ResponseBody String ajouterZoneDeCroisement() {
+		stockageService.ajouterZoneDeCroisement();
+		return "ok";
+	}
+
+	/**
+	 * Supprime en AJAX la zone de croisement d'identifiant donné en paramètre
+	 * 
+	 * @name supprimerLigne
+	 * @description Supprime en AJAX la zone de croisement d'identifiant donné en paramètre
+	 * @param id L'identifiant de la zone de croisement à supprimer
+	 * @return "ok" si tout s'est bien passé
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_ZONES_DE_CROISEMENT + "/supprimer", method = POST)
+	public @ResponseBody String supprimerZoneDeCroisement(@RequestParam int id) {
+		stockageService.supprimerZoneDeCroisement(id);
+		return "ok";
+	}
+	
 	/* IMPORTER ET EXPORTER */
 
 	@RequestMapping(value = URL_IMPORTER_EXPORTER, method = GET)

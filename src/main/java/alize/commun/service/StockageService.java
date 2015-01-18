@@ -11,6 +11,7 @@ import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Vacation;
 import alize.commun.modele.tables.pojos.Vehicule;
+import alize.commun.modele.tables.pojos.Zonedecroisement;
 import alize.commun.util.ListArret;
 
 import java.sql.Date;
@@ -322,6 +323,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Terminus> getTerminus();
+	
 	/**
 	 * Ajoute un arrêt en BDD
 	 * 
@@ -332,7 +334,6 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void ajouterArret();
-	
 	
 	/**
 	 * Supprime un arrêt en BDD selon son ID
@@ -420,6 +421,57 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void supprimerTransition(int id);
+	
+	/* GESTION DES ZONES DE CROISEMENT */
+	
+	/**
+	 * Récupère les zones de croisement stockées en BDD
+	 * 
+	 * @name getZonesDeCroisement
+	 * @description Récupère les zones de croisement stockées en BDD
+	 * @return La liste des zones de croisement stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2014
+	 * @version 1
+	 */
+	public List<Zonedecroisement> getZonesDeCroisement();
+
+	/**
+	 * Met à jour la zone de croisement stockée en BDD
+	 * 
+	 * @name updateZoneDeCroisement
+	 * @description Met à jour la zone de croisement stockée en BDD
+	 * @param id L'identifiant de la zone de croisement à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2015
+	 * @version 1
+	 */
+	public void updateZoneDeCroisement(int id, String colname, String newvalue);
+
+	/**
+	 * Créer une nouvelle zone de croisement en BDD
+	 * 
+	 * @name ajouterZoneDeCroisement
+	 * @description Créer une nouvelle zone de croisement en BDD
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterZoneDeCroisement();
+
+	/**
+	 * Supprime une zone de croisement en BDD selon son ID
+	 * 
+	 * @name supprimerZoneDeCroisement
+	 * @description Supprime une zone de croisement en BDD selon son ID
+	 * @param id L'identifiant de la zone de croisement à supprimer
+	 * @author Thomas [TH]
+	 * @date 18 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerZoneDeCroisement(int id);
 	
 	/* GESTION DES PERIODICITES */
 	

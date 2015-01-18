@@ -36,6 +36,7 @@ import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Vacation;
 import alize.commun.modele.tables.pojos.Vehicule;
+import alize.commun.modele.tables.pojos.Zonedecroisement;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.AssociationconducteurserviceRecord;
 import alize.commun.modele.tables.records.ConducteurRecord;
@@ -54,6 +55,7 @@ import alize.commun.modele.tables.records.VacationRecord;
 import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
+import alize.commun.modele.tables.records.ZonedecroisementRecord;
 import alize.commun.util.ListArret;
 
 public class StockageServiceImpl implements StockageService {
@@ -556,7 +558,6 @@ public class StockageServiceImpl implements StockageService {
 		arret.store();
 	}
 	
-
 	@Override
 	public void ajouterArret() {
 		try {
@@ -702,6 +703,50 @@ public class StockageServiceImpl implements StockageService {
 	public void supprimerTransition(int id) {
 		dsl.delete(TRANSITION)
 		.where(TRANSITION.ID.equal(id))
+		.execute();
+	}
+	
+	/* GESTION DES ZONES DE CROISEMENT */
+	
+	@Override
+	public List<Zonedecroisement> getZonesDeCroisement() {
+		Zonedecroisement zdc;
+		List<Zonedecroisement> zonesdecroisement = new ArrayList<Zonedecroisement>();
+		
+		Result<ZonedecroisementRecord> results = dsl.fetch(ZONEDECROISEMENT);
+		for (ZonedecroisementRecord t : results) {
+			zdc = new Zonedecroisement();
+			zdc.setId(t.getId());
+			zdc.setNom(t.getNom());
+			zonesdecroisement.add(zdc);
+		}
+		
+		return zonesdecroisement;
+	}
+
+	@Override
+	public void updateZoneDeCroisement(int id, String colname, String newvalue) {
+		ZonedecroisementRecord record = dsl.fetchOne(ZONEDECROISEMENT, ZONEDECROISEMENT.ID.equal(id));
+		
+		if(colname.compareTo("nom") == 0) {
+			record.setNom(newvalue);
+		}
+		
+		record.store();
+	}
+
+	@Override
+	public void ajouterZoneDeCroisement() {
+		ZonedecroisementRecord record = dsl.newRecord(ZONEDECROISEMENT);
+		record.setId(null);
+		record.setNom("");
+		record.store();
+	}
+
+	@Override
+	public void supprimerZoneDeCroisement(int id) {
+		dsl.delete(ZONEDECROISEMENT)
+		.where(ZONEDECROISEMENT.ID.equal(id))
 		.execute();
 	}
 	
@@ -1340,6 +1385,5 @@ public class StockageServiceImpl implements StockageService {
 		
 		return arrets;
 	}
-
 
 }

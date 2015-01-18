@@ -43,6 +43,11 @@
 				</a>
 			</li>
 			<li>
+				<a <% out.print(classActive(urlPage, URL_ZONES_DE_CROISEMENT)); %> href="<c:url value="<%=URL_ZONES_DE_CROISEMENT %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Zones de croisement
+				</a>
+			</li>
+			<li>
 				<a <% out.print(classActive(urlPage, URL_IMPORTER_EXPORTER)); %> href="<c:url value="<%=URL_IMPORTER_EXPORTER %>" />">
 					<i class="fa fa-save fa-fw"></i> Importer / Exporter
 				</a>
