@@ -57,12 +57,14 @@
    		     	metadata.push({name: "duree", label: "Durée", datatype: "string", editable: true});
    		     	metadata.push({name: "arretPrecedent", label: "Arrêt précédent", datatype: "html", editable: false});
    		     	metadata.push({name: "arretSuivant", label: "Arrêt suivant", datatype: "html", editable: false});
+   		     	metadata.push({name: "zoneDeCroisement", label: "Zone de croisement", datatype: "html", editable: false});
    		     	metadata.push({datatype: "html", editable: false});
    		     	
 				var data = [];
 	    		var transitions = jQuery.parseJSON( str );
    		    	var index;
    		    	var optionsSelectArret = getOptionsSelectArret();
+   		    	var optionsSelectZoneDeCroisement = getOptionsSelectZoneDeCroisement();
 	    		for(index = 0; index < transitions.length; ++index)
 	    		{
 	    		     data.push({
@@ -72,6 +74,7 @@
 	    		    		 "duree": transitions[index].duree, 
 	    		    		 "arretPrecedent": "<div class='form-group'><select class='form-control selectArret' id='arretPrecedent_" + transitions[index].id + "' onchange='updateArret(" + transitions[index].id + ", \"Precedent\")' data-selected='" + transitions[index].arretPrecedent_id + "'>" + optionsSelectArret + "</select></div>", 
 	    		    		 "arretSuivant": "<div class='form-group'><select class='form-control' id='arretSuivant_" + transitions[index].id + "' onchange='updateArret(" + transitions[index].id + ", \"Suivant\")' data-selected='" + transitions[index].arretSuivant_id + "'>" + optionsSelectArret + "</select></div>", 
+	    		    		 "zoneDeCroisement": "<div class='form-group'><select class='form-control selectZoneDeCroisement' id='zoneDeCroisement_" + transitions[index].id + "' onchange='updateZoneDeCroisement(" + transitions[index].id + ")' data-selected='" + transitions[index].zoneDeCroisement_id + "'>" + optionsSelectZoneDeCroisement + "</select></div>", 
 	    		    		 "":"<a href='#' onclick='supprimerVoie(" + transitions[index].id + ")'><span class='glyphicon glyphicon-remove' aria-label='Supprimer'></span></a>"
 	    		    		 }
 	    		     });
@@ -86,6 +89,7 @@
 	    		editableGrid.renderGrid("transitionsContent", "table table-bordered table-hover table-striped");
 	    		
 	    		selectArrets();
+	    		selectZonesDeCroisement();
 	    	}
 	    });
 	}
@@ -109,6 +113,25 @@
 		return chaineOptions;
 	}
 	
+	function getOptionsSelectZoneDeCroisement() {
+		var chaineOptions = "<option value='0'>Aucune</option>";
+		$.ajax({
+	    	url: "/alize/nau/zonesdecroisement/get",
+	    	type: "POST",
+	    	async: false,
+	    	success: function(str) {
+	    		var data = [];
+	    		var dataJSON = jQuery.parseJSON( str );
+   		    	var index;
+	    		for(index = 0; index < dataJSON.length; ++index)
+	    		{
+	    			chaineOptions+= "<option value='" + dataJSON[index].id + "'>" + dataJSON[index].nom + "</option>";
+	    		}
+	    	}
+	    });
+		return chaineOptions;
+	}
+	
 	function selectArrets() {
 		$('.selectArret').each(function(i, obj) {
 			var id = $(obj).attr('id').substring(15);
@@ -118,6 +141,13 @@
     		var selectArretSuivant = $("#arretSuivant_" + id);
     		arretSelectionne = selectArretSuivant.attr("data-selected");
     		selectArretSuivant.children("[value=" + arretSelectionne + "]").attr("selected", true);
+		});
+	}
+	
+	function selectZonesDeCroisement() {
+		$('.selectZoneDeCroisement').each(function(i, obj) {
+			var zoneDeCroisementSelectionnee = $(obj).attr("data-selected");
+    		$(obj).children("[value=" + zoneDeCroisementSelectionnee + "]").attr("selected", true);
 		});
 	}
 	
@@ -145,6 +175,28 @@
 	function updateArret(idTransition, typeArret) {
 		var colname = "arret" + typeArret + "_id";
 		var newvalue = $('#arret' + typeArret + "_" + idTransition).val();
+		
+		$.ajax({
+			url: '/alize/nau/transitions/update',
+			type: 'POST',
+	    	data: "id=" + idTransition + 
+	    		"&newvalue=" + newvalue + 
+   				"&colname=" + colname,
+			success: function (response) 
+			{ 
+				// reset old value if failed then highlight row
+				var success = response == "ok" || !isNaN(parseInt(response)); // by default, a sucessfull reponse can be "ok" or a database id
+			    highlight(idVoie, success ? "ok" : "error"); 
+			},
+			error: function(XMLHttpRequest, textStatus, exception) { alert("Ajax failure"); },
+			async: true
+		});
+	}
+	
+
+	function updateZoneDeCroisement(idTransition) {
+		var colname = "zoneDeCroisement";
+		var newvalue = $('#zoneDeCroisement_' + idTransition).val();
 		
 		$.ajax({
 			url: '/alize/nau/transitions/update',

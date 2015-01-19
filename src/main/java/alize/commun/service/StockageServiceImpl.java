@@ -687,6 +687,13 @@ public class StockageServiceImpl implements StockageService {
 			transitionRecord.setArretprecedentId(Integer.valueOf(newvalue));
 		} else if(colname.compareTo("arretSuivant_id") == 0) {
 			transitionRecord.setArretsuivantId(Integer.valueOf(newvalue));
+		} else if(colname.compareTo("zoneDeCroisement") == 0) {
+			Integer id_zdc = Integer.valueOf(newvalue);
+			if(id_zdc == 0) {
+				transitionRecord.setZonedecroisementId(null);
+			} else {
+				transitionRecord.setZonedecroisementId(id_zdc);
+			}
 		}
 		
 		transitionRecord.store();
@@ -694,8 +701,12 @@ public class StockageServiceImpl implements StockageService {
 
 	@Override
 	public void ajouterTransition() {
+		LieuRecord lieuRecord = dsl.newRecord(LIEU);
+		lieuRecord.setId(null);
+		lieuRecord.store();
+		
 		TransitionRecord transitionRecord = dsl.newRecord(TRANSITION);
-		transitionRecord.setId(null);
+		transitionRecord.setId(lieuRecord.getId());
 		transitionRecord.store();
 	}
 
