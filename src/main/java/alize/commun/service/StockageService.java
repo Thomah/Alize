@@ -1042,6 +1042,42 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Conducteur> getConducteurs();
+
+	/**
+	 * Met à jour le conducteur indiquée stocké en BDD
+	 * @name updateVehicule
+	 * @description Met à jour le conducteur indiquée stocké en BDD
+	 * @param id L'identifiant du conducteur à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public void updateConducteur(int id, String colname, String newvalue);
+
+	/**
+	 * Créer un nouveau conducteur en BDD
+	 * 
+	 * @name ajouterServiceConducteur
+	 * @description Créer un nouveau conducteur en BDD
+	 * @author Thomas [TH]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterConducteur();
+
+	/**
+	 * Supprime un conducteur en BDD selon son ID
+	 * 
+	 * @name supprimerConducteur
+	 * @description Supprime un conducteur en BDD selon son ID
+	 * @param id L'identifiant du conducteur à supprimer
+	 * @author Thomas [TH]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerConducteur(int id);
 	
 	/* GESTION DU DIAGRAMME DE LIGNE */
 
@@ -1057,7 +1093,5 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public ListArret getArretsDiagramme(int idLigne);
-
-	
 	
 }

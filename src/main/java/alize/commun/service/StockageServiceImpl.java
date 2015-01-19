@@ -1436,6 +1436,35 @@ public class StockageServiceImpl implements StockageService {
 		return conducteurs;
 	}
 
+	@Override
+	public void updateConducteur(int id, String colname, String newvalue) {
+		ConducteurRecord record = dsl.fetchOne(CONDUCTEUR, CONDUCTEUR.ID.equal(id));
+
+		if(colname.compareTo("nom") == 0) {
+			record.setNom(newvalue);
+		} else if(colname.compareTo("telephone") == 0) {
+			record.setTelephone(newvalue);
+		}
+		
+		record.store();
+	}
+
+	@Override
+	public void ajouterConducteur() {
+		ConducteurRecord record = dsl.newRecord(CONDUCTEUR);
+		record.setId(null);
+		record.setNom("");
+		record.setTelephone("");
+		record.store();
+	}
+
+	@Override
+	public void supprimerConducteur(int id) {
+		dsl.delete(CONDUCTEUR)
+			.where(CONDUCTEUR.ID.equal(id))
+			.execute();
+	}
+
 	/* GESTION DES DIAGRAMMES DE LIGNE */
 	
 	@Override

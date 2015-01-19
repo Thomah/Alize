@@ -22,6 +22,11 @@
 					<i class="fa fa-home fa-fw"></i> Accueil
 				</a>
 			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_CONDUCTEURS)); %> href="<c:url value="<%=URL_CONDUCTEURS %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Conducteurs
+				</a>
+			</li>
 		</ul>
 	</div>
 </div>
