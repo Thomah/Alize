@@ -736,9 +736,19 @@ public class StockageServiceImpl implements StockageService {
 			} catch (ParseException e) {
 			}
 		} else if(colname.compareTo("arretPrecedent_id") == 0) {
-			transitionRecord.setArretprecedentId(Integer.valueOf(newvalue));
+			Integer idArret = Integer.valueOf(newvalue);
+			if(idArret == 0) {
+				transitionRecord.setArretprecedentId(null);
+			} else {
+				transitionRecord.setArretprecedentId(idArret);
+			}
 		} else if(colname.compareTo("arretSuivant_id") == 0) {
-			transitionRecord.setArretsuivantId(Integer.valueOf(newvalue));
+			Integer idArret = Integer.valueOf(newvalue);
+			if(idArret == 0) {
+				transitionRecord.setArretsuivantId(null);
+			} else {
+				transitionRecord.setArretsuivantId(idArret);
+			}
 		} else if(colname.compareTo("zoneDeCroisement") == 0) {
 			Integer id_zdc = Integer.valueOf(newvalue);
 			if(id_zdc == 0) {
