@@ -16,8 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Properties;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,17 +94,34 @@ public class EoleControlleur {
 			// Chargement du fichier de propriétés
 			prop.load(input);
 
-			// Ajout des propriétés dans les attributs de la classe
-			view.addObject(NB_VEHICULES_MAX_LABEL,
-					prop.getProperty(NB_VEHICULES_MAX_LABEL));
-			view.addObject(TEMPS_TRAVAIL_MAX_LABEL,
-					prop.getProperty(TEMPS_TRAVAIL_MAX_LABEL));
-			view.addObject(TEMPS_CONDUITE_MAX_LABEL,
-					prop.getProperty(TEMPS_CONDUITE_MAX_LABEL));
-			view.addObject(TEMPS_PAUSE_MIN_LABEL,
-					prop.getProperty(TEMPS_PAUSE_MIN_LABEL));
-			view.addObject(TEMPS_PAUSE_MAX_LABEL,
-					prop.getProperty(TEMPS_PAUSE_MAX_LABEL));
+			// Temps de travail max
+			String str = prop.getProperty(TEMPS_TRAVAIL_MAX_LABEL);
+			if(str == null) {
+				str = "00:00";
+			}
+			view.addObject(TEMPS_TRAVAIL_MAX_LABEL, str);
+			
+			// Temps de conduite max
+			str = prop.getProperty(TEMPS_CONDUITE_MAX_LABEL);
+			if(str == null) {
+				str = "00:00";
+			}
+			view.addObject(TEMPS_CONDUITE_MAX_LABEL, str);
+
+			// Temps de pause min
+			str = prop.getProperty(TEMPS_PAUSE_MIN_LABEL);
+			if(str == null) {
+				str = "00:00";
+			}
+			view.addObject(TEMPS_PAUSE_MIN_LABEL, str);
+			
+			// Temps de pause max
+			str = prop.getProperty(TEMPS_PAUSE_MAX_LABEL);
+			if(str == null) {
+				str = "00:00";
+			}
+			view.addObject(TEMPS_PAUSE_MAX_LABEL, str);
+			
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -121,11 +136,38 @@ public class EoleControlleur {
 		}
 
 		view.addObject("lignes", stockageService.getLignes());
-		view.addObject("voies", stockageService.getVoies());
-		view.addObject("arrets", stockageService.getArrets());
-		view.addObject("periodicites", stockageService.getPeriodicites());
 
 		return view;
+	}
+	
+	/**
+	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
+	 * 
+	 * @param idLigne
+	 *            L'identifiant de la ligne souhaitée
+	 * @return La page associée
+	 * @author Thomas
+	 * @date 21/11/2014
+	 */
+	@RequestMapping(value = URL_CONTRAINTES + "/updateContraintes", method = POST)
+	public @ResponseBody String updateContraintes(@RequestParam String tempsConduiteMax, @RequestParam String tempsTravailMax, @RequestParam String tempsPauseMin, @RequestParam String tempsPauseMax) {
+		
+		Properties properties = new Properties();
+		properties.setProperty(TEMPS_TRAVAIL_MAX_LABEL, tempsTravailMax);
+		properties.setProperty(TEMPS_CONDUITE_MAX_LABEL, tempsConduiteMax);
+		properties.setProperty(TEMPS_PAUSE_MIN_LABEL, tempsPauseMin);
+		properties.setProperty(TEMPS_PAUSE_MAX_LABEL, tempsPauseMax);
+
+		File file = new File(NOM_FICHIER);
+		try {
+			FileOutputStream fileOut = new FileOutputStream(file);
+			properties.store(fileOut, "Contraintes");
+			fileOut.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return "ok";
 	}
 
 	/**
@@ -268,58 +310,6 @@ public class EoleControlleur {
 		} catch (ParseException e) {
 		}
 		return "ok";
-	}
-
-	/**
-	 * Traite les données définies dans la page des contraintes
-	 * 
-	 * @param model
-	 *            Les données associées à la page
-	 * @return La page associée
-	 * @author Thomas
-	 * @date 30/11/2014
-	 */
-	@RequestMapping(value = URL_CONTRAINTES, method = POST)
-	public ModelAndView traiterContraintes(ModelMap model,
-			HttpServletRequest request) {
-
-		Properties properties = new Properties();
-
-		Object obj = request.getParameter(NB_VEHICULES_MAX_LABEL);
-		if (obj != null) {
-			properties.setProperty(NB_VEHICULES_MAX_LABEL, obj.toString());
-		}
-
-		obj = request.getParameter(TEMPS_TRAVAIL_MAX_LABEL);
-		if (obj != null) {
-			properties.setProperty(TEMPS_TRAVAIL_MAX_LABEL, obj.toString());
-		}
-
-		obj = request.getParameter(TEMPS_CONDUITE_MAX_LABEL);
-		if (obj != null) {
-			properties.setProperty(TEMPS_CONDUITE_MAX_LABEL, obj.toString());
-		}
-
-		obj = request.getParameter(TEMPS_PAUSE_MIN_LABEL);
-		if (obj != null) {
-			properties.setProperty(TEMPS_PAUSE_MIN_LABEL, obj.toString());
-		}
-
-		obj = request.getParameter(TEMPS_PAUSE_MAX_LABEL);
-		if (obj != null) {
-			properties.setProperty(TEMPS_PAUSE_MAX_LABEL, obj.toString());
-		}
-
-		File file = new File(NOM_FICHIER);
-		try {
-			FileOutputStream fileOut = new FileOutputStream(file);
-			properties.store(fileOut, "Contraintes");
-			fileOut.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return afficherContraintes(model);
 	}
 
 	/* GESTION DES FEUILLES DE SERVICES */
