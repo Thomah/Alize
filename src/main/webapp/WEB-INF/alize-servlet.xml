@@ -130,7 +130,8 @@
 	<!-- THREADS -->
 	
 	<bean name="calculTask" class="alize.eole.thread.CalculTask">
-		<property name="websocket" ref="websocket" />
+		<property name="stockageService" ref="stockageService" />	
+		<property name="websocket" ref="websocket" />	
 	</bean>
 	<bean name="tasks" class="alize.eole.thread.Tasks">
 		<property name="calculTask" ref="calculTask" />

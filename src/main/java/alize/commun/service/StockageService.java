@@ -146,6 +146,7 @@ public interface StockageService {
 	 */
 	public List<Voie> getVoies();
 	
+	
 	/**
 	 * Récupère les voies de la ligne sélectionnée stockées en BDD
 	 * 
@@ -325,6 +326,18 @@ public interface StockageService {
 	public List<Terminus> getTerminus();
 	
 	/**
+	 * Récupère le terminus stocké en BDD en fonction de son ID
+	 * 
+	 * @name getTerminus
+	 * @description Récupère le terminus stocké en BDD en fonction de son ID
+	 * @return Le terminus stockées en BDD en fonction de son ID
+	 * @author Cyril [CS]
+	 * @date 9 jan. 2015
+	 * @version 1
+	 */
+	public Terminus getTerminus(int id);
+	
+	/**
 	 * Ajoute un arrêt en BDD
 	 * 
 	 * @name ajouterArret
@@ -334,6 +347,18 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void ajouterArret();
+	
+	/**
+	 * Récupère l'arrets stocké en BDD en fonction de son ID
+	 * 
+	 * @name getArret
+	 * @description Récupère l'arrets stocké en BDD en fonction de son ID
+	 * @return L'arret stocké en BDD en fonction de son ID
+	 * @author Cyril [CS]
+	 * @date 09 déc. 2014
+	 * @version 1
+	 */
+	public Arret getArret(int id);
 	
 	/**
 	 * Supprime un arrêt en BDD selon son ID
@@ -384,6 +409,18 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Transition> getTransitions();
+
+	/**
+	 * Récupère la transition stockée en BDD en fonction de l'id de l'arret précédent
+	 * 
+	 * @name getTransitions
+	 * @description Récupère la transition stockée en BDD en fonction de l'id de l'arret précédent
+	 * @return Transition La transitions stockée en BDD en fonction de l'id de l'arret précédent
+	 * @author Cyril [CS]
+	 * @date 9 jan. 2014
+	 * @version 1
+	 */
+	public Transition getTransition(int idArretPrecedent);
 
 	/**
 	 * Met à jour la transitions stockée en BDD
@@ -549,8 +586,18 @@ public interface StockageService {
 	 * @date 6 jan. 2015
 	 * @version 1
 	 */
-	public List<Intervalle> getIntervalles();
+	public List<alize.commun.modele.Intervalle> getIntervalles();
 
+	/**
+	 * Récupère l'intervalle stocké en BDD
+	 * @name getIntervalle
+	 * @description Récupère l'intervalle stocké en BDD
+	 * @return L'intervalle correspondant à l'Id
+	 * @author Cyril [CS]
+	 * @date 16 jan. 2015
+	 * @version 1
+	 */
+	public Intervalle getIntervalle(int id);
 	/**
 	 * Récupère les intervalles du réseau stockés en BDD
 	 * 
@@ -561,7 +608,7 @@ public interface StockageService {
 	 * @date 06 jan. 2015
 	 * @version 1
 	 */
-	public List<Intervalle> getTempsImmobilisation();
+	public List<alize.commun.modele.Intervalle> getTempsImmobilisation();
 
 	/**
 	 * Récupère l'intervalle du réseau  stockés en BDD en fonction de son ID
@@ -574,7 +621,7 @@ public interface StockageService {
 	 * @date 06 jan. 2015
 	 * @version 1
 	 */
-	public Intervalle getTempsImmobilisationArret(int idTempsImmobilisation);
+	public Intervalle getTempsImmobilisation(int idTempsImmobilisation);
 
 	/**
 	 * Met à jour le temps d'immobilisation d'un arrêt
@@ -664,7 +711,9 @@ public interface StockageService {
 	 */
 	void supprimerDepot(int id);
 
+
 	/* GESTION DES FEUILLES DE SERVICE */
+
 
 	/**
 	 * Récupère les feuilles de service stockées en BDD
@@ -1008,5 +1057,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public ListArret getArretsDiagramme(int idLigne);
+
+	
 	
 }

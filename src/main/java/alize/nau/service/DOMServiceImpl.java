@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Depot;
-import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.records.ArretRecord;

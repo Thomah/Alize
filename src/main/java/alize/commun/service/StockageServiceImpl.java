@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
 import alize.commun.modele.tables.pojos.Feuilledeservice;
-import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Depot;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
@@ -60,8 +59,7 @@ import alize.commun.util.ListArret;
 
 public class StockageServiceImpl implements StockageService {
 
-	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat(
-			"hh:mm:ss");
+	public static final SimpleDateFormat PERIODE_FORMAT = new SimpleDateFormat("hh:mm:ss");
 	
 	@Autowired
 	private DSLContext dsl;
@@ -203,6 +201,7 @@ public class StockageServiceImpl implements StockageService {
 		
 		return voies;
 	}
+	
 	
 	public List<Voie> getVoiesPourLaLigne(int idLigne)
 	{
@@ -385,6 +384,24 @@ public class StockageServiceImpl implements StockageService {
 	}
 	
 	@Override
+
+	public Arret getArret(int id) {
+		Arret arret = new Arret();
+		Result<Record6<Integer, String, Byte, Byte, Byte, Byte>> results = 
+				dsl.select(ARRET.ID, ARRET.NOM, ARRET.ESTCOMMERCIAL, ARRET.ESTENTREEDEPOT, ARRET.ESTLIEUECHANGECONDUCTEUR, ARRET.ESTSORTIEDEPOT)
+				.from(ARRET)
+				.where(ARRET.ID.equal(id))
+				.fetch();
+		Record6<Integer, String, Byte, Byte,  Byte, Byte> result = results.get(0);
+		arret.setId(result.getValue(ARRET.ID));
+		arret.setNom(result.getValue(ARRET.NOM));
+		arret.setEstcommercial(result.getValue(ARRET.ESTCOMMERCIAL));
+		arret.setEstentreedepot(result.getValue(ARRET.ESTENTREEDEPOT));
+		arret.setEstlieuechangeconducteur(result.getValue(ARRET.ESTLIEUECHANGECONDUCTEUR));
+		arret.setEstsortiedepot(result.getValue(ARRET.ESTSORTIEDEPOT));
+		return arret;
+	}
+	
 	public List<Arret> getArretsEchangesConducteurs() {
 		Arret arret;
 		List<Arret> arrets = new ArrayList<Arret>();
@@ -416,8 +433,8 @@ public class StockageServiceImpl implements StockageService {
 			depot = new Depot();
 			depot.setId(d.getId());
 			depots.add(depot);
+			
 		}
-		
 		return depots;
 	}
 
@@ -635,8 +652,10 @@ public class StockageServiceImpl implements StockageService {
 		return tempsImmobilisation;
 	}
 	
+	
+	
 	@Override
-	public Intervalle getTempsImmobilisationArret(int idTempsImmobilisation) {
+	public Intervalle getTempsImmobilisation(int idTempsImmobilisation) {
 
 		Intervalle intervalle = new Intervalle();
 		
@@ -672,6 +691,20 @@ public class StockageServiceImpl implements StockageService {
 		return transitions;
 	}
 
+	
+	@Override
+	public Transition getTransition(int idArretPrecedent) {
+		TransitionRecord transitionRecord = dsl.fetchOne(TRANSITION, TRANSITION.ARRETPRECEDENT_ID.equal(idArretPrecedent));
+		
+		Transition transition = new Transition();
+		transition.setId(transitionRecord.getId());
+		transition.setDuree(transitionRecord.getDuree());
+		transition.setArretprecedentId(transitionRecord.getArretprecedentId());
+		transition.setArretsuivantId(transitionRecord.getArretsuivantId());
+		
+		return transition;
+	}
+	
 	@Override
 	public void updateTransition(int id, String colname, String newvalue) {
 		TransitionRecord transitionRecord = dsl.fetchOne(TRANSITION, TRANSITION.ID.equal(id));
@@ -862,7 +895,39 @@ public class StockageServiceImpl implements StockageService {
 		return intervalles;
 	}
 	
+	@Override
+	public Intervalle getIntervalle(int id) {
+
+		Intervalle intervalle = new Intervalle();
+
+		Result<Record4<Integer, Time, Time, Time>> results = dsl
+				.select(INTERVALLE.ID, INTERVALLE.MAX, INTERVALLE.PREF,
+						INTERVALLE.MIN).from(INTERVALLE)
+				.where(INTERVALLE.ID.equal(id)).fetch();
+		Record4<Integer, Time, Time, Time> result = results.get(0);
+		intervalle.setId(result.value1());
+		intervalle.setMin(result.value4());
+		intervalle.setPref(result.value3());
+		intervalle.setMax(result.value2());
+
+		return intervalle;
+	}
+	
 	/* GESTION DES TERMINUS */
+	
+	@Override
+	public Terminus getTerminus(int id) {
+		Terminus t = new Terminus();
+		Result<Record1<Integer>> results = dsl.select(TERMINUS.ID)
+				.from(TERMINUS)
+				.where(TERMINUS.ID.equal(id))
+				.fetch();
+		Record1<Integer> result = results.get(0);
+		t.setId(result.value1());
+		
+		return t;
+	}
+	
 	
 	@Override
 	public void ajouterTerminus(int idArret) {
