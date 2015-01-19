@@ -248,9 +248,19 @@ public class StockageServiceImpl implements StockageService {
 		if(colonne.compareTo("direction") == 0) {
 			voieRecord.setDirection(valeur.toString());
 		} else if(colonne.compareTo("terminusDepart_id") == 0) {
-			voieRecord.setTerminusdepartId(Integer.valueOf(valeur.toString()));
+			int terminusId = Integer.valueOf(valeur.toString());
+			if(terminusId != 0) {
+				voieRecord.setTerminusdepartId(terminusId);
+			} else {
+				voieRecord.setTerminusdepartId(null);
+			}
 		} else if(colonne.compareTo("terminusArrivee_id") == 0) {
-			voieRecord.setTerminusarriveeId(Integer.valueOf(valeur.toString()));
+			int terminusId = Integer.valueOf(valeur.toString());
+			if(terminusId != 0) {
+				voieRecord.setTerminusarriveeId(terminusId);
+			} else {
+				voieRecord.setTerminusarriveeId(null);
+			}
 		} else if(colonne.compareTo("estCommerciale") == 0) {
 			voieRecord.setEstcommerciale(Byte.valueOf(valeur.toString()));
 		}
@@ -463,42 +473,51 @@ public class StockageServiceImpl implements StockageService {
 		boolean trouve = false;
 		int k = 0;
 		int nTransitionsTotal = transitions.size();
-
-		// Recherche du terminus de départ
-		while(k < nTransitionsTotal && !trouve) {
-			if(transitions.get(k).getArretprecedentId() == v.getTerminusdepartId()) {
-				trouve = true;
+		
+		if(nTransitionsTotal > 0) {
+			
+			// Recherche du terminus de départ
+			while(k < nTransitionsTotal && !trouve) {
+				if(transitions.get(k).getArretprecedentId() == v.getTerminusdepartId()) {
+					trouve = true;
+				}
+				k++;
 			}
-			k++;
-		}
-		
-		if(trouve) {
-			arrets.add(transitions.get(k-1).getArretPrecedent());
-			arrets.add(transitions.get(k-1).getArretSuivant());
-			transitions.remove(k-1);
-			nTransitionsTotal--;
-		
-			int kArrets = 1;
-			while(nTransitionsTotal > 0) {
-				
-				trouve = false;
-				k = 0;
-
-				// Recherche de l'arret suivant
-				while(!trouve && k < nTransitionsTotal) {
-					if(transitions.get(k).getArretprecedentId() == arrets.get(kArrets).getId()) {
-						trouve = true;
+			
+			// Si un terminus de départ est trouvé, on peut ordonner les arrets
+			if(trouve) {
+				arrets.add(transitions.get(k-1).getArretPrecedent());
+				arrets.add(transitions.get(k-1).getArretSuivant());
+				transitions.remove(k-1);
+				nTransitionsTotal--;
+			
+				int kArrets = 1;
+				while(nTransitionsTotal > 0) {
+					
+					trouve = false;
+					k = 0;
+	
+					// Recherche de l'arret suivant
+					while(!trouve && k < nTransitionsTotal) {
+						if(transitions.get(k).getArretprecedentId() == arrets.get(kArrets).getId()) {
+							trouve = true;
+						}
+						k++;
 					}
-					k++;
+					
+					if(trouve) {
+						arrets.add(transitions.get(k-1).getArretSuivant());
+						transitions.remove(k-1);
+						nTransitionsTotal--;
+						kArrets++;
+					}
+					
 				}
-				
-				if(trouve) {
-					arrets.add(transitions.get(k-1).getArretSuivant());
-					transitions.remove(k-1);
-					nTransitionsTotal--;
-					kArrets++;
+			} else {
+				arrets.add(transitions.get(0).getArretPrecedent());
+				for(Transition t : transitions) {
+					arrets.add(t.getArretSuivant());
 				}
-				
 			}
 		}
 		
