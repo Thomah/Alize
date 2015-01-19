@@ -145,17 +145,6 @@ public interface StockageService {
 	 */
 	public List<Voie> getVoies();
 	
-	/**
-	 * Récupère la voie stockée en BDD en fonction d'un ID
-	 * 
-	 * @name getVoies
-	 * @description Récupère la voie stockée en BDD en fonction d'un ID
-	 * @return Voie La voie stockée en BDD en fonction d'un ID
-	 * @author Cyril [CS]
-	 * @date 9 jan. 2014
-	 * @version 1
-	 */
-	public Voie getVoie(int id);
 	
 	/**
 	 * Récupère les voies de la ligne sélectionnée stockées en BDD
@@ -545,8 +534,18 @@ public interface StockageService {
 	 * @date 6 jan. 2015
 	 * @version 1
 	 */
-	public List<Intervalle> getIntervalles();
+	public List<alize.commun.modele.Intervalle> getIntervalles();
 
+	/**
+	 * Récupère l'intervalle stocké en BDD
+	 * @name getIntervalle
+	 * @description Récupère l'intervalle stocké en BDD
+	 * @return L'intervalle correspondant à l'Id
+	 * @author Cyril [CS]
+	 * @date 16 jan. 2015
+	 * @version 1
+	 */
+	public Intervalle getIntervalle(int id);
 	/**
 	 * Récupère les intervalles du réseau stockés en BDD
 	 * 
@@ -557,7 +556,7 @@ public interface StockageService {
 	 * @date 06 jan. 2015
 	 * @version 1
 	 */
-	public List<Intervalle> getTempsImmobilisation();
+	public List<alize.commun.modele.Intervalle> getTempsImmobilisation();
 
 	/**
 	 * Récupère l'intervalle du réseau  stockés en BDD en fonction de son ID
@@ -1006,5 +1005,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public ListArret getArretsDiagramme(int idLigne);
+
+	
 	
 }

@@ -19,14 +19,10 @@ import org.springframework.web.socket.TextMessage;
 
 import com.sun.javafx.TempState;
 
-import alize.commun.modele.tables.pojos.Arret;
+import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Depot;
-import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Periodicite;
-import alize.commun.modele.tables.pojos.Terminus;
-import alize.commun.modele.tables.pojos.Transition;
 import alize.commun.modele.tables.pojos.Vehicule;
-import alize.commun.modele.tables.pojos.Voie;
 import alize.eole.modele.ArretM;
 import alize.eole.modele.DepotM;
 import alize.eole.modele.LieuM;
@@ -48,7 +44,7 @@ public class CalculTask extends Thread {
 	private List<DepotM> listeDepotsM;
 	private List<VehiculeM> listeVehiculesM;
 	private List<PeriodiciteM> listePeriodicitesM;
-	private List<ArretM> listeArretsM;
+	private List<Arret> listeArrets;
 	
 	@Override
 	public void run() { 
@@ -60,7 +56,7 @@ public class CalculTask extends Thread {
 		}else{
 			ajouterLigneLog("La premiere periodicite est : " + premierePeriodicite.toString());
 		}
-		ArretM arretDebutJournee = trouverArretM(premierePeriodicite.getPeriodicite().getId());
+		//ArretM arretDebutJournee = trouverArretM(premierePeriodicite.getPeriodicite().getId());
 		Heure heureDebutDeJournee = new Heure(premierePeriodicite.getPeriodicite().getDebut());
 		
 		
@@ -113,11 +109,10 @@ public class CalculTask extends Thread {
 	private void initialisationArrets(){
 		//INITIALISATION DES ARRETS :
 		List<Arret> listeArrets = stockageService.getArrets();
-		listeArretsM = new ArrayList<ArretM>();
+		listeArrets = new ArrayList<Arret>();
 		for (Arret a : listeArrets) {
-			ArretM arret = new ArretM(a);
-			listeArretsM.add(arret);
-			ajouterLigneLog("Insertion arret : " + arret.getArret().getId() + ".");
+			listeArrets.add(a);
+			ajouterLigneLog("Insertion arret : " + a.getId() + ".");
 		}
 	}
 	
@@ -174,44 +169,24 @@ public class CalculTask extends Thread {
 		System.out.println("\nVehcs : " +listeVehicules);
 	}
 	
-	public Time calculerTempsParcours(int idArretDepart, int idArretArrive){
-		try {
-			SimpleDateFormat formater = new SimpleDateFormat("hh:mm:ss");
-			Date date;
-			date = formater.parse("00:00:00");
-			java.sql.Time time = new Time(date.getTime());
-			Long tempsDeParcours = time.getTime();
-			
-			Arret arretDepart = stockageService.getArret(idArretDepart);
-			Arret arretArrive = stockageService.getArret(idArretArrive);	
-			Arret arretCourant = arretDepart;
-			
-			do{
-				Intervalle intervalle = stockageService.getTempsImmobilisation(arretCourant.getTempsimmobilisationId());	
-				tempsDeParcours += intervalle.getPref().getTime();
-				//Récuperer la transition de l'arret courant
-				Transition transition = stockageService.getTransition(arretCourant.getId());	
-				//Ajouter le temps de transition au temps de parcours
-				tempsDeParcours += transition.getDuree().getTime();
-				//Remplacer l'arrêt courant par l'arrêt de destination 
-				arretCourant = stockageService.getArret(transition.getArretsuivantId());
-			}while(arretCourant!=arretArrive);
-			
-			return time;
-			
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
+	//Calculer le temps de parcours à partir d'une liste de transitions (depuis le départ du premier arrêt jusqu'à l'arrivée du dernier arrêt)
+	public Heure calculerTempsParcours(List<Transition> listeTransitions){
+		Heure tempsParcours = new Heure(0,0,0);
+		
+		for(Transition t : listeTransitions){
+			tempsParcours.ajouterHeure(new Heure(t.getDuree()));
+			Arret a = t.getArretSuivant();
+			//Intervalle i = stockageService.getIntervalle(a.getTempsimmobilisationId());
+			//tempsParcours.ajouterHeure(new Heure(i.getPref()));
 		}
+		return tempsParcours;
 	}
 	
 	
-	public ArretM trouverArretM(int id){
-		ArretM arret = null;
-		for(ArretM a : listeArretsM){
-			if(a.getArret().getId()==id){
+	public Arret trouverArretM(int id){
+		Arret arret = null;
+		for(Arret a : listeArrets){
+			if(a.getId()==id){
 				arret=a;
 			}
 		}

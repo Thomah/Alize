@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
 import alize.commun.modele.tables.pojos.Feuilledeservice;
-import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Depot;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
@@ -205,23 +204,6 @@ public class StockageServiceImpl implements StockageService {
 		return voies;
 	}
 	
-	@Override
-	public Voie getVoie(int id) {
-		
-		Voie voie;
-		List<Voie> voies = new ArrayList<Voie>();
-		Result<Record6<Integer,String, Integer, Integer, Integer, Integer>> results = dsl.select(VOIE.ID, VOIE.DIRECTION, VOIE.TERMINUSDEPART_ID, VOIE.TERMINUSARRIVEE_ID, LIGNE_VOIE.VOIE_ID, LIGNE_VOIE.LIGNE_ID)
-									.from(VOIE)
-									.where(VOIE.ID.equal(id))
-									.fetch();
-		Record6<Integer,String, Integer, Integer, Integer, Integer> v = results.get(0);
-			voie = new Voie();
-			voie.setId(v.value1());
-			voie.setDirection(v.value2());
-			voie.setTerminusdepartId(v.value3());
-			voie.setTerminusarriveeId(v.value4());
-		return voie;
-	}
 	
 	public List<Voie> getVoiesPourLaLigne(int idLigne)
 	{
@@ -847,6 +829,24 @@ public class StockageServiceImpl implements StockageService {
 			intervalles.add(intervalle);
 		}
 		return intervalles;
+	}
+	
+	@Override
+	public Intervalle getIntervalle(int id) {
+
+		Intervalle intervalle = new Intervalle();
+
+		Result<Record4<Integer, Time, Time, Time>> results = dsl
+				.select(INTERVALLE.ID, INTERVALLE.MAX, INTERVALLE.PREF,
+						INTERVALLE.MIN).from(INTERVALLE)
+				.where(INTERVALLE.ID.equal(id)).fetch();
+		Record4<Integer, Time, Time, Time> result = results.get(0);
+		intervalle.setId(result.value1());
+		intervalle.setMin(result.value4());
+		intervalle.setPref(result.value3());
+		intervalle.setMax(result.value2());
+
+		return intervalle;
 	}
 	
 	/* GESTION DES TERMINUS */
