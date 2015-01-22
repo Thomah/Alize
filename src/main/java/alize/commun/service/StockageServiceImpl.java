@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
@@ -55,7 +56,6 @@ import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 import alize.commun.modele.tables.records.ZonedecroisementRecord;
-import alize.commun.util.ListArret;
 
 public class StockageServiceImpl implements StockageService {
 
@@ -1497,27 +1497,55 @@ public class StockageServiceImpl implements StockageService {
 	/* GESTION DES DIAGRAMMES DE LIGNE */
 	
 	@Override
-	public ListArret getArretsDiagramme(int idLigne) {
-
+	public List<List<Arret>> getArretsDiagramme(int idLigne) {
 		List<Voie> voies = getVoiesPourLaLigne(idLigne);
-		ListArret arrets = new ListArret();
+		List<List<Arret>> arretsLigne = new ArrayList<List<Arret>>();
 		List<Arret> arretsVoie;
-		Arret arret;
-		boolean doitEtreAjoute = true;
-		int dernierIndexInsere = 0;
-		
 		for(Voie v : voies) {
 			arretsVoie = getArretsPourLaVoie(v.getId());
-			for(Arret a : arretsVoie) {
-				doitEtreAjoute = !arrets.contains(a);
-				if(doitEtreAjoute) {
-					arrets.add(dernierIndexInsere, a);
-					dernierIndexInsere++;
-				}
-			}
+			arretsLigne.add(arretsVoie);
 		}
 		
-		return arrets;
+		return arretsLigne;
+	}
+
+	@Override
+	public List<List<Action>> getActionsPourLaLigne(int idLigne) {
+		List<Voie> voies = getVoiesPourLaLigne(idLigne);
+		List<List<Action>> actionsLigne = new ArrayList<List<Action>>();
+		List<Action> arretsVoie;
+		for(Voie v : voies) {
+			arretsVoie = getActionsPourLaVoie(v.getId());
+			actionsLigne.add(arretsVoie);
+		}
+		
+		return actionsLigne;
+	}
+	
+	@Override
+	public List<Action> getActionsPourLaVoie(int idVoie) {
+		
+		List<Action> actions = new ArrayList<Action>();
+		Action action;
+		
+		Result<Record> records = dsl.select(ACTION.fields())
+				.from(ACTION)
+				.where(ACTION.VOIE_ID.equal(idVoie))
+				.orderBy(ACTION.VEHICULE_ID, ACTION.TIME)
+				.fetch();
+		
+		for(Record record : records) {
+			action = new Action();
+			action.setId(record.getValue(ACTION.ID));
+			action.setTime(record.getValue(ACTION.TIME));
+			action.setTypeaction(record.getValue(ACTION.TYPEACTION));
+			action.setParametre(record.getValue(ACTION.PARAMETRE));
+			action.setVehiculeId(record.getValue(ACTION.VEHICULE_ID));
+			action.setVoieId(record.getValue(ACTION.VOIE_ID));
+			actions.add(action);
+		}
+		
+		return actions;
 	}
 
 }

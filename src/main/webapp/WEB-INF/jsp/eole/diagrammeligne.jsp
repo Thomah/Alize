@@ -19,6 +19,9 @@ a {
 a:hover, a:focus {
     color: #651C00;
 }
+svg {
+	width: 800;
+}
 </style>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>AliZé - Eole</title>
@@ -41,8 +44,7 @@ a:hover, a:focus {
 						<div class="panel-heading">
 							<i class="fa fa-bell fa-fw"></i> Diagramme
 						</div>
-						<div class="panel-body">
-							<div id="diagramme"></div>
+						<div class="panel-body" id="diagramme">
 						</div>
 					</div>
 				</div>
@@ -73,21 +75,48 @@ a:hover, a:focus {
 		src="<c:url value="/resources/js/plugins/moment/moment.js"/>"></script>
 	<script
 		src="<c:url value="/resources/js/plugins/datetimepicker/bootstrap-datetimepicker.js"/>"></script>
+	<script
+		src="<c:url value="/resources/js/plugins/snapsvg/snap.svg-min.js"/>"></script>
+	<script
+		src="<c:url value="/resources/js/plugins/diagrammeligne/diagrammeligne.js"/>"></script>
 	<script type="text/javascript">
 	
+	// Variables globales
+	var diagrammes = [];
+	
+	var LARGEUR_SVG = 914;
+	var INTERVALLE_GRADUATION_ORDONNEES = 50;
+	var MIN_TEMPS = 5;
+	var MAX_TEMPS = 27;
+	var HEIGHT_TEXTE = 20;
+	
+	// Appels au chargement de la page
 	getDiagramme();
-		
+	
 	function getDiagramme() {
 		var idLigne = $("#<%=LIGNE_LABEL %>").val();
-
-	    $.ajax({
-	    	url: "/alize/eole/diagrammeligne/get",
-	    	data: "idLigne=" + idLigne,
-	    	type: "POST",
-	    	success: function(str) {
-	    		$("#diagramme").html(str);
-	    	}
-	    });
+		
+		if(!(idLigne === null)) {
+		    $.ajax({
+		    	url: "/alize/eole/diagrammeligne/get",
+		    	data: "idLigne=" + idLigne,
+		    	type: "POST",
+		    	success: function(str) {
+		    		var data = [];
+		    		var dataJSON = jQuery.parseJSON( str );
+	   		    	var indexArray;
+	   		    	
+		    		for(indexArray = 0; indexArray < dataJSON[1].length; ++indexArray) {
+		    			diagrammes[indexArray] = new DiagrammeVoie();
+		    			diagrammes[indexArray].initialiserPaper(document, dataJSON, indexArray);
+		    		}
+		    		
+		    		for(indexArray = 0; indexArray < dataJSON[0].length; ++indexArray) {
+		    			paintActions(dataJSON, indexArray);
+		    		}
+		    	}
+		    });
+		}
 	}
 	
 	</script>

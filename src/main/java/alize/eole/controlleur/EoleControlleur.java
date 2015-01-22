@@ -33,7 +33,6 @@ import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Vacation;
 import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.service.StockageService;
-import alize.commun.util.ListArret;
 
 /**
  * Controlleur principal du module Eole
@@ -892,14 +891,40 @@ public class EoleControlleur {
 	@RequestMapping(value = URL_DIAGRAMME_LIGNE + "/get", method = POST)
 	public @ResponseBody String getData(@RequestParam int idLigne) {
 		
-		ListArret arrets = stockageService.getArretsDiagramme(idLigne);
+		List<List<Arret>> arrets = stockageService.getArretsDiagramme(idLigne);
+		List<List<Action>> actions = stockageService.getActionsPourLaLigne(idLigne);
 		JSONArray array = new JSONArray();
-		for (Arret a : arrets) {
-			JSONObject object = new JSONObject();
-			object.put("'id'", a.getId());
-			object.put("'nom'", "'" + a.getNom() + "'");
-			array.add(object);
+		
+		JSONArray arrayActions = new JSONArray();
+		for (List<Action> actionsVoie : actions) {
+			JSONArray arrayVoie = new JSONArray();
+			for (Action a : actionsVoie) {
+				JSONObject object = new JSONObject();
+				object.put("'id'", a.getId());
+				object.put("'voieId'", "'" + a.getVoieId() + "'");
+				object.put("'time'", "'" + a.getTime() + "'");
+				object.put("'vehiculeId'", "'" + a.getVehiculeId() + "'");
+				object.put("'typeAction'", "'" + a.getTypeaction() + "'");
+				object.put("'parametre'", "'" + a.getParametre() + "'");
+				arrayVoie.add(object);
+			}
+			arrayActions.add(arrayVoie);
 		}
+		array.add(arrayActions);
+		
+		JSONArray arrayArrets = new JSONArray();
+		for (List<Arret> arretsVoie : arrets) {
+			JSONArray arrayVoie = new JSONArray();
+			for (Arret a : arretsVoie) {
+				JSONObject object = new JSONObject();
+				object.put("'id'", a.getId());
+				object.put("'nom'", "'" + a.getNom() + "'");
+				arrayVoie.add(object);
+			}
+			arrayArrets.add(arrayVoie);
+		}
+		array.add(arrayArrets);
+		
 		String validJSONString = array.toString().replace("'", "\"")
 				.replace("=", ":");
 		return validJSONString;
