@@ -95,7 +95,7 @@
 	}
 	
 	function getOptionsSelectArret() {
-	    var chaineOptions = "";
+	    var chaineOptions = "<option value='0'></option>";
 		$.ajax({
 	    	url: "/alize/nau/arrets/get",
 	    	type: "POST",

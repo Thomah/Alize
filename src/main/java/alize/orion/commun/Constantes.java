@@ -19,5 +19,7 @@ public class Constantes {
 	/* JSP */
 	
 	public static final String JSP_INDEX = "index";	
+
+	public static final String JSP_CONDUCTEURS = "conducteurs";
 	
 }

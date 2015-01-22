@@ -1,0 +1,12 @@
+package alize.commun.modele;
+
+public enum TypeAction {
+	
+	ARRIVER_ARRET,
+	QUITTER_ARRET,
+	DEVENIR_COMMERCIAL,
+	DEVENIR_NON_COMMERCIAL,
+	CHANGER_CONDUCTEUR,
+	CHANGER_VOIE
+	
+}

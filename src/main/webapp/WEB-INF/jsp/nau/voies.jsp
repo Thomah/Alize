@@ -58,7 +58,7 @@
    		     	metadata.push({name: "terminusDepart", label: "Terminus Départ", datatype: "html", editable: false});
    		     	metadata.push({name: "terminusArrivee", label: "Terminus Arrivée", datatype: "html", editable: false});
    		     	metadata.push({name: "estCommerciale", label: "Commerciale", datatype: "boolean", editable: true});
-   		     	metadata.push({name: "affecterTransitions", label: "Affecter les arrets", datatype: "html", editable: false});
+   		     	metadata.push({name: "affecterTransitions", label: "Affecter les transitions", datatype: "html", editable: false});
    		     	metadata.push({datatype: "html", editable: false});
    		     	
 				var data = [];
@@ -103,6 +103,12 @@
 		    	success: function(str) {
 		    		var terminus = jQuery.parseJSON( str );
 	   		    	var index;
+	   		    	
+	   		    	var option = document.createElement("option");
+	    		    option.text = "";
+	    		    option.value = 0;
+	    		    $(obj).append(option);
+	    		    
 		    		for(index = 0; index < terminus.length; ++index)
 		    		{
 						var option = document.createElement("option");
@@ -116,6 +122,12 @@
 		    		
 		    		var selectTerminusArrivee = $("#terminusArrivee_" + id);
 	   		    	var index;
+	   		    	
+	   		    	var option = document.createElement("option");
+	    		    option.text = "";
+	    		    option.value = 0;
+	    		    selectTerminusArrivee.append(option);
+	    		    
 		    		for(index = 0; index < terminus.length; ++index)
 		    		{
 						var option = document.createElement("option");
