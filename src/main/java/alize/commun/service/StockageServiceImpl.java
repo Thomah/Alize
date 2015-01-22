@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
 import alize.commun.modele.tables.pojos.Feuilledeservice;
-import alize.commun.modele.tables.pojos.Depot;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Service;
@@ -56,6 +55,7 @@ import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 import alize.commun.modele.tables.records.ZonedecroisementRecord;
 import alize.commun.util.ListArret;
+import alize.eole.modele.PeriodiciteM;
 
 public class StockageServiceImpl implements StockageService {
 
@@ -423,17 +423,16 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	@Override
-	public List<Depot> getDepots() {
+	public List<alize.commun.modele.Depot> getDepots() {
 		
-		Depot depot;
-		List<Depot> depots = new ArrayList<Depot>();
+		alize.commun.modele.Depot depot;
+		List<alize.commun.modele.Depot> depots = new ArrayList<alize.commun.modele.Depot>();
 		
 		Result<DepotRecord> results = dsl.fetch(DEPOT);
 		for (DepotRecord d : results) {
-			depot = new Depot();
+			depot = new alize.commun.modele.Depot();
 			depot.setId(d.getId());
 			depots.add(depot);
-			
 		}
 		return depots;
 	}
@@ -632,6 +631,32 @@ public class StockageServiceImpl implements StockageService {
 		}
 	}
 	
+	/* GESTION DES LIEUX */
+	@Override
+	public Lieu getLieu(int id) {
+		Lieu lieu = new Lieu();
+		LieuRecord lieuRecord = dsl.fetchOne(LIEU, LIEU.ID.equal(id));
+		
+		lieu.setId(lieuRecord.getId());
+		
+		return lieu;
+	}
+	
+	@Override
+	public List<Lieu> getLieux() {
+		Lieu lieu;
+		List<Lieu> lieux = new ArrayList<Lieu>();
+		
+		Result<LieuRecord> results = dsl.fetch(LIEU);
+		for (LieuRecord i : results) {
+			lieu = new Lieu();
+			lieu.setId(i.getId());
+			lieux.add(lieu);
+		}
+		return lieux;	
+	}
+	
+	
 	/* GESTION DES TEMPS D IMMOBILISATION*/
 	
 	@Override
@@ -691,18 +716,38 @@ public class StockageServiceImpl implements StockageService {
 		return transitions;
 	}
 
-	
 	@Override
-	public Transition getTransition(int idArretPrecedent) {
-		TransitionRecord transitionRecord = dsl.fetchOne(TRANSITION, TRANSITION.ARRETPRECEDENT_ID.equal(idArretPrecedent));
-		
-		Transition transition = new Transition();
-		transition.setId(transitionRecord.getId());
-		transition.setDuree(transitionRecord.getDuree());
-		transition.setArretprecedentId(transitionRecord.getArretprecedentId());
-		transition.setArretsuivantId(transitionRecord.getArretsuivantId());
+	public Transition getTransition(int id) {
+	TransitionRecord t = dsl.fetchOne(TRANSITION, TRANSITION.ID.equal(id));
+	Transition transition = new Transition();
+		transition.setId(t.getId());
+		transition.setDuree(t.getDuree());
+		transition.setArretprecedentId(t.getArretprecedentId());
+		transition.setArretsuivantId(t.getArretsuivantId());
 		
 		return transition;
+	}
+	
+	
+	@Override
+	public List<Transition> getTransitions(int idArretPrecedent) {
+		List<Transition> transitions = new ArrayList<Transition>();
+		Result<Record5<Integer, Integer, Integer, Time, Integer>> results =	dsl.select(TRANSITION.ID, TRANSITION.ARRETPRECEDENT_ID, TRANSITION.ARRETSUIVANT_ID, TRANSITION.DUREE, TRANSITION.ZONEDECROISEMENT_ID)
+				.from(TRANSITION)
+				.where(TRANSITION.ARRETPRECEDENT_ID.equal(idArretPrecedent))
+				.fetch();
+		for(Record5<Integer, Integer, Integer, Time, Integer> r :results){
+			Transition transition = new Transition();
+			transition.setId(r.value1());
+			transition.setDuree(r.value4());
+			transition.setArretprecedentId(r.value2());
+			transition.setArretsuivantId(r.value3());
+			transition.setZonedecroisementId(r.value5());
+			transitions.add(transition);
+		}
+		
+		
+		return transitions;
 	}
 	
 	@Override
@@ -753,13 +798,13 @@ public class StockageServiceImpl implements StockageService {
 	/* GESTION DES ZONES DE CROISEMENT */
 	
 	@Override
-	public List<Zonedecroisement> getZonesDeCroisement() {
-		Zonedecroisement zdc;
-		List<Zonedecroisement> zonesdecroisement = new ArrayList<Zonedecroisement>();
+	public List<ZoneDeCroisement> getZonesDeCroisement() {
+		ZoneDeCroisement zdc;
+		List<ZoneDeCroisement> zonesdecroisement = new ArrayList<ZoneDeCroisement>();
 		
 		Result<ZonedecroisementRecord> results = dsl.fetch(ZONEDECROISEMENT);
 		for (ZonedecroisementRecord t : results) {
-			zdc = new Zonedecroisement();
+			zdc = new ZoneDeCroisement();
 			zdc.setId(t.getId());
 			zdc.setNom(t.getNom());
 			zonesdecroisement.add(zdc);
@@ -797,14 +842,14 @@ public class StockageServiceImpl implements StockageService {
 	/* GESTION DES PERIODICITES */
 	
 	@Override
-	public List<Periodicite> getPeriodicites() {
+	public List<alize.commun.modele.Periodicite> getPeriodicites() {
 
-		Periodicite periodicite;
-		List<Periodicite> periodicites = new ArrayList<Periodicite>();
+		alize.commun.modele.Periodicite periodicite;
+		List<alize.commun.modele.Periodicite> periodicites = new ArrayList<alize.commun.modele.Periodicite>();
 		
 		Result<PeriodiciteRecord> results = dsl.fetch(PERIODICITE);
 		for (PeriodiciteRecord p : results) {
-			periodicite = new Periodicite();
+			periodicite = new alize.commun.modele.Periodicite();
 			periodicite.setId(p.getId());
 			periodicite.setDebut(p.getDebut());
 			periodicite.setFin(p.getFin());
@@ -815,6 +860,21 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return periodicites;
+	}
+	
+	@Override
+	public alize.commun.modele.Periodicite getPeriodicite(int id) {
+
+		PeriodiciteRecord periodiciteRec = dsl.fetchOne(PERIODICITE, PERIODICITE.ID.equal(id));
+		
+		alize.commun.modele.Periodicite periodicite = new alize.commun.modele.Periodicite();
+		periodicite.setDebut(periodiciteRec.getDebut());
+		periodicite.setFin(periodiciteRec.getFin());
+		periodicite.setId(periodiciteRec.getId());
+		periodicite.setIdArret(periodiciteRec.getIdArret());
+		periodicite.setIdVoie(periodiciteRec.getIdVoie());
+		periodicite.setPeriode(periodiciteRec.getPeriode());
+		return periodicite;
 	}
 
 	@Override
@@ -1318,14 +1378,14 @@ public class StockageServiceImpl implements StockageService {
 	/* GESTION DES VEHICULES */
 
 	@Override
-	public List<Vehicule> getVehicules() {
-		Vehicule vehicule;
-		List<Vehicule> vehicules = new ArrayList<Vehicule>();
+	public List<alize.commun.modele.Vehicule> getVehicules() {
+		alize.commun.modele.Vehicule vehicule;
+		List<alize.commun.modele.Vehicule> vehicules = new ArrayList<alize.commun.modele.Vehicule>();
 		
 		Result<VehiculeRecord> results = dsl.fetch(VEHICULE);
 		
 		for (VehiculeRecord v : results) {
-			vehicule = new Vehicule();
+			vehicule = new alize.commun.modele.Vehicule();
 			vehicule.setId(v.getValue(VEHICULE.ID));
 			vehicule.setTypevehicule(v.getValue(VEHICULE.TYPEVEHICULE));
 			vehicules.add(vehicule);
@@ -1461,5 +1521,9 @@ public class StockageServiceImpl implements StockageService {
 		
 		return arrets;
 	}
+
+	
+
+	
 
 }

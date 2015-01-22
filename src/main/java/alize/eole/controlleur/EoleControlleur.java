@@ -801,7 +801,7 @@ public class EoleControlleur {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_VEHICULES + "/get", method = POST)
 	public @ResponseBody String getVehicules() {
-		List<Vehicule> vehicules = stockageService.getVehicules();
+		List<alize.commun.modele.Vehicule> vehicules = stockageService.getVehicules();
 		JSONArray array = new JSONArray();
 		for (Vehicule v : vehicules) {
 			JSONObject object = new JSONObject();

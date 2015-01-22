@@ -236,6 +236,34 @@ public interface StockageService {
 	public List<Transition> getTransitionsAttribuees(int idVoie);
 
 	/**
+	 * Récupère les transitions dont l'arrêt précédent est donné en paramètre.
+	 * 
+	 * @name getTransitions
+	 * @description Récupère les transitions dont l'arrêt précédent est donné en paramètre.
+	 * @return La liste des transitions dont l'arrêt précédent est donné en paramètre
+	 * @param idArretPrecedent l'ID de l'arrêt précédent
+	 * @author Cyril [CS]
+	 * @date 21 jan. 2015
+	 * @version 1
+	 */
+	public List<Transition> getTransitions(int idArretPrecedent);
+	
+	
+	/**
+	 * Récupère la transition d'ID donné en paramètre.
+	 * 
+	 * @name getTransition
+	 * @description Récupère la transition d'ID donné en paramètre.
+	 * @return La transition dont l'ID est donné en paramètre
+	 * @param id l'ID de la transition
+	 * @author Cyril [CS]
+	 * @date 21 jan. 2015
+	 * @version 1
+	 */
+	public Transition getTransition(int id);
+	
+	
+	/**
 	 * Ajoute une association voie / transition en BDD
 	 * 
 	 * @name ajouterVoieTransition
@@ -311,7 +339,7 @@ public interface StockageService {
 	 * @date 7 jan. 2015
 	 * @version 1
 	 */
-	public List<Depot> getDepots();
+	public List<alize.commun.modele.Depot> getDepots();
 
 	/**
 	 * Récupère les terminus stockées en BDD
@@ -410,17 +438,7 @@ public interface StockageService {
 	 */
 	public List<Transition> getTransitions();
 
-	/**
-	 * Récupère la transition stockée en BDD en fonction de l'id de l'arret précédent
-	 * 
-	 * @name getTransitions
-	 * @description Récupère la transition stockée en BDD en fonction de l'id de l'arret précédent
-	 * @return Transition La transitions stockée en BDD en fonction de l'id de l'arret précédent
-	 * @author Cyril [CS]
-	 * @date 9 jan. 2014
-	 * @version 1
-	 */
-	public Transition getTransition(int idArretPrecedent);
+
 
 	/**
 	 * Met à jour la transitions stockée en BDD
@@ -471,7 +489,7 @@ public interface StockageService {
 	 * @date 18 jan. 2014
 	 * @version 1
 	 */
-	public List<Zonedecroisement> getZonesDeCroisement();
+	public List<ZoneDeCroisement> getZonesDeCroisement();
 
 	/**
 	 * Met à jour la zone de croisement stockée en BDD
@@ -522,8 +540,22 @@ public interface StockageService {
 	 * @date 1 déc. 2014
 	 * @version 1
 	 */
-	public List<Periodicite> getPeriodicites();
+	public List<alize.commun.modele.Periodicite> getPeriodicites();
 
+	
+	/**
+	 * Renvoi la périodicité stockée dans la BDD en fonction de sont ID
+	 * 
+	 * @name getPeriodicite
+	 * @description Renvoi la périodicité stockée dans la BDD en fonction de sont ID
+	 * @return Periodicite La périodicité stockée dans la BDD
+	 * @author Cyril [CS]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public alize.commun.modele.Periodicite getPeriodicite(int id);
+	
+	
 	/**
 	 * Récupère les périodicités pour la voie et l'arret sélectionnés stockées en BDD
 	 * 
@@ -597,7 +629,8 @@ public interface StockageService {
 	 * @date 16 jan. 2015
 	 * @version 1
 	 */
-	public Intervalle getIntervalle(int id);
+	public alize.commun.modele.Intervalle getIntervalle(int id);
+	
 	/**
 	 * Récupère les intervalles du réseau stockés en BDD
 	 * 
@@ -765,6 +798,34 @@ public interface StockageService {
 	 */
 	public void supprimerFDS(int id);
 
+	
+	/* GESTION DES LIEUX */
+	
+	
+	/**
+	 * Récupère un lieu en fonction de son ID
+	 * 
+	 * @name getLieu
+	 * @description Récupère un lieu en fonction de son ID
+	 * @param id L'identifiant du lieu en fonction de l'ID
+	 * @author Cyril [CS]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public Lieu getLieu(int id);
+	
+	/**
+	 * Récupère tous les lieux de la BDD
+	 * 
+	 * @name getLieux
+	 * @description Récupère tous les lieux de la BDD
+	 * @author Cyril [CS]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public List<Lieu> getLieux();
+	
+	
 	/* ATTRIBUTION DES PERIODICITES AUX FEUILLES DE SERVICE */
 
 	/**
@@ -948,7 +1009,7 @@ public interface StockageService {
 	 * @date 11 jan. 2015
 	 * @version 1
 	 */
-	public List<Vehicule> getVehicules();
+	public List<alize.commun.modele.Vehicule> getVehicules();
 
 	/**
 	 * Met à jour le véhicule indiqué stockée en BDD
@@ -1057,6 +1118,13 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public ListArret getArretsDiagramme(int idLigne);
+
+	
+
+	
+
+	
+
 
 	
 	

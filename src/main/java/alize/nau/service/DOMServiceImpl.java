@@ -307,7 +307,7 @@ public class DOMServiceImpl implements DOMService {
 		doc.getRootElement().addContent(arrets);
 		
 		// Ajout des dépôts
-		List<Depot> listeDepots = stockageService.getDepots();
+		List<alize.commun.modele.Depot> listeDepots = stockageService.getDepots();
 		Element depots = new Element("depots");
 		Element depot;
 		for(Depot d : listeDepots) {

@@ -3,6 +3,7 @@ package alize.commun;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Random;
 
 /**
  * @name Heure
@@ -15,13 +16,20 @@ public class Heure {
 	private int m; 
 	private int s;
 	
+	private int nbSec;
+	
 	
 	public Heure(int h, int m, int s){
 		this.s = s;
 		this.m = m;
 		this.h = h;
-		
 		this.baseSexaDecimale();
+		this.nbSec = this.toInt();
+		
+	}
+	
+	public Heure(Heure min, Heure max){
+		 heureAuHasard(min, max);
 	}
 	
 	public Heure(Time t){
@@ -29,33 +37,71 @@ public class Heure {
 		this.s = lt.getSecond();
 		this.m = lt.getMinute();
 		this.h = lt.getHour();
+		this.nbSec = this.toInt();
 	}
 	
-	public void ajouterHeure(Heure h){
-		this.setS(this.getS()+h.getS());
-		this.setM(this.getM()+h.getM());
-		this.setH(this.getH()+h.getH());
+	public int toInt(){
+		return this.s+this.m*60+this.h*3600;
+	}
+	
+	public void heureAuHasard(Heure Hmin, Heure Hmax){
+		int min = Hmin.getNbSec();
+		int max = Hmax.getNbSec();
+		
+		int rand = (int) (Math.random() * (max - min)) + min;
+		
+		toHeure(rand);
+	}
+	
+	public void toHeure(double d){
+		int h = (int) d/3600;
+		int tamp = (int) d%3600;
+		int m = (int) tamp/60;
+		tamp = tamp%60;
+		int s = (int) tamp;
+		this.setH(h);
+		this.setM(m);
+		this.setS(s);
+	}
+	
+	public void ajouterHeures(Heure h2){
+		int d1 = this.getNbSec();
+		int d2 = h2.getNbSec();
+		toHeure(d1+d2);
+	}
+	
+	public void incrementer(){
+		int d1 = this.getNbSec();
+		toHeure(d1);
+		
+	}
+	
+	public void soustraireHeures(Heure h2){
+		int d1 = this.getNbSec();
+		int d2 = h2.getNbSec();
+		toHeure(d1-d2);
+	}
+	
+	public int diviserHeures(Heure h2){
+		int d1 = this.getNbSec();
+		int d2 = h2.getNbSec();
+		return  d1/d2;
 	}
 	
 	public int comparerHeure(Heure h2){
-		double nbSec1 = this.getS() + this.getM()*60 + this.getH() * 3600;
-		double nbSec2 = h2.getS() + h2.getM()*60 + h2.getH() * 3600;
+		int nbSec1 = this.getNbSec();
+		int nbSec2 = h2.getNbSec();
 		
 		if(nbSec1==nbSec2){
 			return 0;
 		}else{
 			if(nbSec1<nbSec2){
-				System.out.println(nbSec1  + " < " + nbSec2 + "(" + this + " < " + h2 + ")");
 				return -1;
 			}else{
-
-				System.out.println(nbSec1  + " > " + nbSec2 + "(" + this + " > " + h2 + ")");
 				return 1;
 			}
 		}
 	}
-	
-	
 	
 	private void baseSexaDecimale(){
 		int h = getH();
@@ -110,6 +156,15 @@ public class Heure {
 	public void setS(int s) {
 		this.s = s;
 	}
+
+	public int getNbSec() {
+		return nbSec;
+	}
+
+	public void setNbSec(int nbSec) {
+		this.nbSec = nbSec;
+	}
+	
 	
 	
 }

@@ -32,7 +32,7 @@ public class WebsocketEndPoint extends TextWebSocketHandler {
 		String finEole = jObject.getString("finEole");
 		if(finEole.matches("[0-9]{2}/[0-9]{2}/[0-9]{4} [0-9]{2}:[0-9]{2}")) {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-			Tasks.setCalculTask(LocalDateTime.parse(finEole, formatter));
+			Tasks.setTimerTask(LocalDateTime.parse(finEole, formatter));
 		}
 	}
 

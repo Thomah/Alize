@@ -849,7 +849,7 @@ public class NauControlleur {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_ZONES_DE_CROISEMENT + "/get", method = POST)
 	public @ResponseBody String getListeZonesDeCroisement() {
-		List<Zonedecroisement> zonesdecroisement = stockageService.getZonesDeCroisement();
+		List<ZoneDeCroisement> zonesdecroisement = stockageService.getZonesDeCroisement();
 		JSONArray array = new JSONArray();
 		for (Zonedecroisement z : zonesdecroisement) {
 			JSONObject object = new JSONObject();

@@ -9,26 +9,25 @@ import alize.eole.websocket.handler.WebsocketEndPoint;
 @Component
 public class Tasks {
 	
-	private static CalculTask calculTask;
+	private static TimerTask timerTask;
 	
-	public static void setCalculTask(LocalDateTime l) {
+	public static void setTimerTask(LocalDateTime l) {
 
-		StockageService stockageService = calculTask.getStockageService();
-		WebsocketEndPoint websocket = calculTask.getWebsocket();
+		StockageService stockageService = timerTask.getStockageService();
+		WebsocketEndPoint websocket = timerTask.getWebsocket();
 		
-		calculTask = new CalculTask();
-		calculTask.setStockageService(stockageService);
-		calculTask.setWebsocket(websocket);
-		calculTask.setFinEole(l);
-		calculTask.start();
+		timerTask = new TimerTask();
+		timerTask.setStockageService(stockageService);
+		timerTask.setWebsocket(websocket);
+		timerTask.setFinEole(l);
+		timerTask.start();
 	}
 	
-	public static CalculTask getCalculTask() {
-		return calculTask;
+	public static TimerTask getTimerTask() {
+		return timerTask;
 	}
 	
-	public void setCalculTask(CalculTask calculTask) {
-		Tasks.calculTask = calculTask;
+	public void setTimerTask(TimerTask timerTask) {
+		Tasks.timerTask = timerTask;
 	}
-	
-}
+	}
