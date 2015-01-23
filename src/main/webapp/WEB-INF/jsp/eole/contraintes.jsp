@@ -4,13 +4,6 @@
 <%@ page import="alize.commun.modele.tables.pojos.*"%>
 <%
 	List<Ligne> lignes = (List<Ligne>) request.getAttribute("lignes");
-	List<Voie> voies = (List<Voie>) request.getAttribute("voies");
-	List<Arret> arrets = (List<Arret>) request.getAttribute("arrets");
-	List<Periodicite> periodicites = (List<Periodicite>) request.getAttribute("periodicites");
-	
-	Ligne ligne = (Ligne) request.getAttribute("ligne");
-	Voie voie = (Voie) request.getAttribute("voie");
-	Arret arret = (Arret) request.getAttribute("arret");
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -151,19 +144,15 @@
 								<div class="row">
 									<div class="col-lg-6">
 										<div class="form-group">
-											<label for="<%=NB_VEHICULES_MAX_LABEL %>">Nombre de véhicules maximum</label>
-											<input class="form-control" type="number" name="<%=NB_VEHICULES_MAX_LABEL %>" id="<%=NB_VEHICULES_MAX_LABEL %>" value="<%=request.getAttribute("nbVehiculesMax") %>" />
+											<label for="<%=TEMPS_CONDUITE_MAX_LABEL %>">Temps de conduite maximum légal</label>
+											<input class="form-control" type="time" name="<%=TEMPS_CONDUITE_MAX_LABEL %>" id="<%=TEMPS_CONDUITE_MAX_LABEL %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsConduiteMax") %>" onchange="update()" />
 										</div>
 										<div class="form-group">
 											<label for="<%=TEMPS_TRAVAIL_MAX_LABEL %>">Temps de travail maximum légal par jour</label>
-											<input class="form-control" type="time" name="<%=TEMPS_TRAVAIL_MAX_LABEL %>" id="<%=TEMPS_TRAVAIL_MAX_LABEL %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsTravailMax") %>" />
+											<input class="form-control" type="time" name="<%=TEMPS_TRAVAIL_MAX_LABEL %>" id="<%=TEMPS_TRAVAIL_MAX_LABEL %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsTravailMax") %>" onchange="update()" />
 										</div>
 									</div>
 									<div class="col-lg-6">
-										<div class="form-group">
-											<label for="<%=TEMPS_CONDUITE_MAX_LABEL %>">Temps de conduite maximum légal</label>
-											<input class="form-control" type="time" name="<%=TEMPS_CONDUITE_MAX_LABEL %>" id="<%=TEMPS_CONDUITE_MAX_LABEL %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsConduiteMax") %>" />
-										</div>
 										<div class="form-group">
 											<div class="row">
 												<div class="col-lg-12">
@@ -173,11 +162,11 @@
 											<div class="row">
 												<div class="col-lg-6">
 													<label class="labelLeft" for="<%=TEMPS_PAUSE_MIN_LABEL %>">Min</label>
-													<input class="inputright" type="time" name="<%=TEMPS_PAUSE_MIN_LABEL %>" id="<%=TEMPS_PAUSE_MIN_LABEL %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsPauseMin") %>" />
+													<input class="inputright" type="time" name="<%=TEMPS_PAUSE_MIN_LABEL %>" id="<%=TEMPS_PAUSE_MIN_LABEL %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsPauseMin") %>" onchange="update()" />
 												</div>
 												<div class="col-lg-6">
 													<label class="labelLeft" for="<%=TEMPS_PAUSE_MAX_LABEL %>">Max</label>
-													<input class="inputright" type="time" name="<%=TEMPS_PAUSE_MAX_LABEL %>" id="<%=TEMPS_PAUSE_MAX_LABEL %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsPauseMax") %>" />
+													<input class="inputright" type="time" name="<%=TEMPS_PAUSE_MAX_LABEL %>" id="<%=TEMPS_PAUSE_MAX_LABEL %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsPauseMax") %>" onchange="update()" />
 												</div>
 											</div>
 										</div>
@@ -227,7 +216,6 @@
 	                        </div>
 	                        <!-- /.panel-body -->
 	                    </div>
-						<input type="submit" class="btn btn-default" value="Envoyer" />
 					</form>
 				</div>
 				<!-- /.col-lg-12 -->
@@ -244,8 +232,26 @@
 	<script src="<c:url value="/resources/js/plugins/editablegrid/demo.js"/>"></script>
 	<script type="text/javascript">
 	window.onload = function() {
+		<% if(lignes.size() > 0) { %>
 		document.getElementById("<%=LIGNE_LABEL %>").value = <%=lignes.get(0).getId()%>;
 		getVoiesPourLaLigne();
+		<% } %>
+	}
+	
+	function update() {
+		var tempsConduiteMax = $("#<%=TEMPS_CONDUITE_MAX_LABEL %>").val();
+		var tempsTravailMax = $("#<%=TEMPS_TRAVAIL_MAX_LABEL %>").val();
+		var tempsPauseMin = $("#<%=TEMPS_PAUSE_MIN_LABEL %>").val();
+		var tempsPauseMax = $("#<%=TEMPS_PAUSE_MAX_LABEL %>").val();
+		
+		$.ajax({
+	    	url: "/alize/eole/contraintes/updateContraintes",
+	    	data: "tempsConduiteMax=" + tempsConduiteMax + 
+	    		"&tempsTravailMax=" + tempsTravailMax + 
+	    		"&tempsPauseMin=" + tempsPauseMin + 
+	    		"&tempsPauseMax=" + tempsPauseMax,
+	    	type: "POST"
+	    });
 	}
 	
 	function getVoiesPourLaLigne() {

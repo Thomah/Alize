@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
@@ -54,7 +55,6 @@ import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 import alize.commun.modele.tables.records.ZonedecroisementRecord;
-import alize.commun.util.ListArret;
 import alize.eole.modele.PeriodiciteM;
 
 public class StockageServiceImpl implements StockageService {
@@ -248,9 +248,19 @@ public class StockageServiceImpl implements StockageService {
 		if(colonne.compareTo("direction") == 0) {
 			voieRecord.setDirection(valeur.toString());
 		} else if(colonne.compareTo("terminusDepart_id") == 0) {
-			voieRecord.setTerminusdepartId(Integer.valueOf(valeur.toString()));
+			int terminusId = Integer.valueOf(valeur.toString());
+			if(terminusId != 0) {
+				voieRecord.setTerminusdepartId(terminusId);
+			} else {
+				voieRecord.setTerminusdepartId(null);
+			}
 		} else if(colonne.compareTo("terminusArrivee_id") == 0) {
-			voieRecord.setTerminusarriveeId(Integer.valueOf(valeur.toString()));
+			int terminusId = Integer.valueOf(valeur.toString());
+			if(terminusId != 0) {
+				voieRecord.setTerminusarriveeId(terminusId);
+			} else {
+				voieRecord.setTerminusarriveeId(null);
+			}
 		} else if(colonne.compareTo("estCommerciale") == 0) {
 			voieRecord.setEstcommerciale(Byte.valueOf(valeur.toString()));
 		}
@@ -462,42 +472,51 @@ public class StockageServiceImpl implements StockageService {
 		boolean trouve = false;
 		int k = 0;
 		int nTransitionsTotal = transitions.size();
-
-		// Recherche du terminus de départ
-		while(k < nTransitionsTotal && !trouve) {
-			if(transitions.get(k).getArretprecedentId() == v.getTerminusdepartId()) {
-				trouve = true;
+		
+		if(nTransitionsTotal > 0) {
+			
+			// Recherche du terminus de départ
+			while(k < nTransitionsTotal && !trouve) {
+				if(transitions.get(k).getArretprecedentId() == v.getTerminusdepartId()) {
+					trouve = true;
+				}
+				k++;
 			}
-			k++;
-		}
-		
-		if(trouve) {
-			arrets.add(transitions.get(k-1).getArretPrecedent());
-			arrets.add(transitions.get(k-1).getArretSuivant());
-			transitions.remove(k-1);
-			nTransitionsTotal--;
-		
-			int kArrets = 1;
-			while(nTransitionsTotal > 0) {
-				
-				trouve = false;
-				k = 0;
-
-				// Recherche de l'arret suivant
-				while(!trouve && k < nTransitionsTotal) {
-					if(transitions.get(k).getArretprecedentId() == arrets.get(kArrets).getId()) {
-						trouve = true;
+			
+			// Si un terminus de départ est trouvé, on peut ordonner les arrets
+			if(trouve) {
+				arrets.add(transitions.get(k-1).getArretPrecedent());
+				arrets.add(transitions.get(k-1).getArretSuivant());
+				transitions.remove(k-1);
+				nTransitionsTotal--;
+			
+				int kArrets = 1;
+				while(nTransitionsTotal > 0) {
+					
+					trouve = false;
+					k = 0;
+	
+					// Recherche de l'arret suivant
+					while(!trouve && k < nTransitionsTotal) {
+						if(transitions.get(k).getArretprecedentId() == arrets.get(kArrets).getId()) {
+							trouve = true;
+						}
+						k++;
 					}
-					k++;
+					
+					if(trouve) {
+						arrets.add(transitions.get(k-1).getArretSuivant());
+						transitions.remove(k-1);
+						nTransitionsTotal--;
+						kArrets++;
+					}
+					
 				}
-				
-				if(trouve) {
-					arrets.add(transitions.get(k-1).getArretSuivant());
-					transitions.remove(k-1);
-					nTransitionsTotal--;
-					kArrets++;
+			} else {
+				arrets.add(transitions.get(0).getArretPrecedent());
+				for(Transition t : transitions) {
+					arrets.add(t.getArretSuivant());
 				}
-				
 			}
 		}
 		
@@ -762,9 +781,19 @@ public class StockageServiceImpl implements StockageService {
 			} catch (ParseException e) {
 			}
 		} else if(colname.compareTo("arretPrecedent_id") == 0) {
-			transitionRecord.setArretprecedentId(Integer.valueOf(newvalue));
+			Integer idArret = Integer.valueOf(newvalue);
+			if(idArret == 0) {
+				transitionRecord.setArretprecedentId(null);
+			} else {
+				transitionRecord.setArretprecedentId(idArret);
+			}
 		} else if(colname.compareTo("arretSuivant_id") == 0) {
-			transitionRecord.setArretsuivantId(Integer.valueOf(newvalue));
+			Integer idArret = Integer.valueOf(newvalue);
+			if(idArret == 0) {
+				transitionRecord.setArretsuivantId(null);
+			} else {
+				transitionRecord.setArretsuivantId(idArret);
+			}
 		} else if(colname.compareTo("zoneDeCroisement") == 0) {
 			Integer id_zdc = Integer.valueOf(newvalue);
 			if(id_zdc == 0) {
@@ -1496,30 +1525,87 @@ public class StockageServiceImpl implements StockageService {
 		return conducteurs;
 	}
 
+	@Override
+	public void updateConducteur(int id, String colname, String newvalue) {
+		ConducteurRecord record = dsl.fetchOne(CONDUCTEUR, CONDUCTEUR.ID.equal(id));
+
+		if(colname.compareTo("nom") == 0) {
+			record.setNom(newvalue);
+		} else if(colname.compareTo("telephone") == 0) {
+			record.setTelephone(newvalue);
+		}
+		
+		record.store();
+	}
+
+	@Override
+	public void ajouterConducteur() {
+		ConducteurRecord record = dsl.newRecord(CONDUCTEUR);
+		record.setId(null);
+		record.setNom("");
+		record.setTelephone("");
+		record.store();
+	}
+
+	@Override
+	public void supprimerConducteur(int id) {
+		dsl.delete(CONDUCTEUR)
+			.where(CONDUCTEUR.ID.equal(id))
+			.execute();
+	}
+
 	/* GESTION DES DIAGRAMMES DE LIGNE */
 	
 	@Override
-	public ListArret getArretsDiagramme(int idLigne) {
-
+	public List<List<Arret>> getArretsDiagramme(int idLigne) {
 		List<Voie> voies = getVoiesPourLaLigne(idLigne);
-		ListArret arrets = new ListArret();
+		List<List<Arret>> arretsLigne = new ArrayList<List<Arret>>();
 		List<Arret> arretsVoie;
-		Arret arret;
-		boolean doitEtreAjoute = true;
-		int dernierIndexInsere = 0;
-		
 		for(Voie v : voies) {
 			arretsVoie = getArretsPourLaVoie(v.getId());
-			for(Arret a : arretsVoie) {
-				doitEtreAjoute = !arrets.contains(a);
-				if(doitEtreAjoute) {
-					arrets.add(dernierIndexInsere, a);
-					dernierIndexInsere++;
-				}
-			}
+			arretsLigne.add(arretsVoie);
 		}
 		
-		return arrets;
+		return arretsLigne;
+	}
+
+	@Override
+	public List<List<Action>> getActionsPourLaLigne(int idLigne) {
+		List<Voie> voies = getVoiesPourLaLigne(idLigne);
+		List<List<Action>> actionsLigne = new ArrayList<List<Action>>();
+		List<Action> arretsVoie;
+		for(Voie v : voies) {
+			arretsVoie = getActionsPourLaVoie(v.getId());
+			actionsLigne.add(arretsVoie);
+		}
+		
+		return actionsLigne;
+	}
+	
+	@Override
+	public List<Action> getActionsPourLaVoie(int idVoie) {
+		
+		List<Action> actions = new ArrayList<Action>();
+		Action action;
+		
+		Result<Record> records = dsl.select(ACTION.fields())
+				.from(ACTION)
+				.where(ACTION.VOIE_ID.equal(idVoie))
+				.orderBy(ACTION.VEHICULE_ID, ACTION.TIME)
+				.fetch();
+		
+		for(Record record : records) {
+			action = new Action();
+			action.setId(record.getValue(ACTION.ID));
+			action.setTime(record.getValue(ACTION.TIME));
+			action.setTypeaction(record.getValue(ACTION.TYPEACTION));
+			action.setParametre(record.getValue(ACTION.PARAMETRE));
+			action.setVehiculeId(record.getValue(ACTION.VEHICULE_ID));
+			action.setVoieId(record.getValue(ACTION.VOIE_ID));
+			actions.add(action);
+		}
+		
+		return actions;
 	}
 
 	

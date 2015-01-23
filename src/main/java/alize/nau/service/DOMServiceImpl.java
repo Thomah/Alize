@@ -12,6 +12,7 @@ import static alize.commun.modele.tables.Voie.*;
 import static alize.commun.modele.tables.VoieTransition.*;
 import static alize.commun.modele.tables.Terminus.*;
 import static alize.commun.modele.tables.Transition.*;
+import static alize.commun.modele.tables.Zonedecroisement.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -40,6 +41,7 @@ import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Depot;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Terminus;
+import alize.commun.modele.tables.pojos.Zonedecroisement;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.DepotRecord;
 import alize.commun.modele.tables.records.IntervalleRecord;
@@ -51,6 +53,7 @@ import alize.commun.modele.tables.records.TerminusRecord;
 import alize.commun.modele.tables.records.TransitionRecord;
 import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
+import alize.commun.modele.tables.records.ZonedecroisementRecord;
 import alize.commun.service.StockageService;
 
 public class DOMServiceImpl implements DOMService {
@@ -227,6 +230,18 @@ public class DOMServiceImpl implements DOMService {
 				}
 			}
 			
+			// Importation des zones de croisement
+			listElements = racine.getChild("zonesdecroisement").getChildren();
+			i = listElements.iterator();
+			ZonedecroisementRecord zonedecroisement = dsl.newRecord(ZONEDECROISEMENT);
+
+			while (i.hasNext()) {
+				courant = (Element) i.next();
+				zonedecroisement.setId(Integer.valueOf(courant.getAttributeValue("id")));
+				zonedecroisement.setNom(courant.getAttributeValue("nom"));
+				zonedecroisement.store();
+			}
+			
 			// Importation des transitions
 			listElements = racine.getChild("transitions").getChildren();
 			i = listElements.iterator();
@@ -251,8 +266,27 @@ public class DOMServiceImpl implements DOMService {
 					e.printStackTrace();
 				}
 				
-				transition.setArretprecedentId(Integer.valueOf(courant.getChild("arretPrecedent").getChild("Arret").getAttributeValue("ref")));
-				transition.setArretsuivantId(Integer.valueOf(courant.getChild("arretSuivant").getChild("Arret").getAttributeValue("ref")));
+				Integer id = Integer.valueOf(courant.getChild("arretPrecedent").getChild("Arret").getAttributeValue("ref"));
+				if(id == 0) {
+					transition.setArretprecedentId(null);
+				} else {
+					transition.setArretprecedentId(id);
+				}
+				
+				id = Integer.valueOf(courant.getChild("arretSuivant").getChild("Arret").getAttributeValue("ref"));
+				if(id == 0) {
+					transition.setArretprecedentId(null);
+				} else {
+					transition.setArretprecedentId(id);
+				}
+
+				id = Integer.valueOf(courant.getChild("zoneDeCroisement").getChild("Zonedecroisement").getAttributeValue("ref"));
+				if(id == 0) {
+					transition.setArretprecedentId(null);
+				} else {
+					transition.setArretprecedentId(id);
+				}
+				
 				transition.store();
 			}
 
@@ -378,6 +412,18 @@ public class DOMServiceImpl implements DOMService {
 		}
 		doc.getRootElement().addContent(lignes);
 		
+		// Ajout des zones de croisement
+		List<ZoneDeCroisement> listeZonesDeCroisement = stockageService.getZonesDeCroisement();
+		Element zonesDeCroisement = new Element("zonesdecroisement");
+		Element zoneDeCroisement;
+		for(Zonedecroisement zdc : listeZonesDeCroisement) {
+			zoneDeCroisement = new Element("Zonedecroisement");
+			zoneDeCroisement.setAttribute("id", zdc.getId().toString());
+			zoneDeCroisement.setAttribute("nom", zdc.getNom());
+			zonesDeCroisement.addContent(zoneDeCroisement);
+		}
+		doc.getRootElement().addContent(zonesDeCroisement);
+		
 		// Ajout des transitions
 		List<Transition> listeTransitions = stockageService.getTransitions();
 		Element transitions = new Element("transitions");
@@ -390,16 +436,35 @@ public class DOMServiceImpl implements DOMService {
 			// Ajout de l'arret précédent
 			Element arretPrecedent = new Element("arretPrecedent");
 			Element arretP = new Element("Arret");
-			arretP.setAttribute(new Attribute("ref", t.getArretprecedentId().toString()));
+			if(t.getArretprecedentId() != null) {
+				arretP.setAttribute(new Attribute("ref", t.getArretprecedentId().toString()));
+			} else {
+				arretP.setAttribute(new Attribute("ref", "0"));
+			}
 			arretPrecedent.addContent(arretP);
 			transition.addContent(arretPrecedent);
 
 			// Ajout du terminus de départ
 			Element arretSuivant = new Element("arretSuivant");
 			Element arretS = new Element("Arret");
-			arretS.setAttribute(new Attribute("ref", t.getArretsuivantId().toString()));
+			if(t.getArretprecedentId() != null) {
+				arretS.setAttribute(new Attribute("ref", t.getArretsuivantId().toString()));
+			} else {
+				arretS.setAttribute(new Attribute("ref", "0"));
+			}
 			arretSuivant.addContent(arretS);
 			transition.addContent(arretSuivant);
+			
+			// Ajout de la zone de croisement
+			zoneDeCroisement = new Element("zoneDeCroisement");
+			Element zdc = new Element("Zonedecroisement");
+			if(t.getZonedecroisementId() != null) {
+				zdc.setAttribute(new Attribute("ref", t.getZonedecroisementId().toString()));
+			} else {
+				zdc.setAttribute(new Attribute("ref", "0"));
+			}
+			zoneDeCroisement.addContent(zdc);
+			transition.addContent(zoneDeCroisement);
 			
 			transitions.addContent(transition);
 		}

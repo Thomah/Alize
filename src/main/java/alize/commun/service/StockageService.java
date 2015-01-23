@@ -12,7 +12,6 @@ import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Vacation;
 import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.modele.tables.pojos.Zonedecroisement;
-import alize.commun.util.ListArret;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -1103,6 +1102,42 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Conducteur> getConducteurs();
+
+	/**
+	 * Met à jour le conducteur indiquée stocké en BDD
+	 * @name updateVehicule
+	 * @description Met à jour le conducteur indiquée stocké en BDD
+	 * @param id L'identifiant du conducteur à mettre à jour
+	 * @param colname La colonne mise à jour
+	 * @param newvalue La valeur mise à jour
+	 * @author Thomas [TH]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public void updateConducteur(int id, String colname, String newvalue);
+
+	/**
+	 * Créer un nouveau conducteur en BDD
+	 * 
+	 * @name ajouterServiceConducteur
+	 * @description Créer un nouveau conducteur en BDD
+	 * @author Thomas [TH]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterConducteur();
+
+	/**
+	 * Supprime un conducteur en BDD selon son ID
+	 * 
+	 * @name supprimerConducteur
+	 * @description Supprime un conducteur en BDD selon son ID
+	 * @param id L'identifiant du conducteur à supprimer
+	 * @author Thomas [TH]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerConducteur(int id);
 	
 	/* GESTION DU DIAGRAMME DE LIGNE */
 
@@ -1117,15 +1152,32 @@ public interface StockageService {
 	 * @date 15 jan. 2015
 	 * @version 1
 	 */
-	public ListArret getArretsDiagramme(int idLigne);
+	public List<List<Arret>> getArretsDiagramme(int idLigne);
 
+	/**
+	 * Récupère les actions d'une ligne
+	 * 
+	 * @name getActionsPourLaLigne
+	 * @description Récupère les actions d'une ligne
+	 * @param idLigne L'identifiant de la ligne
+	 * @return La liste des actions d'une ligne
+	 * @author Thomas [TH]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public List<List<Action>> getActionsPourLaLigne(int idLigne);
 	
-
-	
-
-	
-
-
-	
+	/**
+	 * Récupère les actions d'une voie
+	 * 
+	 * @name getActionsPourLaLigne
+	 * @description Récupère les actions d'une voie
+	 * @param idVoie L'identifiant de la voie
+	 * @return La liste des actions d'une voie
+	 * @author Thomas [TH]
+	 * @date 19 jan. 2015
+	 * @version 1
+	 */
+	public List<Action> getActionsPourLaVoie(int idVoie);
 	
 }
