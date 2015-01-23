@@ -413,7 +413,7 @@ public class DOMServiceImpl implements DOMService {
 		doc.getRootElement().addContent(lignes);
 		
 		// Ajout des zones de croisement
-		List<Zonedecroisement> listeZonesDeCroisement = stockageService.getZonesDeCroisement();
+		List<ZoneDeCroisement> listeZonesDeCroisement = stockageService.getZonesDeCroisement();
 		Element zonesDeCroisement = new Element("zonesdecroisement");
 		Element zoneDeCroisement;
 		for(Zonedecroisement zdc : listeZonesDeCroisement) {

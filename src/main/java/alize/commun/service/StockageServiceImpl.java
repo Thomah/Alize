@@ -55,11 +55,10 @@ import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 import alize.commun.modele.tables.records.ZonedecroisementRecord;
-<<<<<<< HEAD
-import alize.commun.util.ListArret;
+
+//import alize.commun.util.ListArret;
 import alize.eole.modele.PeriodiciteM;
-=======
->>>>>>> 36fdf9bb87a3fb6c7069c46ed244629a5afca3d1
+
 
 public class StockageServiceImpl implements StockageService {
 
@@ -1608,7 +1607,6 @@ public class StockageServiceImpl implements StockageService {
 			action.setVoieId(record.getValue(ACTION.VOIE_ID));
 			actions.add(action);
 		}
-		
 		return actions;
 	}
 

@@ -1154,15 +1154,7 @@ public interface StockageService {
 	 */
 	public List<List<Arret>> getArretsDiagramme(int idLigne);
 	
-<<<<<<< HEAD
 
-	
-
-	
-
-
-	
-=======
 	/**
 	 * Récupère les actions d'une ligne
 	 * 
@@ -1188,6 +1180,5 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Action> getActionsPourLaVoie(int idVoie);
->>>>>>> 36fdf9bb87a3fb6c7069c46ed244629a5afca3d1
 	
 }

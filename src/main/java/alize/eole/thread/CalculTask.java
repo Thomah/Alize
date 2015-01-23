@@ -13,6 +13,7 @@ import org.springframework.web.socket.TextMessage;
 
 import alize.commun.Heure;
 import alize.commun.exception.CalculException;
+import alize.commun.exception.SolutionIncomptatibleException;
 import alize.commun.modele.Arret;
 import alize.commun.modele.Depot;
 import alize.commun.modele.Intervalle;
@@ -63,6 +64,7 @@ public class CalculTask extends Thread {
 			
 			int horloge = debutJourneeSec;
 			ajouterLigneLog("Go");
+			try {
 			while(horloge!=finJourneeSec){
 				
 				for(Vehicule v : listeVehicules){
@@ -76,7 +78,9 @@ public class CalculTask extends Thread {
 							if(nouvelleTransition.getZonedecroisementId()!=null){
 								ZoneDeCroisement z = trouverZoneDeCroisement(nouvelleTransition.getZonedecroisementId());
 								if(z.isOccupee()){
-									//throw new SolutionIncomptatibleException("Conflit d'entrée dans la zone de croisement " + z.getNom());
+									
+										throw new SolutionIncomptatibleException("Conflit d'entrée dans la zone de croisement " + z.getNom());
+									
 								}else{
 									z.setOccupee(true);
 								}
@@ -100,6 +104,9 @@ public class CalculTask extends Thread {
 				}
 				
 				horloge++;
+			}
+			} catch (SolutionIncomptatibleException e) {
+				e.printStackTrace();
 			}
 			
 			timerTask.stopperTimer("Fin des calculs");
