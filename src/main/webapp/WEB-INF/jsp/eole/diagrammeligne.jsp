@@ -84,12 +84,6 @@ svg {
 	// Variables globales
 	var diagrammes = [];
 	
-	var LARGEUR_SVG = 914;
-	var INTERVALLE_GRADUATION_ORDONNEES = 50;
-	var MIN_TEMPS = 5;
-	var MAX_TEMPS = 27;
-	var HEIGHT_TEXTE = 20;
-	
 	// Appels au chargement de la page
 	getDiagramme();
 	
@@ -112,7 +106,7 @@ svg {
 		    		}
 		    		
 		    		for(indexArray = 0; indexArray < dataJSON[0].length; ++indexArray) {
-		    			paintActions(dataJSON, indexArray);
+		    			diagrammes[indexArray].paintActions(dataJSON, indexArray);
 		    		}
 		    	}
 		    });
