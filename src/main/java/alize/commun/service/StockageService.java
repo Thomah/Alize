@@ -1153,7 +1153,6 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<List<Arret>> getArretsDiagramme(int idLigne);
-	
 
 	/**
 	 * Récupère les actions d'une ligne

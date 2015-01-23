@@ -55,8 +55,6 @@ import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 import alize.commun.modele.tables.records.ZonedecroisementRecord;
-
-//import alize.commun.util.ListArret;
 import alize.eole.modele.PeriodiciteM;
 
 
