@@ -27,6 +27,11 @@
 					<i class="fa fa-th-list fa-fw"></i> Conducteurs
 				</a>
 			</li>
+			<li>
+				<a <% out.print(classActive(urlPage, URL_FEUILLES_DE_SERVICES)); %> href="<c:url value="<%=URL_FEUILLES_DE_SERVICES %>" />">
+					<i class="fa fa-th-list fa-fw"></i> Feuilles de services
+				</a>
+			</li>
 		</ul>
 	</div>
 </div>

@@ -27,10 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import alize.commun.modele.*;
-import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Periodicite;
-import alize.commun.modele.tables.pojos.Service;
-import alize.commun.modele.tables.pojos.Vacation;
 import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.service.StockageService;
 

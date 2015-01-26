@@ -1,16 +1,16 @@
 package alize.orion.controlleur;
 
 import static alize.commun.Constantes.*;
-import static alize.nau.commun.Constantes.URL_LIGNES;
 import static alize.orion.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.jooq.tools.json.JSONArray;
-import org.jooq.tools.json.JSONObject;
+import org.json.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
-import alize.commun.modele.tables.pojos.Service;
-import alize.commun.modele.tables.pojos.Voie;
 import alize.commun.service.StockageService;
 
 /**
@@ -71,12 +70,16 @@ public class OrionControlleur {
 	public @ResponseBody String getServices(@RequestParam String date) {
 		Map<Service, Integer> services = stockageService.getServices(date);
 		JSONArray array = new JSONArray();
-		for (Entry<Service, Integer> s : services.entrySet()) {
-			Service service = s.getKey();
-			JSONObject object = new JSONObject();
-			object.put("'id'", service.getId());
-			object.put("'conducteur'", s.getValue());
-			array.add(object);
+		try {
+			for (Entry<Service, Integer> s : services.entrySet()) {
+				Service service = s.getKey();
+				JSONObject object = new JSONObject();
+				object.put("'id'", service.getId());
+				object.put("'conducteur'", s.getValue());
+				array.put(object);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		String validJSONString = array.toString().replace("'", "\"")
 				.replace("=", ":");
@@ -139,12 +142,16 @@ public class OrionControlleur {
 	public @ResponseBody String getConducteurs() {
 		List<Conducteur> conducteurs = stockageService.getConducteurs();
 		JSONArray array = new JSONArray();
-		for (Conducteur c : conducteurs) {
-			JSONObject object = new JSONObject();
-			object.put("'id'", c.getId());
-			object.put("'nom'", "'" + c.getNom() + "'");
-			object.put("'telephone'", "'" + c.getTelephone() + "'");
-			array.add(object);
+		try {
+			for (Conducteur c : conducteurs) {
+				JSONObject object = new JSONObject();
+				object.put("'id'", c.getId());
+				object.put("'nom'", "'" + c.getNom() + "'");
+				object.put("'telephone'", "'" + c.getTelephone() + "'");
+				array.put(object);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 		String validJSONString = array.toString().replace("'", "\"")
 				.replace("=", ":");
@@ -201,6 +208,81 @@ public class OrionControlleur {
 	public @ResponseBody String supprimerConducteur(@RequestParam int id) {
 		stockageService.supprimerConducteur(id);
 		return "ok";
+	}
+
+	/* AFFICHAGE DES FEUILLES DE SERVICES */
+	
+	/**
+	 * Affiche la JSP de gestion des feuilles de services
+	 * 
+	 * @name afficherFeuillesDeServices
+	 * @description Affiche la JSP de visualisation des feuilles de services
+	 * @return La vue de la JSP de visualisation des feuilles de services
+	 * @author Thomas [TH]
+	 * @date 26 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FEUILLES_DE_SERVICES, method = GET)
+	public ModelAndView afficherFeuillesDeServices() {
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_FEUILLES_DE_SERVICES);
+		view.addObject(URL_MODULE_CLE, URL_MODULE);
+		view.addObject(URL_PAGE_CLE, URL_FEUILLES_DE_SERVICES);
+		return view;
+	}
+	
+	/**
+	 * Retourne en AJAX la liste des feuilles de service au format JSON
+	 * 
+	 * @name getListeFDS
+	 * @description Retourne en AJAX la liste des feuilles de service au format JSON
+	 * @return La liste des feuilles de service au format JSON
+	 * @author Thomas [TH]
+	 * @date 26 jan. 2015
+	 * @version 1
+	 */
+	@RequestMapping(value = URL_FEUILLES_DE_SERVICES + "/get", method = POST)
+	public @ResponseBody String getListeFDS(@RequestParam String date) {
+		SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm:ss");
+		JSONObject fdsJSON = new JSONObject();
+		try {
+			Feuilledeservice fds = stockageService.getFDS(new java.sql.Date(dateFormatter.parse(date).getTime()));
+
+			fdsJSON.put("id", fds.getId());
+			fdsJSON.put("couleur", fds.getCouleur());
+			fdsJSON.put("debutSaison", fds.getDebutsaison());
+			fdsJSON.put("finSaison", fds.getFinsaison());
+			
+			JSONArray servicesJSON = new JSONArray();
+			for(Service s : fds.getServices()) {
+				JSONObject serviceJSON = new JSONObject();
+				serviceJSON.put("id", s.getId());
+				serviceJSON.put("fds_id", s.getFeuilledeserviceId());
+				
+				JSONArray vacationsJSON = new JSONArray();
+				for(Vacation v : s.getVacations()) {
+					JSONObject vacationJSON = new JSONObject();
+					vacationJSON.put("'id'", v.getId());
+					vacationJSON.put("'heureDebut'", timeFormatter.format(v.getHeuredebut()));
+					vacationJSON.put("'heureFin'", timeFormatter.format(v.getHeurefin()));
+					vacationJSON.put("'arretEchangeConducteurDebut_id'", v.getArretechangeconducteurdebutId());
+					vacationJSON.put("'arretEchangeConducteurFin_id'", v.getArretechangeconducteurfinId());
+					vacationJSON.put("'vehicule_id'", v.getVehiculeId());
+					vacationJSON.put("'service_id'", v.getServiceId());
+					vacationsJSON.put(vacationJSON);
+				}
+				
+				serviceJSON.put("vacations", vacationsJSON);
+				servicesJSON.put(serviceJSON);
+			}
+			
+			fdsJSON.put("services", servicesJSON);
+			
+			
+		} catch (JSONException |ParseException e) {
+			e.printStackTrace();
+		}
+		return fdsJSON.toString();
 	}
 
 }

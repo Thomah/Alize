@@ -28,14 +28,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
-import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
-import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Terminus;
-import alize.commun.modele.tables.pojos.Vacation;
-import alize.commun.modele.tables.pojos.Vehicule;
-import alize.commun.modele.tables.pojos.Zonedecroisement;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.AssociationconducteurserviceRecord;
 import alize.commun.modele.tables.records.ConducteurRecord;
@@ -55,8 +50,6 @@ import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 import alize.commun.modele.tables.records.ZonedecroisementRecord;
-import alize.eole.modele.PeriodiciteM;
-
 
 public class StockageServiceImpl implements StockageService {
 
@@ -1018,7 +1011,6 @@ public class StockageServiceImpl implements StockageService {
 		return t;
 	}
 	
-	
 	@Override
 	public void ajouterTerminus(int idArret) {
 		TerminusRecord terminusRecord = dsl.newRecord(TERMINUS);
@@ -1086,6 +1078,22 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return fdss;
+	}
+	
+	@Override
+	public Feuilledeservice getFDS(java.sql.Date date) {
+		
+		FeuilledeserviceRecord record = dsl.fetchOne(
+				FEUILLEDESERVICE, 
+				FEUILLEDESERVICE.DEBUTSAISON.le(date)
+					.and(FEUILLEDESERVICE.FINSAISON.ge(date)));
+		
+		Feuilledeservice f = new Feuilledeservice(record);
+		if(f.getId() != null) {
+			f.setServices(getServices(f.getId()));
+		}
+		
+		return f;
 	}
 
 	@Override
@@ -1217,6 +1225,22 @@ public class StockageServiceImpl implements StockageService {
 			service = new Service();
 			service.setId(s.getValue(SERVICE.ID));
 			service.setFeuilledeserviceId(s.getValue(SERVICE.FEUILLEDESERVICE_ID));
+			services.add(service);
+		}
+		
+		return services;
+	}
+
+	@Override
+	public List<Service> getServices(int idFDS) {
+		Service service;
+		List<Service> services = new ArrayList<Service>();
+		
+		Result<ServiceRecord> results = dsl.fetch(SERVICE, SERVICE.FEUILLEDESERVICE_ID.equal(idFDS));
+		
+		for (ServiceRecord s : results) {
+			service = new Service(s);
+			service.setVacations(getVacations(service.getId(), 0));
 			services.add(service);
 		}
 		
@@ -1607,9 +1631,5 @@ public class StockageServiceImpl implements StockageService {
 		}
 		return actions;
 	}
-
-	
-
-	
 
 }
