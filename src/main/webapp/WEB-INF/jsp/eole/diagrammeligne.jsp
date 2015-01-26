@@ -76,7 +76,7 @@ svg {
 	<script
 		src="<c:url value="/resources/js/plugins/datetimepicker/bootstrap-datetimepicker.js"/>"></script>
 	<script
-		src="<c:url value="/resources/js/plugins/snapsvg/snap.svg-min.js"/>"></script>
+		src="<c:url value="/resources/js/plugins/svg/svg.min.js"/>"></script>
 	<script
 		src="<c:url value="/resources/js/plugins/diagrammeligne/diagrammeligne.js"/>"></script>
 	<script type="text/javascript">

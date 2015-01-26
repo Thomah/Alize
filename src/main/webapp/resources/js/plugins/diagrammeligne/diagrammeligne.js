@@ -1,17 +1,26 @@
 function DiagrammeVoie () {
 	
-	var MIN_TEMPS = 5;
-	var MAX_TEMPS = 27;
-	
-	this.heightSVG = 0;
-	this.widthSVG = 914;
-	this.heightAbscisses = 40;
-	this.widthOrdonnees = 100;
-	this.heightTitle = 30;
+	this.minTemps = 5;
+	this.maxTemps = 27;
+
+	this.sizeChar = 8;
 	this.sizeGraduation = 4;
 	this.spaceGraduation = 50;
+
+	this.widthSVG = 914;
+	this.widthOrdonnees = 100;
+	this.widthGraph = 100;
+	this.widthGraduation;
+	
+	this.heightSVG = 0;
+	this.heightTitle = 30;
+	this.heightText = 12;
+	this.heightGraph = -this.spaceGraduation;
+	this.heightAbscisses = 40;
+	
 	this.margin = 5;
-	this.paper;
+	
+	this.draw;
 	
 	if ( typeof DiagrammeVoie.initialized == "undefined" ) {
 		
@@ -22,64 +31,79 @@ function DiagrammeVoie () {
 			
 			if(this.heightSVG > 0) {
 				
-				var domElement = document.createElement("svg");
+				var domElement = document.createElement("div");
 				domElement.setAttribute("id", "diagramme-" + indexVoie)
 				document.getElementById("diagramme").appendChild(domElement);
 				
-				$.getScript("../resources/js/plugins/snapsvg/snap.svg-min.js");
-				this.paper = Snap('#diagramme-' + indexVoie);
-				this.paper.attr({
-				    width: this.widthSVG,
-				    height: this.heightSVG
-				});
-				
-				// Ajout du titre
-				this.paper.text(this.margin, this.heightTitle, "Voie " + indexVoie);
-				
-				// Ajout de l'axe des abscisses
-				var axeAbscisses = this.paper.line(
-						this.margin + this.widthOrdonnees + this.sizeGraduation/2, 
-						this.heightSVG - this.margin - this.heightTitle - this.sizeGraduation/2, 
-						this.widthSVG - this.margin - this.heightAbscisses, 
-						this.heightSVG - this.margin - this.heightAbscisses - this.sizeGraduation/2);
-				axeAbscisses.attr({
-				    fill: "#bada55",
-				    stroke: "#000",
-				    strokeWidth: 1
-				});
-				
-				// Ajout des graduations de l'axe des abscisses
-				var indexAbscisses;
-				var deltaX = (this.widthSVG - 2 * this.margin) / (MAX_TEMPS - MIN_TEMPS);
-				for(indexAbscisses = 0; indexAbscisses < (MAX_TEMPS - MIN_TEMPS) ; ++indexAbscisses) {
-					var graduationsAbscisses = this.paper.line(this.margin + indexAbscisses * deltaX, this.heightSVG - this.margin - this.heightTitle + 2, this.margin + indexAbscisses * deltaX, this.heightSVG - this.margin - this.heightTitle - 2);
-					graduationsAbscisses.attr({
-	    			    fill: "#bada55",
-	    			    stroke: "#000",
-	    			    strokeWidth: 1
-	    			});
+				$.getScript("../resources/js/plugins/svg/svg.min.js");
+				if (SVG.supported) {
+					this.draw = SVG('diagramme-' + indexVoie).size(this.widthSVG, this.heightSVG);
+					
+					// Ajout du titre
+					this.draw.text("Voie " + indexVoie)
+						.x(this.margin)
+						.y(0);
+					
+					// Ajout de l'axe des abscisses
+					this.draw.line(
+						this.margin + this.widthOrdonnees, 
+						this.margin + this.heightTitle + this.heightGraph, 
+						this.margin + this.widthOrdonnees + this.widthGraph, 
+						this.margin + this.heightTitle + this.heightGraph)
+						.stroke({ width: 1 });
+					
+					// Ajout des graduations de l'axe des abscisses
+					var indexAbscisses;
+					this.widthGraduation = this.widthGraph / (this.maxTemps - this.minTemps);
+					for(indexAbscisses = 0; indexAbscisses < (this.maxTemps - this.minTemps + 1) ; ++indexAbscisses) {
+						
+						this.draw.line(
+							this.margin + this.widthOrdonnees + indexAbscisses * this.widthGraduation, 
+							this.margin + this.heightTitle + this.heightGraph - this.sizeGraduation/2, 
+							this.margin + this.widthOrdonnees + indexAbscisses * this.widthGraduation, 
+							this.margin + this.heightTitle + this.heightGraph + this.sizeGraduation/2)
+							.stroke({ width: 1 });
+						
+						var heure = indexAbscisses + this.minTemps;
+						this.draw.text(heure.toString())
+							.x(this.margin + this.widthOrdonnees + indexAbscisses * this.widthGraduation - (heure.toString().length-1) * this.sizeChar)
+							.y(this.margin + this.heightTitle + this.heightGraph + this.heightText)
+							.font({
+								size: this.heightText
+							});
+						
+					}
+					
+					// Ajout de l'axe des ordonnées
+					this.draw.line(
+						this.margin + this.widthOrdonnees, 
+						this.margin + this.heightTitle, 
+						this.margin + this.widthOrdonnees, 
+						this.margin + this.heightTitle + this.heightGraph)
+						.stroke({ width: 1 });
+					
+					// Ajout des graduations de l'axe des ordonnées
+		    		for(indexObject = 0; indexObject < dataJSON[1][indexVoie].length; ++indexObject) {
+		    			
+		    			this.draw.line(
+	    					this.margin + this.widthOrdonnees - this.sizeGraduation/2, 
+							this.margin + this.heightTitle + indexObject * this.spaceGraduation, 
+	    					this.margin + this.widthOrdonnees + this.sizeGraduation/2, 
+							this.margin + this.heightTitle + indexObject * this.spaceGraduation)
+							.stroke({ width: 1 });
+
+						this.draw.text(dataJSON[1][indexVoie][indexObject].nom)
+							.x(this.margin)
+							.y(this.margin + this.heightTitle + indexObject * this.spaceGraduation - this.heightText/2)
+							.font({
+								size: this.heightText
+							});
+						
+		 	    		console.log(dataJSON[1][indexVoie][indexObject]);
+		    		}
+				} else {
+					alert('SVG not supported');
 				}
-				
-				// Ajout de l'axe des ordonnées
-				var axeOrdonnees = this.paper.line(this.margin, this.margin + this.heightTitle, this.margin, this.heightSVG - this.margin - this.heightTitle);
-				axeOrdonnees.attr({
-				    fill: "#bada55",
-				    stroke: "#000",
-				    strokeWidth: 1
-				});
-				
-				// Ajout des graduations de l'axe des ordonnées
-	    		for(indexObject = 0; indexObject < dataJSON[1][indexVoie].length; ++indexObject)
-	    		{
-	    			var graduationsOrdonnees = this.paper.line(this.margin - 2, this.margin + (indexObject + 1) * this.spaceGraduation, this.margin + 2, this.margin + (indexObject + 1) * this.spaceGraduation);
-	    			graduationsOrdonnees.attr({
-	    			    fill: "#bada55",
-	    			    stroke: "#000",
-	    			    strokeWidth: 1
-	    			});
-	    			
-	 	    		console.log(dataJSON[1][indexVoie][indexObject]);
-	    		}
 			
 			}
 			
@@ -90,16 +114,18 @@ function DiagrammeVoie () {
 	   		if(length == 0) {
 	   			this.heightSVG = 0;
 	   		} else {
-	   			var heightSVG = 3 * this.margin + this.heightTitle + this.sizeGraduation + this.heightAbscisses;
 	   	   		for(indexObject = 0; indexObject < length; ++indexObject)
 	   	   		{
-	   	   			this.heightSVG+= this.spaceGraduation;
+	   	   			this.heightGraph+= this.spaceGraduation;
 	   	   		}
+   	   			this.heightSVG = 2 * this.margin + this.heightTitle + this.heightGraph +  this.heightAbscisses;
 	   		}
 		}
 		
 		DiagrammeVoie.prototype.calculWidth = function(document) {
-			this.widthSVG = document.getElementById("diagramme").offsetWidth;
+			var element = document.getElementById("diagramme");
+			this.widthSVG = element.offsetWidth - parseFloat(window.getComputedStyle(element).paddingLeft) - parseFloat(window.getComputedStyle(element).paddingRight);
+			this.widthGraph = this.widthSVG - 2 * this.margin - this.widthOrdonnees;
 		}
 
 		DiagrammeVoie.prototype.paintActions = function(dataJSON, indexVoie) {
@@ -114,10 +140,34 @@ function DiagrammeVoie () {
 					if(actionActuelle.vehiculeId == vehiculeId) {
 						if(actionPrecedente.typeAction == 1 && actionActuelle.typeAction == 0) {
 							console.log("Transition repérée");
+							console.log("Heure Début : " + this.timeStringToFloat(actionPrecedente.time));
+							console.log("Heure Fin : " + this.timeStringToFloat(actionActuelle.time));
+							console.log("Index Arret Précédent : " + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre));
+							console.log("Index Arret Suivant : " + this.getIndexOfArret(dataJSON, indexVoie, actionActuelle.parametre));
+							
+							this.draw.line(
+								this.margin + this.widthOrdonnees + this.timeStringToFloat(actionPrecedente.time) * this.widthGraduation - this.minTemps, 
+								this.margin + this.heightTitle + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre) * this.spaceGraduation, 
+								this.margin + this.widthOrdonnees + this.timeStringToFloat(actionActuelle.time) * this.widthGraduation - this.minTemps, 
+								this.margin + this.heightTitle + this.getIndexOfArret(dataJSON, indexVoie, actionActuelle.parametre) * this.spaceGraduation)
+								.stroke({ color: '#f06', width: 1 });
+							
 							actionPrecedente = actionActuelle;
 						}
 						if(actionPrecedente.typeAction == 0 && actionActuelle.typeAction == 1) {
 							console.log("Attente repérée");
+							console.log("Heure Début : " + this.timeStringToFloat(actionPrecedente.time));
+							console.log("Heure Fin : " + this.timeStringToFloat(actionActuelle.time));
+							console.log("Index Arret Précédent : " + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre));
+							console.log("Index Arret Suivant : " + this.getIndexOfArret(dataJSON, indexVoie, actionActuelle.parametre));
+
+							this.draw.line(
+								this.margin + this.widthOrdonnees + this.timeStringToFloat(actionPrecedente.time) * this.widthGraduation - this.minTemps, 
+								this.margin + this.heightTitle + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre) * this.spaceGraduation, 
+								this.margin + this.widthOrdonnees + this.timeStringToFloat(actionActuelle.time) * this.widthGraduation - this.minTemps, 
+								this.margin + this.heightTitle + this.getIndexOfArret(dataJSON, indexVoie, actionActuelle.parametre) * this.spaceGraduation)
+								.stroke({ color: '#f06', width: 1 });
+							
 							actionPrecedente = actionActuelle;
 						}
 					} else {
@@ -128,6 +178,28 @@ function DiagrammeVoie () {
 			}
 			
 		}
+		
+		DiagrammeVoie.prototype.getIndexOfArret = function(dataJSON, indexVoie, idArret) {
+			
+			var trouve = false;
+			var indexArret = 0;
+			while(!trouve && indexArret < dataJSON[0][indexVoie].length) {
+				trouve = dataJSON[1][indexVoie][indexArret].id == idArret;
+				indexArret++;
+			}
+			
+			if(trouve) {
+				return --indexArret;
+			}
+			
+		}
+		
+		DiagrammeVoie.prototype.timeStringToFloat = function(time) {
+			  var hoursMinutes = time.split(/[.:]/);
+			  var hours = parseInt(hoursMinutes[0], 10);
+			  var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+			  return hours + minutes / 60;
+			}
 		
 		DiagrammeVoie.initialized = true;
 	}
