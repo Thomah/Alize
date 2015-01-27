@@ -28,94 +28,12 @@ a:hover, a:focus {
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">Feuilles de service</h1>
+					<h1 class="page-header">Feuille de service : <span id="idFDS"></span></h1>
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-4">
-                   <div class="panel panel-default">
-                       <div class="panel-heading">
-                           Kitchen Sink
-                       </div>
-                       <!-- /.panel-heading -->
-                       <div class="panel-body">
-                           <div class="table-responsive">
-                               <table class="table table-striped table-bordered table-hover">
-                                   <thead>
-                                       <tr>
-                                           <th>#</th>
-                                           <th>First Name</th>
-                                           <th>Last Name</th>
-                                           <th>Username</th>
-                                       </tr>
-                                   </thead>
-                                   <tbody>
-                                       <tr>
-                                           <td>1</td>
-                                           <td>Mark</td>
-                                           <td>Otto</td>
-                                           <td>@mdo</td>
-                                       </tr>
-                                       <tr>
-                                           <td>2</td>
-                                           <td>Jacob</td>
-                                           <td>Thornton</td>
-                                           <td>@fat</td>
-                                       </tr>
-                                       <tr>
-                                           <td>3</td>
-                                           <td>Larry</td>
-                                           <td>the Bird</td>
-                                           <td>@twitter</td>
-                                       </tr>
-                                   </tbody>
-                               </table>
-                           </div>
-                       </div>
-                   </div>
-               </div>
-               <div class="col-lg-4">
-                   <div class="panel panel-default">
-                       <div class="panel-heading">
-                           Kitchen Sink
-                       </div>
-                       <!-- /.panel-heading -->
-                       <div class="panel-body">
-                           <div class="table-responsive">
-                               <table class="table table-striped table-bordered table-hover">
-                                   <thead>
-                                       <tr>
-                                           <th>#</th>
-                                           <th>First Name</th>
-                                           <th>Last Name</th>
-                                           <th>Username</th>
-                                       </tr>
-                                   </thead>
-                                   <tbody>
-                                       <tr>
-                                           <td>1</td>
-                                           <td>Mark</td>
-                                           <td>Otto</td>
-                                           <td>@mdo</td>
-                                       </tr>
-                                       <tr>
-                                           <td>2</td>
-                                           <td>Jacob</td>
-                                           <td>Thornton</td>
-                                           <td>@fat</td>
-                                       </tr>
-                                       <tr>
-                                           <td>3</td>
-                                           <td>Larry</td>
-                                           <td>the Bird</td>
-                                           <td>@twitter</td>
-                                       </tr>
-                                   </tbody>
-                               </table>
-                           </div>
-                       </div>
-                   </div>
-               </div>
+				<div id="colonne-1" class="col-lg-4"></div>
+				<div id="colonne-2" class="col-lg-4"></div>
 				<div class="col-lg-4">
 					<div class="panel panel-default">
 						<div class="panel-heading">
@@ -144,7 +62,6 @@ a:hover, a:focus {
         calendarWeeks: true,
         todayHighlight: true
         }).on('changeDate', function(e){
-	        console.log(e);
 	        dateSelectionnee = e.date;
 			getServices();
 	    });
@@ -155,9 +72,134 @@ a:hover, a:focus {
 	    	type: "POST",
 	    	data: "date=" + dateSelectionnee.toLocaleString(),
 	    	success: function(str) {
-   		    	console.log(str);
+	    		var dataJSON = jQuery.parseJSON(str);
+	    		
+	    		if(typeof dataJSON.id != 'undefined') {
+	    			document.getElementById("idFDS").innerHTML = dataJSON.id;
+	    		} else {
+	    			document.getElementById("idFDS").innerHTML = "";
+	    		}
+	    		
+	    		$("#colonne-1").empty();
+	    		$("#colonne-2").empty();
+	    		
+	    		var indexService;
+	    		for(indexService = 0; indexService < dataJSON.services.length; ++indexService)
+	    		{
+	    			addServiceOnColumn(indexService % 2 + 1, dataJSON.services[indexService]);
+	    		}
 	    	}
 	    });
+	}
+	
+	function addServiceOnColumn(numColonne, service) {
+		var colonne = document.getElementById("colonne-" + numColonne);
+		
+		var panel = document.createElement("div");
+		panel.className = "panel panel-default";
+
+		var panelHeading = document.createElement("div");
+		panelHeading.className = "panel-heading";
+		panelHeading.innerHTML = "Service " + service.id;
+		
+		var selectConducteur = document.createElement("div");
+		selectConducteur.className = "pull-right";
+		
+		var btnConducteur = document.createElement("div");
+		btnConducteur.className = "btn-group";
+		
+		var buttonConducteur = document.createElement("button");
+		buttonConducteur.className = "btn btn-default btn-xs dropdown-toggle";
+		buttonConducteur.innerHTML = "TEST ";
+		buttonConducteur.type = "button";
+		buttonConducteur.setAttribute("data-toggle", "dropdown");
+		
+		var caret = document.createElement("span");
+		caret.className = "caret";
+		
+		buttonConducteur.appendChild(caret);
+		btnConducteur.appendChild(buttonConducteur);
+		
+		var ulDropdown = document.createElement("ul");
+		ulDropdown.className = "dropdown-menu pull-right";
+		ulDropdown.setAttribute("role", "menu");
+		
+		var liDropdown = document.createElement("li");
+		liDropdown.innerHTML = "TEST";
+		
+		ulDropdown.appendChild(liDropdown);
+		btnConducteur.appendChild(ulDropdown);
+		selectConducteur.appendChild(btnConducteur);
+		panelHeading.appendChild(selectConducteur);
+		
+		var panelBody = document.createElement("div");
+		panelBody.className = "panel-body";
+		
+		var divVacations = document.createElement("div");
+		divVacations.id = "vacations-" + service.id;
+		divVacations.className = "table-responsive";
+
+		panelBody.appendChild(divVacations);
+		panel.appendChild(panelHeading);
+		panel.appendChild(panelBody);
+		colonne.appendChild(panel);
+		
+		if(service.vacations.length > 0) {
+		
+			var metadata = [];
+	     	metadata.push({name: "vehicule", label: "Véhicule", datatype: "string", editable: false});
+	     	metadata.push({name: "heureDebut", label: "Heure Début", datatype: "string", editable: false});
+	     	metadata.push({name: "arretDebut", label: "Arrêt Début", datatype: "string", editable: false});
+	     	metadata.push({name: "heureFin", label: "Heure Fin", datatype: "string", editable: false});
+	     	metadata.push({name: "arretFin", label: "Arrêt Fin", datatype: "string", editable: false});
+	
+			var data = [];
+			var indexVacation;
+			for(indexVacation = 0; indexVacation < service.vacations.length; ++indexVacation)
+			{
+				var vehiculeId = service.vacations[indexVacation].vehicule_id;
+	    		if(typeof vehiculeId == 'undefined') {
+	    			vehiculeId = "Non défini";
+	    		}
+				
+				var heureDebut = service.vacations[indexVacation].heureDebut;
+	    		if(typeof heureDebut == 'undefined') {
+	    			heureDebut = "Non définie";
+	    		}
+	    		
+	    		var arretEchangeConducteurDebut_id = service.vacations[indexVacation].arretEchangeConducteurDebut_id;
+	    		if(typeof arretEchangeConducteurDebut_id == 'undefined') {
+	    			arretEchangeConducteurDebut_id = "Non défini";
+	    		}
+	    		
+	    		var heureFin = service.vacations[indexVacation].heureFin;
+	    		if(typeof heureFin == 'undefined') {
+	    			heureFin = "Non définie";
+	    		}
+	    		
+	    		var arretEchangeConducteurFin_id = service.vacations[indexVacation].arretEchangeConducteurFin_id;
+	    		if(typeof arretEchangeConducteurFin_id == 'undefined') {
+	    			arretEchangeConducteurFin_id = "Non défini";
+	    		}
+				
+			     data.push({
+			    	 id: service.vacations[indexVacation].id, 
+			    	 values: {
+			    		 "vehicule" : vehiculeId,
+			    		 "heureDebut": heureDebut, 
+			    		 "arretDebut": arretEchangeConducteurDebut_id, 
+			    		 "heureFin": heureFin, 
+			    		 "arretFin": arretEchangeConducteurFin_id
+			    		 }
+			     });
+			}
+			
+			editableGrid = new EditableGrid("Grid");
+			editableGrid.load({"metadata": metadata, "data": data});
+			editableGrid.renderGrid("vacations-" + service.id, "table table-bordered table-hover table-striped");
+			
+		}
+	
 	}
 
 	</script>

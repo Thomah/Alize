@@ -65,7 +65,6 @@ public class OrionControlleur {
 	 * @date 12 jan. 2015
 	 * @version 1
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_SERVICES + "/get", method = POST)
 	public @ResponseBody String getServices(@RequestParam String date) {
 		Map<Service, Integer> services = stockageService.getServices(date);
@@ -74,16 +73,14 @@ public class OrionControlleur {
 			for (Entry<Service, Integer> s : services.entrySet()) {
 				Service service = s.getKey();
 				JSONObject object = new JSONObject();
-				object.put("'id'", service.getId());
-				object.put("'conducteur'", s.getValue());
+				object.put("id", service.getId());
+				object.put("conducteur", s.getValue());
 				array.put(object);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		String validJSONString = array.toString().replace("'", "\"")
-				.replace("=", ":");
-		return validJSONString;
+		return array.toString();
 	}
 
 	/**
@@ -135,9 +132,8 @@ public class OrionControlleur {
 	 * @return La liste des conducteurs au format JSON
 	 * @author Thomas [TH]
 	 * @date 12 jan. 2015
-	 * @version 1
+	 * @version 2
 	 */
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_CONDUCTEURS + "/get", method = POST)
 	public @ResponseBody String getConducteurs() {
 		List<Conducteur> conducteurs = stockageService.getConducteurs();
@@ -145,17 +141,15 @@ public class OrionControlleur {
 		try {
 			for (Conducteur c : conducteurs) {
 				JSONObject object = new JSONObject();
-				object.put("'id'", c.getId());
-				object.put("'nom'", "'" + c.getNom() + "'");
-				object.put("'telephone'", "'" + c.getTelephone() + "'");
+				object.put("id", c.getId());
+				object.put("nom", c.getNom());
+				object.put("telephone", c.getTelephone());
 				array.put(object);
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		String validJSONString = array.toString().replace("'", "\"")
-				.replace("=", ":");
-		return validJSONString;
+		return array.toString();
 	}
 	
 	/**
@@ -262,13 +256,13 @@ public class OrionControlleur {
 				JSONArray vacationsJSON = new JSONArray();
 				for(Vacation v : s.getVacations()) {
 					JSONObject vacationJSON = new JSONObject();
-					vacationJSON.put("'id'", v.getId());
-					vacationJSON.put("'heureDebut'", timeFormatter.format(v.getHeuredebut()));
-					vacationJSON.put("'heureFin'", timeFormatter.format(v.getHeurefin()));
-					vacationJSON.put("'arretEchangeConducteurDebut_id'", v.getArretechangeconducteurdebutId());
-					vacationJSON.put("'arretEchangeConducteurFin_id'", v.getArretechangeconducteurfinId());
-					vacationJSON.put("'vehicule_id'", v.getVehiculeId());
-					vacationJSON.put("'service_id'", v.getServiceId());
+					vacationJSON.put("id", v.getId());
+					vacationJSON.put("heureDebut", timeFormatter.format(v.getHeuredebut()));
+					vacationJSON.put("heureFin", timeFormatter.format(v.getHeurefin()));
+					vacationJSON.put("arretEchangeConducteurDebut_id", v.getArretechangeconducteurdebutId());
+					vacationJSON.put("arretEchangeConducteurFin_id", v.getArretechangeconducteurfinId());
+					vacationJSON.put("vehicule_id", v.getVehiculeId());
+					vacationJSON.put("service_id", v.getServiceId());
 					vacationsJSON.put(vacationJSON);
 				}
 				
