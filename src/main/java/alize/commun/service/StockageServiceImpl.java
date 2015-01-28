@@ -1090,7 +1090,7 @@ public class StockageServiceImpl implements StockageService {
 		
 		Feuilledeservice f = new Feuilledeservice(record);
 		if(f.getId() != null) {
-			f.setServices(getServices(f.getId()));
+			f.setServices(getServices(f.getId(), date));
 		}
 		
 		return f;
@@ -1232,14 +1232,23 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	@Override
-	public List<Service> getServices(int idFDS) {
+	public List<Service> getServices(int idFDS, java.sql.Date date) {
 		Service service;
 		List<Service> services = new ArrayList<Service>();
 		
-		Result<ServiceRecord> results = dsl.fetch(SERVICE, SERVICE.FEUILLEDESERVICE_ID.equal(idFDS));
+		Result<Record5<Integer, Integer, Integer, String, String>> results = dsl.selectDistinct(SERVICE.ID, SERVICE.FEUILLEDESERVICE_ID, ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID, CONDUCTEUR.NOM, CONDUCTEUR.TELEPHONE)
+				.from(SERVICE)
+				.leftOuterJoin(ASSOCIATIONCONDUCTEURSERVICE).on(
+						SERVICE.ID.equal(ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID)
+						.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(date))
+				)
+				.leftOuterJoin(CONDUCTEUR).on(
+						ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID.equal(CONDUCTEUR.ID))
+				.orderBy(SERVICE.ID)
+				.fetch();
 		
-		for (ServiceRecord s : results) {
-			service = new Service(s);
+		for (Record record : results) {
+			service = new Service(record);
 			service.setVacations(getVacations(service.getId(), 0));
 			services.add(service);
 		}
@@ -1260,20 +1269,20 @@ public class StockageServiceImpl implements StockageService {
 			e.printStackTrace();
 		}
 		
-		Result<Record2<Integer, Integer>> results = dsl.selectDistinct(SERVICE.ID, ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID)
+		Result<Record5<Integer, Integer, Integer, String, String>> results = dsl.selectDistinct(SERVICE.ID, SERVICE.FEUILLEDESERVICE_ID, ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID, CONDUCTEUR.NOM, CONDUCTEUR.TELEPHONE)
 				.from(SERVICE)
-				.leftOuterJoin(ASSOCIATIONCONDUCTEURSERVICE)
-				.on(
+				.leftOuterJoin(ASSOCIATIONCONDUCTEURSERVICE).on(
 						SERVICE.ID.equal(ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID)
 						.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(dateSQL))
 				)
+				.leftOuterJoin(CONDUCTEUR).on(
+						ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID.equal(CONDUCTEUR.ID))
 				.fetch();
 		
-		for (Record2<Integer, Integer> s : results) {
-			service = new Service();
-			service.setId(s.getValue(SERVICE.ID));
+		for (Record record : results) {
+			service = new Service(record);
 			
-			Integer conducteurId = s.getValue(ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID);
+			Integer conducteurId = record.getValue(ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID);
 			if(conducteurId == null) {
 				conducteurId = 0;
 			}

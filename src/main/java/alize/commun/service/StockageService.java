@@ -905,7 +905,7 @@ public interface StockageService {
 	 * @date 29 jan. 2015
 	 * @version 1
 	 */
-	public List<Service> getServices(int idFDS);
+	public List<Service> getServices(int idFDS, Date date);
 
 	/**
 	 * Récupère les services tous les services avec les conducteurs associés à la date indiquée stockés en BDD

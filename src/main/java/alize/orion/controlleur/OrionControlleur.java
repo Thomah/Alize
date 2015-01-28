@@ -47,7 +47,7 @@ public class OrionControlleur {
 	 */
 	@RequestMapping(value = URL_INDEX, method = GET)
 	public ModelAndView afficherDashboard() {
-		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_INDEX);
+		ModelAndView view = new ModelAndView(URL_MODULE + SLASH + JSP_FEUILLES_DE_SERVICES);
 		view.addObject(URL_MODULE_CLE, URL_MODULE);
 		view.addObject(URL_PAGE_CLE, URL_INDEX);
 		return view;
@@ -252,6 +252,8 @@ public class OrionControlleur {
 				JSONObject serviceJSON = new JSONObject();
 				serviceJSON.put("id", s.getId());
 				serviceJSON.put("fds_id", s.getFeuilledeserviceId());
+				serviceJSON.put("conducteur_id", s.getConducteur().getId());
+				serviceJSON.put("conducteur_nom", s.getConducteur().getNom());
 				
 				JSONArray vacationsJSON = new JSONArray();
 				for(Vacation v : s.getVacations()) {

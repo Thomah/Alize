@@ -55,6 +55,7 @@ a:hover, a:focus {
 	<script src="<c:url value="/resources/js/plugins/datepicker/bootstrap-datepicker.js"/>"></script>
 	<script type="text/javascript">
 	var dateSelectionnee;
+	var conducteurs;
 	
     $('#datepicker').datepicker({
         weekStart: 1,
@@ -63,6 +64,7 @@ a:hover, a:focus {
         todayHighlight: true
         }).on('changeDate', function(e){
 	        dateSelectionnee = e.date;
+			getConducteurs();
 			getServices();
 	    });
 	
@@ -106,11 +108,12 @@ a:hover, a:focus {
 		selectConducteur.className = "pull-right";
 		
 		var btnConducteur = document.createElement("div");
-		btnConducteur.className = "btn-group";
+		btnConducteur.id = "btnService-" + service.id;
+		btnConducteur.className = "btn-group liste-conducteurs";
 		
 		var buttonConducteur = document.createElement("button");
 		buttonConducteur.className = "btn btn-default btn-xs dropdown-toggle";
-		buttonConducteur.innerHTML = "TEST ";
+		buttonConducteur.innerHTML = service.conducteur_nom + " (" + service.conducteur_id + ") ";
 		buttonConducteur.type = "button";
 		buttonConducteur.setAttribute("data-toggle", "dropdown");
 		
@@ -120,15 +123,21 @@ a:hover, a:focus {
 		buttonConducteur.appendChild(caret);
 		btnConducteur.appendChild(buttonConducteur);
 		
-		var ulDropdown = document.createElement("ul");
-		ulDropdown.className = "dropdown-menu pull-right";
-		ulDropdown.setAttribute("role", "menu");
+		var ulDropdown = $('<ul>');
+		ulDropdown.attr("class", "dropdown-menu pull-right");
+		ulDropdown.attr("role", "menu");
 		
-		var liDropdown = document.createElement("li");
-		liDropdown.innerHTML = "TEST";
+		for(index = 0; index < conducteurs.length; ++index)
+		{
+			var liDropdown = $('<li>');
+			var aDropdown = "<a href='#' onclick='updateConducteur(\"" + service.id + "\", " + conducteurs[index].id + ")'>" + conducteurs[index].nom + " (" + conducteurs[index].id + ")" + "</a>";
+			
+			liDropdown.append(aDropdown);
+			ulDropdown.append(liDropdown);
+		}
+
+		btnConducteur.appendChild(ulDropdown.get(0));
 		
-		ulDropdown.appendChild(liDropdown);
-		btnConducteur.appendChild(ulDropdown);
 		selectConducteur.appendChild(btnConducteur);
 		panelHeading.appendChild(selectConducteur);
 		
@@ -200,6 +209,37 @@ a:hover, a:focus {
 			
 		}
 	
+	}
+	
+	function getConducteurs() {
+				
+		$.ajax({
+	    	url: "/alize/orion/conducteurs/get",
+	    	type: "POST",
+	    	success: function(str) {
+	    		conducteurs = jQuery.parseJSON(str);	
+	    	}
+	    });
+		
+	}
+	
+	function updateConducteur(idService, idConducteur) {
+		var colname = "conducteur";
+		var newvalue = idService;
+
+		$.ajax({
+			url: '/alize/orion/services/update',
+			type: 'POST',
+	    	data: "idService=" + newvalue + 
+    			"&date=" + dateSelectionnee.toLocaleString() + 
+	    		"&newvalue=" + idConducteur + 
+   				"&colname=" + colname,
+   			success: function(str) {
+   				getServices();
+   			},
+			error: function(XMLHttpRequest, textStatus, exception) { alert("Ajax failure"); },
+			async: true
+		});
 	}
 
 	</script>
