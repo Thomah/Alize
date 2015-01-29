@@ -1179,5 +1179,34 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Action> getActionsPourLaVoie(int idVoie);
+
+	/**
+	 * Ajoute une actions à la BDD
+	 * 
+	 * @name ajouterAction
+	 * @description  Ajoute une actions à la BDD
+	 * @param id l'identifiant de l'action
+	 * @param t le temps de début
+	 * @param idVehicule l'identifiant du véhicule concerné
+	 * @param idVoie l'identifiant de la voie
+	 * @param typeAction le type d'action concerné
+	 * @param parametre le parametre concerné
+	 * @author Cyril [CS]
+	 * @date 27 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterAction( Time t, int idVehicule, int idVoie,
+			int typeAction, int parametre);
+	
+	/**
+	 * Supprime toutes les actions stockées en BDD
+	 * 
+	 * @name supprimerToutesLesActions
+	 * @description  Supprime toutes les actions stockées en BDD
+	 * @author Cyril [CS]
+	 * @date 28 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerToutesLesActions();
 	
 }

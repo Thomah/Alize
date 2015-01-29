@@ -208,7 +208,7 @@
 			{ 
 				// reset old value if failed then highlight row
 				var success = response == "ok" || !isNaN(parseInt(response)); // by default, a sucessfull reponse can be "ok" or a database id
-			    highlight(idVoie, success ? "ok" : "error"); 
+			    highlight(idTransition, success ? "ok" : "error"); 
 			},
 			error: function(XMLHttpRequest, textStatus, exception) { alert("Ajax failure"); },
 			async: true

@@ -16,7 +16,6 @@ public class Vehicule extends alize.commun.modele.tables.pojos.Vehicule {
 		this.getLieuActuel().supprimerUnVehicule(this);
 		this.setLieuActuel(nouveauLieu);	
 		this.getLieuActuel().ajouterUnVehicule(this);
-		this.heureProchainDepart+=getLieuActuel().getDuree();
 	}
 	
 	public String toString(){

@@ -1,7 +1,9 @@
 package alize.eole.thread;
 
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.format.datetime.joda.LocalDateTimeParser;
+import org.springframework.format.datetime.joda.LocalTimeParser;
 import org.springframework.web.socket.TextMessage;
 
 import alize.commun.Heure;
@@ -19,6 +23,7 @@ import alize.commun.modele.Depot;
 import alize.commun.modele.Intervalle;
 import alize.commun.modele.Lieu;
 import alize.commun.modele.Transition;
+import alize.commun.modele.TypeAction;
 import alize.commun.modele.Vehicule;
 import alize.commun.modele.ZoneDeCroisement;
 import alize.commun.modele.tables.Periodicite;
@@ -56,57 +61,106 @@ public class CalculTask extends Thread {
 	try {
 			Heure debutJournee=new Heure (4,0,0);
 			debutJourneeSec = debutJournee.toInt();
-			Heure finJournee = new Heure (25,0,0);
+			Heure finJournee = new Heure (6,0,0);
 			finJourneeSec = finJournee.toInt();
 			initialisation();
 			
 			int n = 0;
 			
-			int horloge = debutJourneeSec;
+			
 			ajouterLigneLog("Go");
-			try {
-			while(horloge!=finJourneeSec){
+			int horloge , time;
+			int iterator = 0;
+			while (iterator<100) {
+				horloge = debutJourneeSec;
 				
-				for(Vehicule v : listeVehicules){
-				//Vehicule v=listeVehicules.get(0);
-					if(v.getHeureProchainDepart() == horloge){
-						Lieu l = v.getLieuActuel();
-						if(l.isArret()){
-							Arret a = trouverArret(l.getId());
-							n = random(0, a.getListeTransitionsPossibles().size());
-							Transition nouvelleTransition = a.getListeTransitionsPossibles().get(n);
-							if(nouvelleTransition.getZonedecroisementId()!=null){
-								ZoneDeCroisement z = trouverZoneDeCroisement(nouvelleTransition.getZonedecroisementId());
-								if(z.isOccupee()){
+				try {
+					System.out.println("Iterator :" + iterator);
+					while (horloge != finJourneeSec) {
+						for (Vehicule v : listeVehicules) {
+							if (v.getHeureProchainDepart() == horloge) {
+								Lieu l = trouverLieu(v.getLieuActuel().getId());
+								if (l.isArret()) {
 									
-										throw new SolutionIncomptatibleException("Conflit d'entrée dans la zone de croisement " + z.getNom());
+									Arret a = trouverArret(l.getId());
+									System.out.println("Arret :" + a);
 									
-								}else{
-									z.setOccupee(true);
-								}
-							}
-							v.changerLieu(trouverLieu(nouvelleTransition.getId()));
-							v.setHeureProchainDepart(v.getHeureProchainDepart()+timeToInt(nouvelleTransition.getDuree()));
-							heure.toHeure(v.getHeureProchainDepart());
-							ajouterLigneLog("Véhicule " + v.getId() +" : Arret " + a.getId() + " --> Transition " + nouvelleTransition.getId() + " (" + heure.toString() +").");
-						}else{
-							Transition t = trouverTransition(l.getId());
-							Arret nouvelArret = t.getArretSuivant();
-							v.changerLieu(nouvelArret.getLieu());
-							Intervalle i = stockageService.getIntervalle(nouvelArret.getTempsimmobilisationId());
-							n = random((new Heure(i.getMin())).toInt(), (new Heure(i.getMax())).toInt());
-							v.setHeureProchainDepart(v.getHeureProchainDepart()+n);
-							v.setHeureProchainDepart(v.getHeureProchainDepart()+n);
-							heure.toHeure(v.getHeureProchainDepart());
-							ajouterLigneLog("Véhicule " + v.getId() +" : Transition " + t.getId() + " --> Arret " + nouvelArret.getId() + " (" + heure.toString() +").");
+									int nbTransitionsPossibles = a.getListeTransitionsPossibles().size() ;
+									n = random(0, nbTransitionsPossibles);
+									
+									boolean recommencer = true;
+									Lieu nouveauLieu ;
+									Transition nouvelleTransition = new Transition();
+									int curseur = n;
+									while(recommencer){
+										nouvelleTransition = a.getListeTransitionsPossibles().get(curseur);
+										nouveauLieu = trouverLieu(nouvelleTransition.getId());
+										
+										if(nouveauLieu.estoccupe()){
+											curseur=(curseur+1)%nbTransitionsPossibles;
+											if(curseur==n){
+												throw new SolutionIncomptatibleException("Conflit d'entrée dans la transition "+ nouveauLieu.getId());
+											}
+										}else{
+											recommencer=false;
+										}
+									}
+									
+									if (nouvelleTransition.getZonedecroisementId() != null) {
+										ZoneDeCroisement z = trouverZoneDeCroisement(nouvelleTransition.getZonedecroisementId());
+										
+										if (z.isOccupee()) {
+											throw new SolutionIncomptatibleException("Conflit d'entrée dans la zone de croisement "+ z.getNom());
+										}
+										
+									}
+									
+										
+										v.changerLieu(trouverLieu(nouvelleTransition.getId()));
+										
+										heure.toHeure(v.getHeureProchainDepart());
+										
+										ajouterLigneLog("Véhicule " + v.getId()
+												+ " : Arret " + a.getId()
+												+ " --> Transition "
+												+ nouvelleTransition.getId()
+												+ " (" + heure.toString()
+												+ ").");
+										stockageService.ajouterAction( toTime(v.getHeureProchainDepart()), (int) v.getId(), 1, TypeAction.QUITTER_ARRET.ordinal(), a.getId());
+										
+									} else {
+										Transition t = trouverTransition(l.getId());
+										System.out.println("Transition :" + t);
+										
+										Arret nouvelArret = t.getArretSuivant();
+										System.out.println("NouvelleArret :" + nouvelArret);
+										
+										v.changerLieu(trouverLieu(nouvelArret.getId()));
+										
+										Intervalle i = stockageService.getIntervalle(nouvelArret.getTempsimmobilisationId());
+										
+										n = random((new Heure(i.getMin())).toInt(),(new Heure(i.getMax())).toInt());
+										time = v.getHeureProchainDepart() + n;
+										
+										v.setHeureProchainDepart(time);
+										
+										heure.toHeure(v.getHeureProchainDepart());
+										ajouterLigneLog("Véhicule " + v.getId()
+												+ " : Transition " + t.getId()
+												+ " --> Arret "
+												+ nouvelArret.getId() + " ("
+												+ heure.toString() + ").");
+										stockageService.ajouterAction(toTime(time), (int) v.getId(), 1, TypeAction.ARRIVER_ARRET.ordinal(), nouvelArret.getId());
+									}
+								
+							}							
 						}
+						horloge++;
 					}
+				} catch (SolutionIncomptatibleException e) {
+					e.printStackTrace();
 				}
-				
-				horloge++;
-			}
-			} catch (SolutionIncomptatibleException e) {
-				e.printStackTrace();
+				iterator++;
 			}
 			
 			timerTask.stopperTimer("Fin des calculs");
@@ -117,11 +171,21 @@ public class CalculTask extends Thread {
 		
 	}
 
+	@SuppressWarnings("deprecation")
+	private Time toTime(int secondes){
+		int heures = secondes / 3600;
+		secondes%=3600;
+		int minutes = secondes/60;
+		secondes%=60;
+		return new Time(heures,minutes, secondes);	
+	}
+	
 	private int random(int min, int max){
 			return Math.round((int) (Math.random() * (max - min)) + min);
 	}
 	
 	private void initialisation() throws CalculException {
+		stockageService.supprimerToutesLesActions();
 		ajouterLigneLog(" INITIALISATION ");
 		initialisationDepots();
 		initialisationZonesDeCroisements();
@@ -135,7 +199,6 @@ public class CalculTask extends Thread {
 	private void initialisationZonesDeCroisements(){
 		List<ZoneDeCroisement> listeZdc = stockageService.getZonesDeCroisement();
 		for(ZoneDeCroisement z : listeZdc){
-			z.setOccupee(false);
 			z.setListeTransitionsConcernees(new ArrayList<Transition>());
 			listesZoneDeCroisements.add(z);
 		}
@@ -220,7 +283,7 @@ public class CalculTask extends Thread {
 		for (Vehicule c : listeV) {
 			alize.commun.modele.Vehicule vehicule = (alize.commun.modele.Vehicule) c;
 			
-			vehicule.setHeureProchainDepart(random(debutJourneeSec, debutJourneeSec+180));
+			vehicule.setHeureProchainDepart(random(debutJourneeSec, finJourneeSec));
 			vehicule.setLieuActuel(lieu);
 			listeVehicules.add(vehicule);
 			lieu.ajouterUnVehicule(vehicule);
@@ -242,6 +305,8 @@ public class CalculTask extends Thread {
 					+ ".");
 		}
 	}
+	
+
 
 	private ZoneDeCroisement trouverZoneDeCroisement(int id){
 		ZoneDeCroisement zoneDeCroisement = null;

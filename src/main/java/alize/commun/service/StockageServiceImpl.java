@@ -36,6 +36,7 @@ import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.pojos.Vacation;
 import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.modele.tables.pojos.Zonedecroisement;
+import alize.commun.modele.tables.records.ActionRecord;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.AssociationconducteurserviceRecord;
 import alize.commun.modele.tables.records.ConducteurRecord;
@@ -1609,7 +1610,23 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	
-
+	@Override
+	public void ajouterAction(Time t, int idVehicule, int idVoie, int typeAction, int parametre) {
+		ActionRecord record = dsl.newRecord(ACTION);
+	
+		record.setId(null);
+		record.setParametre(parametre);
+		record.setTime(t);
+		record.setTypeaction(typeAction);
+		record.setVehiculeId(idVehicule);
+		record.setVoieId(idVoie);
+		record.store();
+	}
+	
+	@Override
+	public void supprimerToutesLesActions(){
+		dsl.delete(ACTION).execute();
+	}
 	
 
 }
