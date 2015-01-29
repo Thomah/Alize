@@ -21,7 +21,7 @@
 <link type="text/css" rel="stylesheet" href="<c:url value="/resources/css/plugins/morris.css"/>" />
 
 <!-- Custom Fonts -->
-<link type="text/css" rel="stylesheet" href="<c:url value="/resources/font-awesome-4.1.0/css/font-awesome.min.css"/>" />
+<link type="text/css" rel="stylesheet" href="<c:url value="/resources/css/font-awesome.min.css"/>" />
 
 <style>
 .btn-group {
