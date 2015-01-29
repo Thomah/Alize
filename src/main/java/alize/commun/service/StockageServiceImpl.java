@@ -575,8 +575,7 @@ public class StockageServiceImpl implements StockageService {
 			}else{
 				supprimerDepot(id);
 			}
-
-			
+		} else if(colonne.compareTo("estEnFaceDe") == 0) {
 			Integer enFaceDe = Integer.valueOf(Integer.valueOf(valeur.toString()));
 			if(enFaceDe != 0) {
 				arret.setEstenfacede(enFaceDe);
@@ -723,6 +722,7 @@ public class StockageServiceImpl implements StockageService {
 			transition.setDuree(t.getDuree());
 			transition.setArretprecedentId(t.getArretprecedentId());
 			transition.setArretsuivantId(t.getArretsuivantId());
+			transition.setZonedecroisementId(t.getZonedecroisementId());
 			transitions.add(transition);
 		}
 		

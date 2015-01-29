@@ -638,7 +638,7 @@ public class NauControlleur {
 	/**
 	 * Met à jour en AJAX le temps d'immobilisation sélectionné
 	 * 
-	 * @name updateArret
+	 * @name updateTempsImmobilisation
 	 * @description Met à jour en AJAX le temps d'immobilisation sélectionné
 	 * @param id L'identifiant de l'intervalle à mettre à jour
 	 * @param newvalue La nouvelle valeur saisie
@@ -750,6 +750,7 @@ public class NauControlleur {
 			object.put("'arretPrecedent_id'", "'" + t.getArretprecedentId()
 					+ "'");
 			object.put("'arretSuivant_id'", "'" + t.getArretsuivantId() + "'");
+			object.put("'zoneDeCroisement_id'", "'" + t.getZonedecroisementId() + "'");
 			array.add(object);
 		}
 		String validJSONString = array.toString().replace("'", "\"")
@@ -973,6 +974,7 @@ public class NauControlleur {
 		FileInputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(fichier);
+			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

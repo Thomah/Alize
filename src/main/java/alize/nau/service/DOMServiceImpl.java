@@ -138,11 +138,12 @@ public class DOMServiceImpl implements DOMService {
 				
 				arret.setId(Integer.valueOf(courant.getAttributeValue("id")));
 				arret.setNom(courant.getAttributeValue("nom"));
-				arret.setEstcommercial((byte) courant.getAttributeValue("estCommercial").compareTo("1"));
-				arret.setEstentreedepot((byte) courant.getAttributeValue("estEntreeDepot").compareTo("1"));
-				arret.setEstsortiedepot((byte) courant.getAttributeValue("estSortieDepot").compareTo("1"));
-				arret.setEstlieuechangeconducteur((byte) courant.getAttributeValue("estLieuEchangeConducteur").compareTo("1"));
+				arret.setEstcommercial(Byte.valueOf(courant.getAttributeValue("estCommercial")));
+				arret.setEstentreedepot(Byte.valueOf(courant.getAttributeValue("estEntreeDepot")));
+				arret.setEstsortiedepot(Byte.valueOf(courant.getAttributeValue("estSortieDepot")));
+				arret.setEstlieuechangeconducteur(Byte.valueOf(courant.getAttributeValue("estLieuEchangeConducteur")));
 				arret.setTempsimmobilisationId(Integer.valueOf(courant.getAttributeValue("tempsImmobilisation")));
+				arret.setEstenfacede(Integer.valueOf(courant.getAttributeValue("estEnFaceDe")));
 				arret.store();
 			}
 			
@@ -334,7 +335,19 @@ public class DOMServiceImpl implements DOMService {
 			arret.setAttribute(new Attribute("estLieuEchangeConducteur", a.getEstlieuechangeconducteur().toString()));
 			arret.setAttribute(new Attribute("estEntreeDepot", a.getEstentreedepot().toString()));
 			arret.setAttribute(new Attribute("estSortieDepot", a.getEstsortiedepot().toString()));
-			arret.setAttribute(new Attribute("tempsImmobilisation", a.getTempsimmobilisationId().toString()));
+			
+			if(a.getEstenfacede() != null) {
+				arret.setAttribute(new Attribute("estEnFaceDe", a.getEstenfacede().toString()));
+			} else {
+				arret.setAttribute(new Attribute("estEnFaceDe", "0"));
+			}
+			
+			if(a.getTempsimmobilisationId() != null) {
+				arret.setAttribute(new Attribute("tempsImmobilisation", a.getTempsimmobilisationId().toString()));
+			} else {
+				arret.setAttribute(new Attribute("tempsImmobilisation", "0"));
+			}
+			
 			arrets.addContent(arret);
 		}
 		doc.getRootElement().addContent(arrets);
@@ -473,8 +486,13 @@ public class DOMServiceImpl implements DOMService {
 		XMLOutputter xmlOutput = new XMLOutputter();
 		xmlOutput.setFormat(Format.getPrettyFormat());
 		String chemin = RACINE + servletContext.getContextPath().substring(1);
+		
+		File f = new File(chemin + File.separator + "resources" + File.separator + "output.xml");
+		
 		try {
-			xmlOutput.output(doc, new FileWriter(chemin + File.separator + "resources" + File.separator + "output.xml"));
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+			xmlOutput.output(doc, new FileWriter(f));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
