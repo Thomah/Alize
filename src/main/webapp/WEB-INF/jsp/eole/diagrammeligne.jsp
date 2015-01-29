@@ -102,6 +102,8 @@ svg {
 	   		    	
 		    		for(indexArray = 0; indexArray < dataJSON[1].length; ++indexArray) {
 		    			diagrammes[indexArray] = new DiagrammeVoie();
+		    			diagrammes[indexArray].minTemps = diagrammes[indexArray].timeStringToFloat(dataJSON[2].tempsDebutJournee);
+		    			diagrammes[indexArray].maxTemps = diagrammes[indexArray].timeStringToFloat(dataJSON[2].tempsFinJournee);
 		    			diagrammes[indexArray].initialiserPaper(document, dataJSON, indexArray);
 		    		}
 		    		

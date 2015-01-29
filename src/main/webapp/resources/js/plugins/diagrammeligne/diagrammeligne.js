@@ -171,7 +171,7 @@ function DiagrammeVoie () {
 			
 			var trouve = false;
 			var indexArret = 0;
-			while(!trouve && indexArret < dataJSON[0][indexVoie].length) {
+			while(!trouve && indexArret < dataJSON[1][indexVoie].length) {
 				trouve = dataJSON[1][indexVoie][indexArret].id == idArret;
 				indexArret++;
 			}

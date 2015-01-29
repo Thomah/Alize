@@ -813,8 +813,8 @@ public class StockageServiceImpl implements StockageService {
 
 	@Override
 	public void supprimerTransition(int id) {
-		dsl.delete(TRANSITION)
-		.where(TRANSITION.ID.equal(id))
+		dsl.delete(LIEU)
+		.where(LIEU.ID.equal(id))
 		.execute();
 	}
 	

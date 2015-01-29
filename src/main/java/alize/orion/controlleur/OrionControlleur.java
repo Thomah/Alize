@@ -1,13 +1,18 @@
 package alize.orion.controlleur;
 
 import static alize.commun.Constantes.*;
+import static alize.eole.constante.Contraintes.*;
 import static alize.orion.commun.Constantes.*;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.json.*;
@@ -31,7 +36,7 @@ import alize.commun.service.StockageService;
  */
 @Controller
 public class OrionControlleur {
-
+	
 	@Autowired
 	private StockageService stockageService;
 	
@@ -241,7 +246,7 @@ public class OrionControlleur {
 		JSONObject fdsJSON = new JSONObject();
 		try {
 			Feuilledeservice fds = stockageService.getFDS(new java.sql.Date(dateFormatter.parse(date).getTime()));
-
+			
 			fdsJSON.put("id", fds.getId());
 			fdsJSON.put("couleur", fds.getCouleur());
 			fdsJSON.put("debutSaison", fds.getDebutsaison());

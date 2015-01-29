@@ -7,6 +7,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -117,7 +118,20 @@ public class EoleControlleur {
 				str = "00:00";
 			}
 			view.addObject(TEMPS_PAUSE_MAX_LABEL, str);
-			
+
+			// Temps de début de journée
+			str = prop.getProperty(TEMPS_DEBUT_JOURNEE);
+			if(str == null) {
+				str = "00:00:00";
+			}
+			view.addObject(TEMPS_DEBUT_JOURNEE, str);
+
+			// Temps de fin de journée
+			str = prop.getProperty(TEMPS_FIN_JOURNEE);
+			if(str == null) {
+				str = "00:00:00";
+			}
+			view.addObject(TEMPS_FIN_JOURNEE, str);
 
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -146,13 +160,15 @@ public class EoleControlleur {
 	 * @date 21/11/2014
 	 */
 	@RequestMapping(value = URL_CONTRAINTES + "/updateContraintes", method = POST)
-	public @ResponseBody String updateContraintes(@RequestParam String tempsConduiteMax, @RequestParam String tempsTravailMax, @RequestParam String tempsPauseMin, @RequestParam String tempsPauseMax) {
+	public @ResponseBody String updateContraintes(@RequestParam String tempsConduiteMax, @RequestParam String tempsTravailMax, @RequestParam String tempsPauseMin, @RequestParam String tempsPauseMax, @RequestParam String tempsDebutJournee, @RequestParam String tempsFinJournee) {
 		
 		Properties properties = new Properties();
 		properties.setProperty(TEMPS_TRAVAIL_MAX_LABEL, tempsTravailMax);
 		properties.setProperty(TEMPS_CONDUITE_MAX_LABEL, tempsConduiteMax);
 		properties.setProperty(TEMPS_PAUSE_MIN_LABEL, tempsPauseMin);
 		properties.setProperty(TEMPS_PAUSE_MAX_LABEL, tempsPauseMax);
+		properties.setProperty(TEMPS_DEBUT_JOURNEE, tempsDebutJournee);
+		properties.setProperty(TEMPS_FIN_JOURNEE, tempsFinJournee);
 
 		File file = new File(NOM_FICHIER);
 		try {
@@ -921,6 +937,30 @@ public class EoleControlleur {
 			arrayArrets.add(arrayVoie);
 		}
 		array.add(arrayArrets);
+
+		JSONObject object = new JSONObject();
+		Properties prop = new Properties();
+		InputStream input;
+		try {
+			input = new FileInputStream(NOM_FICHIER);
+			prop.load(input);
+			
+			String str = prop.getProperty(TEMPS_DEBUT_JOURNEE);
+			if(str == null) {
+				str = "00:00:00";
+			}
+			object.put("'" + TEMPS_DEBUT_JOURNEE + "'", "'" + str + "'");
+			
+			str = prop.getProperty(TEMPS_FIN_JOURNEE);
+			if(str == null) {
+				str = "00:00:00";
+			}
+			object.put("'" + TEMPS_FIN_JOURNEE + "'", "'" + str + "'");
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		array.add(object);
 		
 		String validJSONString = array.toString().replace("'", "\"")
 				.replace("=", ":");
