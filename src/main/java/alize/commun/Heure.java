@@ -1,14 +1,10 @@
 package alize.commun;
 
 import java.sql.Time;
-import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Random;
 
 /**
- * @name Heure
  * @author Cyril [CS]
- * @date 3 nov. 2014
  * @version 1
  */
 public class Heure {

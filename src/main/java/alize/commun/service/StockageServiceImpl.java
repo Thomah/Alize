@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
 import alize.commun.modele.tables.pojos.Ligne;
-import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Terminus;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.AssociationconducteurserviceRecord;
@@ -865,14 +864,14 @@ public class StockageServiceImpl implements StockageService {
 	/* GESTION DES PERIODICITES */
 	
 	@Override
-	public List<alize.commun.modele.Periodicite> getPeriodicites() {
+	public List<Periodicite> getPeriodicites() {
 
-		alize.commun.modele.Periodicite periodicite;
-		List<alize.commun.modele.Periodicite> periodicites = new ArrayList<alize.commun.modele.Periodicite>();
+		Periodicite periodicite;
+		List<Periodicite> periodicites = new ArrayList<Periodicite>();
 		
 		Result<PeriodiciteRecord> results = dsl.fetch(PERIODICITE);
 		for (PeriodiciteRecord p : results) {
-			periodicite = new alize.commun.modele.Periodicite();
+			periodicite = new Periodicite();
 			periodicite.setId(p.getId());
 			periodicite.setDebut(p.getDebut());
 			periodicite.setFin(p.getFin());

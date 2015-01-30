@@ -4,7 +4,6 @@ package alize.eole.constante;
  * Constantes liées à la sauvegarde et au chargement des contraintes
  * 
  * @author Thomas
- * @date 30/11/2014
  */
 public class Contraintes {
 
@@ -12,7 +11,6 @@ public class Contraintes {
 	 * Nom du fichier utilisé pour sauvegarder les données
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String NOM_FICHIER = "contraintes.properties";
 
@@ -21,7 +19,6 @@ public class Contraintes {
 	 * la compagnie de transport
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String NB_VEHICULES_MAX_LABEL = "nbVehiculesMax";
 
@@ -30,7 +27,6 @@ public class Contraintes {
 	 * travail par jour
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String TEMPS_TRAVAIL_MAX_LABEL = "tempsTravailMax";
 
@@ -39,7 +35,6 @@ public class Contraintes {
 	 * conduite consécutif
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String TEMPS_CONDUITE_MAX_LABEL = "tempsConduiteMax";
 
@@ -48,7 +43,6 @@ public class Contraintes {
 	 * d'un conducteur
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String TEMPS_PAUSE_MIN_LABEL = "tempsPauseMin";
 
@@ -57,7 +51,6 @@ public class Contraintes {
 	 * d'un conducteur
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String TEMPS_PAUSE_MAX_LABEL = "tempsPauseMax";
 	
@@ -65,7 +58,6 @@ public class Contraintes {
 	 * Label utilisé dans le formulaire pour désigner l'heure de début de journée
 	 * 
 	 * @author Thomas
-	 * @date 29/01/2015
 	 */
 	public static final String TEMPS_DEBUT_JOURNEE = "tempsDebutJournee";	
 
@@ -73,7 +65,6 @@ public class Contraintes {
 	 * Label utilisé dans le formulaire pour désigner l'heure de fin de journée
 	 * 
 	 * @author Thomas
-	 * @date 29/01/2015
 	 */
 	public static final String TEMPS_FIN_JOURNEE = "tempsFinJournee";	
 	
@@ -81,7 +72,6 @@ public class Contraintes {
 	 * Label utilisé dans le formulaire pour désigner la ligne
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String LIGNE_LABEL = "ligne";
 	
@@ -89,7 +79,6 @@ public class Contraintes {
 	 * Label utilisé dans le formulaire pour désigner la voie
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String VOIE_LABEL = "voie";
 	
@@ -97,7 +86,6 @@ public class Contraintes {
 	 * Label utilisé dans le formulaire pour désigner l'arret
 	 * 
 	 * @author Thomas
-	 * @date 30/11/2014
 	 */
 	public static final String ARRET_LABEL = "arret";
 	

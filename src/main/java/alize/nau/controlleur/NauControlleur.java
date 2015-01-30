@@ -69,11 +69,8 @@ public class NauControlleur {
 	/**
 	 * Affiche la JSP de gestion des lignes
 	 * 
-	 * @name afficherLignes
-	 * @description Affiche la JSP de gestion des lignes
 	 * @return La vue de la JSP de gestion des lignes
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES, method = GET)
@@ -87,11 +84,8 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des lignes au format JSON
 	 * 
-	 * @name getListeLignes
-	 * @description Retourne en AJAX la liste des lignes au format JSON
 	 * @return La liste des lignes au format JSON
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -113,19 +107,12 @@ public class NauControlleur {
 	/**
 	 * Met à jour en AJAX la voie sélectionnée
 	 * 
-	 * @name updateLigne
-	 * @description Met à jour en AJAX la voie sélectionnée
-	 * @param id
-	 *            L'identifiant de la ligne à mettre à jour
-	 * @param newvalue
-	 *            La nouvelle valeur saisie
-	 * @param colname
-	 *            La colonne mise à jour
-	 * @param coltype
-	 *            Le type de la valeur mise à jour
+	 * @param id L'identifiant de la ligne à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
+	 * @param coltype Le type de la valeur mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES + "/update", method = POST)
@@ -139,11 +126,8 @@ public class NauControlleur {
 	/**
 	 * Créer en AJAX une nouvelle ligne
 	 * 
-	 * @name ajouterLigne
-	 * @description Créer en AJAX une nouvelle ligne
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES + "/ajouter", method = POST)
@@ -155,13 +139,9 @@ public class NauControlleur {
 	/**
 	 * Supprime en AJAX la ligne d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerLigne
-	 * @description Supprime en AJAX la ligne d'identifiant donné en paramètre
-	 * @param id
-	 *            L'identifiant de la ligne à supprimer
+	 * @param id L'identifiant de la ligne à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES + "/supprimer", method = POST)
@@ -175,11 +155,8 @@ public class NauControlleur {
 	/**
 	 * Affiche la JSP de gestion des attributions lignes / voies
 	 * 
-	 * @name afficherLignesVoies
-	 * @description Affiche la JSP de gestion des attributions lignes / voies
 	 * @return La vue de la JSP de gestion des attributions lignes / voies
 	 * @author Thomas [TH]
-	 * @date 4 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES_VOIES, method = GET)
@@ -194,14 +171,9 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des voies non attribuées au format JSON
 	 * 
-	 * @name getListeVoiesNonAttribuees
-	 * @description Retourne en AJAX la liste des voies non attribuées au format
-	 *              JSON
-	 * @param idLigne
-	 *            L'identifiant de la ligne concernée
+	 * @param idLigne L'identifiant de la ligne concernée
 	 * @return La liste des voies non attribuées au format JSON
 	 * @author Thomas [TH]
-	 * @date 4 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -227,14 +199,9 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des voies attribuées au format JSON
 	 * 
-	 * @name getListeVoiesAttribuees
-	 * @description Retourne en AJAX la liste des voies attribuées au format
-	 *              JSON
-	 * @param idLigne
-	 *            L'identifiant de la ligne concernée
+	 * @param idLigne L'identifiant de la ligne concernée
 	 * @return La liste des voies attribuées au format JSON
 	 * @author Thomas [TH]
-	 * @date 4 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -259,15 +226,10 @@ public class NauControlleur {
 	/**
 	 * Créer en AJAX une nouvelle association ligne / voie
 	 * 
-	 * @name ajouterLigneVoie
-	 * @description Créer en AJAX une nouvelle association ligne / voie
-	 * @param id
-	 *            L'identifiant de la voie concernée
-	 * @param idLigne
-	 *            L'identifiant de la ligne concernée
+	 * @param id L'identifiant de la voie concernée
+	 * @param idLigne L'identifiant de la ligne concernée
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 4 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES_VOIES + "/ajouter", method = POST)
@@ -280,16 +242,10 @@ public class NauControlleur {
 	/**
 	 * Supprime en AJAX l'association ligne / voie donnée en paramètre
 	 * 
-	 * @name supprimerLigne
-	 * @description Supprime en AJAX l'association ligne / voie donnée en
-	 *              paramètre
-	 * @param id
-	 *            L'identifiant de la voie concernée
-	 * @param idLigne
-	 *            L'identifiant de la ligne concernée
+	 * @param id L'identifiant de la voie concernée
+	 * @param idLigne L'identifiant de la ligne concernée
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 4 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_LIGNES_VOIES + "/supprimer", method = POST)
@@ -304,11 +260,8 @@ public class NauControlleur {
 	/**
 	 * Affiche la JSP de gestion des voies
 	 * 
-	 * @name afficherLignes
-	 * @description Affiche la JSP de gestion des voies
 	 * @return La vue de la JSP de gestion des voies
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VOIES, method = GET)
@@ -322,11 +275,8 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des voies au format JSON
 	 * 
-	 * @name getListeVoies
-	 * @description Retourne en AJAX la liste des voies au format JSON
 	 * @return La liste des voies au format JSON
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -352,14 +302,10 @@ public class NauControlleur {
 	 * Retourne en AJAX la liste des terminus parmi les arrêts de la voie au
 	 * format JSON
 	 * 
-	 * @name getListeTerminusVoie
-	 * @description Retourne en AJAX la liste des terminus parmi les arrêts de
-	 *              la voie au format JSON
 	 * @param idVoie
 	 *            La voie sélectionnée
 	 * @return La liste des terminus parmi les arrêts de la voie au format JSON
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -381,8 +327,6 @@ public class NauControlleur {
 	/**
 	 * Met à jour en AJAX la voie sélectionnée
 	 * 
-	 * @name updateVoie
-	 * @description Met à jour en AJAX la voie sélectionnée
 	 * @param id
 	 *            L'identifiant de la voie à mettre à jour
 	 * @param newvalue
@@ -391,7 +335,6 @@ public class NauControlleur {
 	 *            La colonne mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VOIES + "/update", method = POST)
@@ -404,11 +347,8 @@ public class NauControlleur {
 	/**
 	 * Créer en AJAX une nouvelle voie
 	 * 
-	 * @name ajouterVoie
-	 * @description Créer en AJAX une nouvelle voie
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VOIES + "/ajouter", method = POST)
@@ -420,13 +360,9 @@ public class NauControlleur {
 	/**
 	 * Supprime en AJAX la voie d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerVoie
-	 * @description Supprime en AJAX la voie d'identifiant donné en paramètre
-	 * @param id
-	 *            L'identifiant de la voie à supprimer
+	 * @param id L'identifiant de la voie à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 2 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VOIES + "/supprimer", method = POST)
@@ -440,11 +376,8 @@ public class NauControlleur {
 	/**
 	 * Affiche la JSP de gestion des attributions voies / arrets
 	 * 
-	 * @name afficherVoiesArrets
-	 * @description Affiche la JSP de gestion des attributions voies / arrets
 	 * @return La vue de la JSP de gestion des attributions voies / arrets
 	 * @author Thomas [TH]
-	 * @date 5 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VOIES_TRANSITIONS, method = GET)
@@ -458,12 +391,9 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des transitions non attribuées au format JSON
 	 * 
-	 * @name getListeTransitionsNonAttribuees
-	 * @description Retourne en AJAX la liste des transitions non attribuées au format JSON
 	 * @param idVoie L'identifiant de la voie concernée
 	 * @return La liste des transitions non attribuées au format JSON
 	 * @author Thomas [TH]
-	 * @date 5 jan. 2015
 	 * @version 2
 	 */
 	@SuppressWarnings("unchecked")
@@ -489,12 +419,9 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des transitions attribuées au format JSON
 	 * 
-	 * @name getListeTransitionsAttribuees
-	 * @description Retourne en AJAX la liste des transitions attribuées au format JSON
 	 * @param idVoie L'identifiant de la voie concernée
 	 * @return La liste des voies attribuées au format JSON
 	 * @author Thomas [TH]
-	 * @date 5 jan. 2015
 	 * @version 2
 	 */
 	@SuppressWarnings("unchecked")
@@ -518,13 +445,10 @@ public class NauControlleur {
 	/**
 	 * Créer en AJAX une nouvelle association voie / transition
 	 * 
-	 * @name ajouterVoieTransition
-	 * @description Créer en AJAX une nouvelle association voie / transition
 	 * @param idVoie L'identifiant de la voie concernée
 	 * @param idTransition L'identifiant de la transition concernée
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 5 jan. 2015
 	 * @version 2
 	 */
 	@RequestMapping(value = URL_VOIES_TRANSITIONS + "/ajouter", method = POST)
@@ -536,13 +460,10 @@ public class NauControlleur {
 	/**
 	 * Supprime en AJAX l'association voie / transition donnée en paramètre
 	 * 
-	 * @name supprimerVoieTransition
-	 * @description Supprime en AJAX l'association voie / transition donnée en paramètre
 	 * @param idVoie L'identifiant de la voie concernée
 	 * @param idTransition L'identifiant de la transition concernée
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 5 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VOIES_TRANSITIONS + "/supprimer", method = POST)
@@ -556,11 +477,8 @@ public class NauControlleur {
 	/**
 	 * Affiche la JSP de gestion des arrets
 	 * 
-	 * @name afficherArrets
-	 * @description Affiche la JSP de gestion des arrets
 	 * @return La vue de la JSP de gestion des arrets
 	 * @author Cyril [CS]
-	 * @date 5 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ARRETS, method = GET)
@@ -574,11 +492,8 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des arrets au format JSON
 	 * 
-	 * @name getListeArrets
-	 * @description Retourne en AJAX la liste des arrets au format JSON
 	 * @return La liste des arrets au format JSON
 	 * @author Cyril [CS]
-	 * @date 5 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -612,11 +527,8 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des arrets où les échanges conducteur sont possibles au format JSON
 	 * 
-	 * @name getListeArretsEchangesConducteurs
-	 * @description Retourne en AJAX la liste des arrets où les échanges conducteur sont possibles au format JSON
 	 * @return La liste des arrets où les échanges conducteur sont possibles au format JSON
 	 * @author Thomas [TH]
-	 * @date 11 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -638,14 +550,11 @@ public class NauControlleur {
 	/**
 	 * Met à jour en AJAX le temps d'immobilisation sélectionné
 	 * 
-	 * @name updateTempsImmobilisation
-	 * @description Met à jour en AJAX le temps d'immobilisation sélectionné
 	 * @param id L'identifiant de l'intervalle à mettre à jour
 	 * @param newvalue La nouvelle valeur saisie
 	 * @param colname La colonne mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Cyril [CS]
-	 * @date 5 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ARRETS + "/updateTempsImmobilisation", method = POST)
@@ -657,14 +566,11 @@ public class NauControlleur {
 	/**
 	 * Met à jour en AJAX l'arrêt sélectionné
 	 * 
-	 * @name updateArret
-	 * @description Met à jour en AJAX l'arrêt sélectionné
 	 * @param id L'identifiant de l'intervalle à mettre à jour
 	 * @param newvalue La nouvelle valeur saisie
 	 * @param colname La colonne mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Cyril [CS]
-	 * @date 5 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ARRETS + "/updateArret", method = POST)
@@ -676,11 +582,8 @@ public class NauControlleur {
 	/**
 	 * Créer en AJAX un nouvel arret
 	 * 
-	 * @name ajouter Arret
-	 * @description Créer en AJAX un nouvel arret
 	 * @return "ok" si tout s'est bien passé
 	 * @author Cyril [CS]
-	 * @date 5 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ARRETS + "/ajouter", method = POST)
@@ -692,12 +595,9 @@ public class NauControlleur {
 	/**
 	 * Supprime en AJAX l'arrêt d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerArret
-	 * @description Supprime en AJAX l'arrêt d'identifiant donné en paramètre
 	 * @param id L'identifiant de l'arrê à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Cyril [CS]
-	 * @date 5 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ARRETS + "/supprimer", method = POST)
@@ -712,11 +612,8 @@ public class NauControlleur {
 	/**
 	 * Affiche la JSP de gestion des transitions
 	 * 
-	 * @name afficherTransitions
-	 * @description Affiche la JSP de gestion des transitions
 	 * @return La vue de la JSP de gestion des transitions
 	 * @author Thomas [TH]
-	 * @date 3 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_TRANSITIONS, method = GET)
@@ -731,11 +628,8 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des transitions au format JSON
 	 * 
-	 * @name getListeTransitions
-	 * @description Retourne en AJAX la liste des transitions au format JSON
 	 * @return La liste des transitions au format JSON
 	 * @author Thomas [TH]
-	 * @date 3 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -761,17 +655,11 @@ public class NauControlleur {
 	/**
 	 * Met à jour en AJAX la transition sélectionnée
 	 * 
-	 * @name updateTransition
-	 * @description Met à jour en AJAX la transition sélectionnée
-	 * @param id
-	 *            L'identifiant de la transition à mettre à jour
-	 * @param newvalue
-	 *            La nouvelle valeur saisie
-	 * @param colname
-	 *            La colonne mise à jour
+	 * @param id L'identifiant de la transition à mettre à jour
+	 * @param newvalue La nouvelle valeur saisie
+	 * @param colname La colonne mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 3 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_TRANSITIONS + "/update", method = POST)
@@ -784,11 +672,8 @@ public class NauControlleur {
 	/**
 	 * Créer en AJAX une nouvelle transition
 	 * 
-	 * @name ajouterTransition
-	 * @description Créer en AJAX une nouvelle transition
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 3 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_TRANSITIONS + "/ajouter", method = POST)
@@ -800,14 +685,9 @@ public class NauControlleur {
 	/**
 	 * Supprime en AJAX la transition d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerTransition
-	 * @description Supprime en AJAX la transition d'identifiant donné en
-	 *              paramètre
-	 * @param id
-	 *            L'identifiant de la transition à supprimer
+	 * @param id L'identifiant de la transition à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 3 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_TRANSITIONS + "/supprimer", method = POST)
@@ -818,15 +698,11 @@ public class NauControlleur {
 
 	/* GESTION DES ZONES DE CROISEMENT */
 	
-
 	/**
 	 * Affiche la JSP de gestion des zones de croisement
 	 * 
-	 * @name afficherZonesDeCroisement
-	 * @description Affiche la JSP de gestion des zones de croisement
 	 * @return La vue de la JSP de gestion des zones de croisement
 	 * @author Thomas [TH]
-	 * @date 18 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ZONES_DE_CROISEMENT, method = GET)
@@ -840,11 +716,8 @@ public class NauControlleur {
 	/**
 	 * Retourne en AJAX la liste des zones de croisement au format JSON
 	 * 
-	 * @name getListeZonesDeCroisement
-	 * @description Retourne en AJAX la liste des zones de croisement au format JSON
 	 * @return La liste des zones de croisement au format JSON
 	 * @author Thomas [TH]
-	 * @date 18 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -866,14 +739,11 @@ public class NauControlleur {
 	/**
 	 * Met à jour en AJAX la zone de croisement sélectionnée
 	 * 
-	 * @name updateZoneDeCroisement
-	 * @description Met à jour en AJAX la zone de croisement sélectionnée
 	 * @param id L'identifiant de la zone de croisement à mettre à jour
 	 * @param newvalue La nouvelle valeur saisie
 	 * @param colname La colonne mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 18 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ZONES_DE_CROISEMENT + "/update", method = POST)
@@ -886,11 +756,8 @@ public class NauControlleur {
 	/**
 	 * Créer en AJAX une nouvelle zone de croisement
 	 * 
-	 * @name ajouterZoneDeCroisement
-	 * @description Créer en AJAX une nouvelle zone de croisement
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 18 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ZONES_DE_CROISEMENT + "/ajouter", method = POST)
@@ -902,12 +769,9 @@ public class NauControlleur {
 	/**
 	 * Supprime en AJAX la zone de croisement d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerLigne
-	 * @description Supprime en AJAX la zone de croisement d'identifiant donné en paramètre
 	 * @param id L'identifiant de la zone de croisement à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 18 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_ZONES_DE_CROISEMENT + "/supprimer", method = POST)
@@ -948,15 +812,9 @@ public class NauControlleur {
 	/**
 	 * Génère le fichier XML correspondant au réseau et le télécharge
 	 * 
-	 * @name traiterExporter
-	 * @description Génère le fichier XML correspondant au réseau et le
-	 *              télécharge
-	 * @param request
-	 *            La requete HTTP envoyé
-	 * @param response
-	 *            La réponse renvoyé au client
+	 * @param request La requete HTTP envoyé
+	 * @param response La réponse renvoyé au client
 	 * @author Thomas [TH]
-	 * @date 6 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_IMPORTER_EXPORTER + "/exporter", method = GET)

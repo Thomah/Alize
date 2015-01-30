@@ -7,7 +7,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,15 +27,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import alize.commun.modele.*;
-import alize.commun.modele.tables.pojos.Periodicite;
 import alize.commun.modele.tables.pojos.Vehicule;
 import alize.commun.service.StockageService;
 
 /**
  * Controlleur principal du module Eole
- * 
- * @author Thomas
- * @date 21/11/2014
  *
  */
 @Controller
@@ -51,11 +46,9 @@ public class EoleControlleur {
 	/**
 	 * Affiche la page principale du module Eole
 	 * 
-	 * @param model
-	 *            Les données associées à la page
+	 * @param model Les données associées à la page
 	 * @return La page associée
 	 * @author Thomas
-	 * @date 21/11/2014
 	 */
 	@RequestMapping(value = URL_INDEX, method = GET)
 	public ModelAndView afficherDashboard(ModelMap model) {
@@ -68,11 +61,9 @@ public class EoleControlleur {
 	/**
 	 * Affiche la page de définition des contraintes du module Eole
 	 * 
-	 * @param model
-	 *            Les données associées à la page
+	 * @param model Les données associées à la page
 	 * @return La page associée
 	 * @author Thomas
-	 * @date 21/11/2014
 	 */
 	@RequestMapping(value = URL_CONTRAINTES, method = GET)
 	public ModelAndView afficherContraintes(ModelMap model) {
@@ -152,15 +143,23 @@ public class EoleControlleur {
 	
 	/**
 	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
-	 * 
-	 * @param idLigne
-	 *            L'identifiant de la ligne souhaitée
-	 * @return La page associée
+	 * @param tempsConduiteMax Le temps de conduite maximum consécutif
+	 * @param tempsTravailMax Le temps de travail maximum par journée
+	 * @param tempsPauseMin Le temps de pause minimum
+	 * @param tempsPauseMax Le temps de pause maximum
+	 * @param tempsDebutJournee L'heure de début de journée
+	 * @param tempsFinJournee L'heure de fin de la journée
+	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas
-	 * @date 21/11/2014
 	 */
 	@RequestMapping(value = URL_CONTRAINTES + "/updateContraintes", method = POST)
-	public @ResponseBody String updateContraintes(@RequestParam String tempsConduiteMax, @RequestParam String tempsTravailMax, @RequestParam String tempsPauseMin, @RequestParam String tempsPauseMax, @RequestParam String tempsDebutJournee, @RequestParam String tempsFinJournee) {
+	public @ResponseBody String updateContraintes(
+			@RequestParam String tempsConduiteMax, 
+			@RequestParam String tempsTravailMax, 
+			@RequestParam String tempsPauseMin, 
+			@RequestParam String tempsPauseMax, 
+			@RequestParam String tempsDebutJournee, 
+			@RequestParam String tempsFinJournee) {
 		
 		Properties properties = new Properties();
 		properties.setProperty(TEMPS_TRAVAIL_MAX_LABEL, tempsTravailMax);
@@ -185,11 +184,9 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX la liste des voies associées à la ligne sélectionnée
 	 * 
-	 * @param idLigne
-	 *            L'identifiant de la ligne souhaitée
+	 * @param idLigne L'identifiant de la ligne souhaitée
 	 * @return La page associée
 	 * @author Thomas
-	 * @date 21/11/2014
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_CONTRAINTES + "/selectLigne", method = POST)
@@ -216,7 +213,6 @@ public class EoleControlleur {
 	 * @param idVoie L'identifiant de la voie souhaitée
 	 * @return La liste des arrets au format JSON
 	 * @author Thomas
-	 * @date 21 nov. 2014
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_CONTRAINTES + "/selectVoie", method = POST)
@@ -244,7 +240,6 @@ public class EoleControlleur {
 	 *            L'identifiant de l'arret souhaité
 	 * @return La liste des périodicités au format JSON
 	 * @author Thomas
-	 * @date 21/11/2014
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = URL_CONTRAINTES + "/selectArret", method = POST)
@@ -275,7 +270,6 @@ public class EoleControlleur {
 	 *            L'identifiant de l'arret souhaité
 	 * @return La liste des périodicités au format JSON
 	 * @author Thomas
-	 * @date 21/11/2014
 	 */
 	@RequestMapping(value = URL_CONTRAINTES + "/ajouterPeriodicite", method = POST)
 	public @ResponseBody String ajouterPeriodicite(@RequestParam int idVoie,
@@ -310,7 +304,6 @@ public class EoleControlleur {
 	 *            Le nom de la propriété mise à jour
 	 * @return La liste des périodicités au format JSON
 	 * @author Thomas
-	 * @date 21/11/2014
 	 */
 	@RequestMapping(value = URL_CONTRAINTES + "/updatePeriodicite", method = POST)
 	public @ResponseBody String updatePeriodicite(@RequestParam int id,
@@ -329,11 +322,8 @@ public class EoleControlleur {
 	/**
 	 * Affiche la JSP de gestion des feuilles de service
 	 * 
-	 * @name afficherFDS
-	 * @description Affiche la JSP de gestion des feuilles de service
 	 * @return La vue de la JSP de gestion des feuilles de service
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_FDS, method = GET)
@@ -347,11 +337,8 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX la liste des feuilles de service au format JSON
 	 * 
-	 * @name getListeFDS
-	 * @description Retourne en AJAX la liste des feuilles de service au format JSON
 	 * @return La liste des feuilles de service au format JSON
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -376,15 +363,12 @@ public class EoleControlleur {
 	/**
 	 * Met à jour en AJAX la feuille de service sélectionnée
 	 * 
-	 * @name updateFDS
-	 * @description Met à jour en AJAX la feuille de service sélectionnée
 	 * @param id L'identifiant de la ligne à mettre à jour
 	 * @param newvalue La nouvelle valeur saisie
 	 * @param colname La colonne mise à jour
 	 * @param coltype Le type de la valeur mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_FDS + "/update", method = POST)
@@ -397,11 +381,8 @@ public class EoleControlleur {
 	/**
 	 * Créer en AJAX une nouvelle feuille de service
 	 * 
-	 * @name ajouterFDS
-	 * @description Créer en AJAX une nouvelle feuille de service
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_FDS + "/ajouter", method = POST)
@@ -413,12 +394,9 @@ public class EoleControlleur {
 	/**
 	 * Supprime en AJAX la feuille de service d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerFDS
-	 * @description Supprime en AJAX la feuille de service d'identifiant donné en paramètre
 	 * @param id L'identifiant de la feuille de service à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_FDS + "/supprimer", method = POST)
@@ -432,11 +410,8 @@ public class EoleControlleur {
 	/**
 	 * Affiche la JSP de gestion des attributions fds / periodicites
 	 * 
-	 * @name afficherFDSPeriodicites
-	 * @description Affiche la JSP de gestion des attributions fds / periodicites
 	 * @return La vue de la JSP de gestion des attributions fds / periodicites
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_FDS_PERIODICITES, method = GET)
@@ -450,12 +425,9 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX la liste des périodicités non attribuées au format JSON
 	 * 
-	 * @name getListePeriodicitesNonAttribuees
-	 * @description Retourne en AJAX la liste des périodicités non attribuées au format JSON
 	 * @param idFDS L'identifiant de la feuille de service concernée
 	 * @return La liste des périodicités non attribuées au format JSON
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -481,12 +453,9 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX la liste des périodicités attribuées au format JSON
 	 * 
-	 * @name getListeVoiesAttribuees
-	 * @description Retourne en AJAX la liste des périodicités attribuées au format JSON
 	 * @param idFDS L'identifiant de la feuille de service concernée
 	 * @return La liste des périodicités attribuées au format JSON
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -512,13 +481,10 @@ public class EoleControlleur {
 	/**
 	 * Créer en AJAX une nouvelle association fds / periodicites
 	 * 
-	 * @name ajouterLigneVoie
-	 * @description Créer en AJAX une nouvelle association fds / periodicites
 	 * @param idFDS L'identifiant de la feuille de service concernée
 	 * @param idPeriodicite L'identifiant de la périodicité concernée
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_FDS_PERIODICITES + "/ajouter", method = POST)
@@ -530,13 +496,10 @@ public class EoleControlleur {
 	/**
 	 * Supprime en AJAX l'association fds / periodicites donnée en paramètre
 	 * 
-	 * @name supprimerLigne
-	 * @description Supprime en AJAX l'association fds / periodicites donnée en paramètre
 	 * @param idFDS L'identifiant de la feuille de service concernée
 	 * @param idPeriodicite L'identifiant de la périodicité concernée
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 9 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_FDS_PERIODICITES + "/supprimer", method = POST)
@@ -550,11 +513,8 @@ public class EoleControlleur {
 	/**
 	 * Affiche la JSP de gestion des services
 	 * 
-	 * @name afficherServices
-	 * @description Affiche la JSP de gestion des services
 	 * @return La vue de la JSP de gestion des services
 	 * @author Thomas [TH]
-	 * @date 10 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_SERVICES, method = GET)
@@ -568,11 +528,8 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX la liste des services au format JSON
 	 * 
-	 * @name getServices
-	 * @description Retourne en AJAX la liste des services au format JSON
 	 * @return La liste des services au format JSON
 	 * @author Thomas [TH]
-	 * @date 10 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -594,14 +551,11 @@ public class EoleControlleur {
 	/**
 	 * Met à jour en AJAX le service sélectionné
 	 * 
-	 * @name updateService
-	 * @description Met à jour en AJAX le service sélectionné
 	 * @param id L'identifiant du service à mettre à jour
 	 * @param newvalue La nouvelle valeur saisie
 	 * @param colname La colonne mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 10 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_SERVICES + "/update", method = POST)
@@ -613,12 +567,9 @@ public class EoleControlleur {
 
 	/**
 	 * Créer en AJAX un nouveau service
-	 * ajouterService
-	 * @name ajouterFDS
-	 * @description Créer en AJAX un nouveau service
+	 * 
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 10 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_SERVICES + "/ajouter", method = POST)
@@ -630,12 +581,9 @@ public class EoleControlleur {
 	/**
 	 * Supprime en AJAX le service d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerService
-	 * @description Supprime en AJAX le service d'identifiant donné en paramètre
 	 * @param id L'identifiant du service à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 10 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_SERVICES + "/supprimer", method = POST)
@@ -649,11 +597,8 @@ public class EoleControlleur {
 	/**
 	 * Affiche la JSP de gestion des vacations d'un service donné en paramètre
 	 * 
-	 * @name afficherVacationsService
-	 * @description Affiche la JSP de gestion des vacations d'un service donné en paramètre
 	 * @return La vue de la JSP de gestion des vacations d'un service donné en paramètre
 	 * @author Thomas [TH]
-	 * @date 11 jan. 2015
 	 * @version 2
 	 */
 	@RequestMapping(value = URL_VACATIONS + "service", method = GET)
@@ -667,11 +612,8 @@ public class EoleControlleur {
 	/**
 	 * Affiche la JSP de gestion des vacations d'un véhicule donné en paramètre
 	 * 
-	 * @name afficherVacationsVehicule
-	 * @description Affiche la JSP de gestion des vacations d'un véhicule donné en paramètre
 	 * @return La vue de la JSP de gestion des vacations d'un véhicule donné en paramètre
 	 * @author Thomas [TH]
-	 * @date 12 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VACATIONS + "vehicule", method = GET)
@@ -685,13 +627,10 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX la liste des vacations pour le service et le véhicule indiqués au format JSON
 	 * 
-	 * @name getVacations
-	 * @description Retourne en AJAX la liste des vacations pour le service et le véhicule indiqués au format JSON
 	 * @param idService L'identifiant du service
 	 * @param idService L'identifiant du véhicule
 	 * @return La liste des vacations pour le service et le véhicule indiqués au format JSON
 	 * @author Thomas [TH]
-	 * @date 11 jan. 2015
 	 * @version 2
 	 */
 	@SuppressWarnings("unchecked")
@@ -719,14 +658,11 @@ public class EoleControlleur {
 	/**
 	 * Met à jour en AJAX la vacation sélectionnée
 	 * 
-	 * @name updateVacation
-	 * @description Met à jour en AJAX la vacation sélectionnée
 	 * @param id L'identifiant de la vacation à mettre à jour
 	 * @param newvalue La nouvelle valeur saisie
 	 * @param colname La colonne mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 11 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VACATIONS + "/update", method = POST)
@@ -738,13 +674,11 @@ public class EoleControlleur {
 
 	/**
 	 * Créer en AJAX une nouvelle vacation pour le service et le véhicule indiqués
-	 * @name ajouterVacation
-	 * @description Créer en AJAX une nouvelle vacation pour le service et le véhicule indiqués
+	 * 
 	 * @param idService L'identifiant du service
 	 * @param idVehicule L'identifiant du véhicule
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 11 jan. 2015
 	 * @version 2
 	 */
 	@RequestMapping(value = URL_VACATIONS + "/ajouter", method = POST)
@@ -756,12 +690,9 @@ public class EoleControlleur {
 	/**
 	 * Supprime en AJAX le service d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerVacation
-	 * @description Supprime en AJAX la vacation d'identifiant donné en paramètre
 	 * @param id L'identifiant de la vacation à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 11 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VACATIONS + "/supprimer", method = POST)
@@ -775,11 +706,8 @@ public class EoleControlleur {
 	/**
 	 * Affiche la JSP de gestion des véhicules
 	 * 
-	 * @name afficherVehicules
-	 * @description Affiche la JSP de gestion des véhicules
 	 * @return La vue de la JSP de gestion des véhicules
 	 * @author Thomas [TH]
-	 * @date 12 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VEHICULES, method = GET)
@@ -793,11 +721,8 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX la liste des vehicules au format JSON
 	 * 
-	 * @name getVacations
-	 * @description Retourne en AJAX la liste des vacations au format JSON
 	 * @return La liste des vacations au format JSON
 	 * @author Thomas [TH]
-	 * @date 11 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")
@@ -819,14 +744,11 @@ public class EoleControlleur {
 	/**
 	 * Met à jour en AJAX le véhicule sélectionné
 	 * 
-	 * @name updateVehicule
-	 * @description Met à jour en AJAX le véhicule sélectionné
 	 * @param id L'identifiant du véhicule à mettre à jour
 	 * @param newvalue La nouvelle valeur saisie
 	 * @param colname La colonne mise à jour
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 12 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VEHICULES + "/update", method = POST)
@@ -838,11 +760,9 @@ public class EoleControlleur {
 
 	/**
 	 * Créer en AJAX un nouveau véhicule
-	 * @name ajouterVehicule
-	 * @description Créer en AJAX un nouveau véhicule
+	 * 
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 12 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VEHICULES + "/ajouter", method = POST)
@@ -854,12 +774,9 @@ public class EoleControlleur {
 	/**
 	 * Supprime en AJAX le véhicule d'identifiant donné en paramètre
 	 * 
-	 * @name supprimerVehicule
-	 * @description Supprime en AJAX le véhicule d'identifiant donné en paramètre
 	 * @param id L'identifiant du véhicule à supprimer
 	 * @return "ok" si tout s'est bien passé
 	 * @author Thomas [TH]
-	 * @date 12 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_VEHICULES + "/supprimer", method = POST)
@@ -873,11 +790,8 @@ public class EoleControlleur {
 	/**
 	 * Affiche la JSP du diagramme de ligne
 	 * 
-	 * @name afficherDiagrammeLigne
-	 * @description Affiche la JSP du diagramme de ligne
 	 * @return La vue de la JSP du diagramme de ligne
 	 * @author Thomas [TH]
-	 * @date 15 jan. 2015
 	 * @version 1
 	 */
 	@RequestMapping(value = URL_DIAGRAMME_LIGNE, method = GET)
@@ -892,12 +806,9 @@ public class EoleControlleur {
 	/**
 	 * Retourne en AJAX les données nécessaires pour afficher le diagramme de la ligne sélectionnée
 	 * 
-	 * @name getData
-	 * @description Retourne en AJAX les données nécessaires pour afficher le diagramme de la ligne sélectionnée
 	 * @param idLigne L'identifiant de la ligne
 	 * @return Les données nécessaires pour afficher le diagramme de la ligne sélectionnée
 	 * @author Thomas [TH]
-	 * @date 15 jan. 2015
 	 * @version 1
 	 */
 	@SuppressWarnings("unchecked")

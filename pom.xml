@@ -230,7 +230,8 @@
 					</jdbc>
 					<generator>
 						<generate>
-							<daos>true</daos>
+							<daos>false</daos>
+							<pojos>true</pojos>
 						</generate>
 						<name>org.jooq.util.DefaultGenerator</name>
 						<strategy>
