@@ -2,16 +2,11 @@ package alize.commun.service;
 
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
-import alize.commun.modele.tables.pojos.Depot;
-import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Intervalle;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
-import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Terminus;
-import alize.commun.modele.tables.pojos.Vacation;
-import alize.commun.modele.tables.pojos.Vehicule;
-import alize.commun.modele.tables.pojos.Zonedecroisement;
+import alize.commun.modele.tables.pojos.VoieTransition;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -350,7 +345,7 @@ public interface StockageService {
 	 * @date 7 jan. 2015
 	 * @version 1
 	 */
-	public List<Terminus> getTerminus();
+	public List<alize.commun.modele.Terminus> getTerminus();
 	
 	/**
 	 * Récupère le terminus stocké en BDD en fonction de son ID
@@ -436,8 +431,6 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Transition> getTransitions();
-
-
 
 	/**
 	 * Met à jour la transitions stockée en BDD
@@ -746,14 +739,11 @@ public interface StockageService {
 
 	/* GESTION DES FEUILLES DE SERVICE */
 
-
 	/**
 	 * Récupère les feuilles de service stockées en BDD
 	 * 
 	 * @name getFDS
 	 * @description Récupère les feuilles de service stockées en BDD
-	 * @param idVoie L'identifiant de la voie concernée
-	 * @param idArret L'identifiant de l'arret concerné
 	 * @return La liste des feuilles de service stockées en BDD
 	 * @author Thomas [TH]
 	 * @date 9 jan. 2015
@@ -761,6 +751,19 @@ public interface StockageService {
 	 */
 	public List<Feuilledeservice> getFDS();
 
+	/**
+	 * Récupère la feuille de service applicable à la date donnée stockées en BDD
+	 * 
+	 * @name getFDS
+	 * @description Récupère la feuille de service applicable à la date donnée stockées en BDD
+	 * @param date La date voulue
+	 * @return La feuille de service applicable à la date donnée stockées en BDD
+	 * @author Thomas [TH]
+	 * @date 26 jan. 2015
+	 * @version 1
+	 */
+	public Feuilledeservice getFDS(Date date);
+	
 	/**
 	 * Met à jour la feuille de service indiquée stockées en BDD
 	 * @name updateFDS
@@ -892,6 +895,18 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Service> getServices();
+
+	/**
+	 * Récupère les services correspondant à la feuille de service indiquée stockés en BDD
+	 * 
+	 * @name getServices
+	 * @description Récupère les services correspondant à la feuille de service indiquée stockés en BDD
+	 * @return La liste des services correspondant à la feuille de service indiquée stockés en BDD
+	 * @author Thomas [TH]
+	 * @date 29 jan. 2015
+	 * @version 1
+	 */
+	public List<Service> getServices(int idFDS, Date date);
 
 	/**
 	 * Récupère les services tous les services avec les conducteurs associés à la date indiquée stockés en BDD
@@ -1181,6 +1196,18 @@ public interface StockageService {
 	public List<Action> getActionsPourLaVoie(int idVoie);
 
 	/**
+	 * Récupère les associations entre les voies et les transitions
+	 * 
+	 * @name getVoiesTransitions
+	 * @description Récupère les associations entre les voies et les transitions
+	 * @return La liste des transitions d'une voie
+	 * @author Cyril [CS]
+	 * @date 29 jan. 2015
+	 * @version 1
+	 */
+	public List<VoieTransition> getVoiesTransitions();
+	
+	/**
 	 * Ajoute une actions à la BDD
 	 * 
 	 * @name ajouterAction
@@ -1208,5 +1235,7 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public void supprimerToutesLesActions();
+
+	List<Action> getActions();
 	
 }

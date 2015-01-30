@@ -139,12 +139,6 @@ function DiagrammeVoie () {
 					
 					if(actionActuelle.vehiculeId == vehiculeId) {
 						if(actionPrecedente.typeAction == 1 && actionActuelle.typeAction == 0) {
-							console.log("Transition repérée");
-							console.log("Heure Début : " + this.timeStringToFloat(actionPrecedente.time));
-							console.log("Heure Fin : " + this.timeStringToFloat(actionActuelle.time));
-							console.log("Index Arret Précédent : " + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre));
-							console.log("Index Arret Suivant : " + this.getIndexOfArret(dataJSON, indexVoie, actionActuelle.parametre));
-							
 							this.draw.line(
 								this.margin + this.widthOrdonnees + this.timeStringToFloat(actionPrecedente.time) * this.widthGraduation - this.minTemps, 
 								this.margin + this.heightTitle + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre) * this.spaceGraduation, 
@@ -155,12 +149,6 @@ function DiagrammeVoie () {
 							actionPrecedente = actionActuelle;
 						}
 						if(actionPrecedente.typeAction == 0 && actionActuelle.typeAction == 1) {
-							console.log("Attente repérée");
-							console.log("Heure Début : " + this.timeStringToFloat(actionPrecedente.time));
-							console.log("Heure Fin : " + this.timeStringToFloat(actionActuelle.time));
-							console.log("Index Arret Précédent : " + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre));
-							console.log("Index Arret Suivant : " + this.getIndexOfArret(dataJSON, indexVoie, actionActuelle.parametre));
-
 							this.draw.line(
 								this.margin + this.widthOrdonnees + this.timeStringToFloat(actionPrecedente.time) * this.widthGraduation - this.minTemps, 
 								this.margin + this.heightTitle + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre) * this.spaceGraduation, 
@@ -183,7 +171,7 @@ function DiagrammeVoie () {
 			
 			var trouve = false;
 			var indexArret = 0;
-			while(!trouve && indexArret < dataJSON[0][indexVoie].length) {
+			while(!trouve && indexArret < dataJSON[1][indexVoie].length) {
 				trouve = dataJSON[1][indexVoie][indexArret].id == idArret;
 				indexArret++;
 			}

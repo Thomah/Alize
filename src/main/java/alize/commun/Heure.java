@@ -64,6 +64,15 @@ public class Heure {
 		this.setS(s);
 	}
 	
+	public Heure toHeure2(double d){
+		int h = (int) d/3600;
+		int tamp = (int) d%3600;
+		int m = (int) tamp/60;
+		tamp = tamp%60;
+		int s = (int) tamp;
+		return new Heure(h,m,s);
+	}
+	
 	public void ajouterHeures(Heure h2){
 		int d1 = this.getNbSec();
 		int d2 = h2.getNbSec();
@@ -76,10 +85,10 @@ public class Heure {
 		
 	}
 	
-	public void soustraireHeures(Heure h2){
-		int d1 = this.getNbSec();
+	public Heure soustraireHeures(Heure h1, Heure h2){
+		int d1 = h1.getNbSec();
 		int d2 = h2.getNbSec();
-		toHeure(d1-d2);
+		return toHeure2(d1-d2);
 	}
 	
 	public int diviserHeures(Heure h2){

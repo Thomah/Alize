@@ -16,10 +16,14 @@ public class Constantes {
 
 	public static final String URL_CONDUCTEURS = URL_INDEX + SLASH + "conducteurs";
 
+	public static final String URL_FEUILLES_DE_SERVICES = URL_INDEX + SLASH + "feuillesdeservices";
+	
 	/* JSP */
 	
 	public static final String JSP_INDEX = "index";	
 
 	public static final String JSP_CONDUCTEURS = "conducteurs";
+
+	public static final String JSP_FEUILLES_DE_SERVICES = "feuillesdeservices";
 	
 }

@@ -170,6 +170,23 @@
 												</div>
 											</div>
 										</div>
+										<div class="form-group">
+											<div class="row">
+												<div class="col-lg-12">
+													<label>Temps de pause</label>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-lg-6">
+													<label class="labelLeft" for="<%=TEMPS_DEBUT_JOURNEE %>">Min</label>
+													<input class="inputright" type="time" name="<%=TEMPS_DEBUT_JOURNEE %>" id="<%=TEMPS_DEBUT_JOURNEE %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsDebutJournee") %>" onchange="update()" />
+												</div>
+												<div class="col-lg-6">
+													<label class="labelLeft" for="<%=TEMPS_FIN_JOURNEE %>">Max</label>
+													<input class="inputright" type="time" name="<%=TEMPS_FIN_JOURNEE %>" id="<%=TEMPS_FIN_JOURNEE %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsFinJournee") %>" onchange="update()" />
+												</div>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -243,13 +260,17 @@
 		var tempsTravailMax = $("#<%=TEMPS_TRAVAIL_MAX_LABEL %>").val();
 		var tempsPauseMin = $("#<%=TEMPS_PAUSE_MIN_LABEL %>").val();
 		var tempsPauseMax = $("#<%=TEMPS_PAUSE_MAX_LABEL %>").val();
+		var tempsDebutJournee = $("#<%=TEMPS_DEBUT_JOURNEE %>").val();
+		var tempsFinJournee = $("#<%=TEMPS_FIN_JOURNEE %>").val();
 		
 		$.ajax({
 	    	url: "/alize/eole/contraintes/updateContraintes",
 	    	data: "tempsConduiteMax=" + tempsConduiteMax + 
 	    		"&tempsTravailMax=" + tempsTravailMax + 
 	    		"&tempsPauseMin=" + tempsPauseMin + 
-	    		"&tempsPauseMax=" + tempsPauseMax,
+	    		"&tempsPauseMax=" + tempsPauseMax + 
+	    		"&tempsDebutJournee=" + tempsDebutJournee + 
+	    		"&tempsFinJournee=" + tempsFinJournee,
 	    	type: "POST"
 	    });
 	}

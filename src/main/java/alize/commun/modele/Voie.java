@@ -20,6 +20,15 @@ public class Voie extends alize.commun.modele.tables.pojos.Voie{
 		transitions = new ArrayList<Transition>();
 	}
 	
+	public boolean contientTransition(int id){
+		for(Transition t : transitions){
+			if(t.getId()==id){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public Terminus getTerminusDepart() {
 		return terminusDepart;
 	}

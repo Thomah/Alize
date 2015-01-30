@@ -62,6 +62,22 @@ public class Contraintes {
 	public static final String TEMPS_PAUSE_MAX_LABEL = "tempsPauseMax";
 	
 	/**
+	 * Label utilisé dans le formulaire pour désigner l'heure de début de journée
+	 * 
+	 * @author Thomas
+	 * @date 29/01/2015
+	 */
+	public static final String TEMPS_DEBUT_JOURNEE = "tempsDebutJournee";	
+
+	/**
+	 * Label utilisé dans le formulaire pour désigner l'heure de fin de journée
+	 * 
+	 * @author Thomas
+	 * @date 29/01/2015
+	 */
+	public static final String TEMPS_FIN_JOURNEE = "tempsFinJournee";	
+	
+	/**
 	 * Label utilisé dans le formulaire pour désigner la ligne
 	 * 
 	 * @author Thomas

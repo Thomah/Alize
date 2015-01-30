@@ -9,7 +9,9 @@
 			<span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span>
 			<span class="icon-bar"></span> <span class="icon-bar"></span>
 		</button>
-		<a class="navbar-brand" href="<c:url value="/"/>">AliZé V1</a>
+		<a class="navbar-brand" href="<c:url value="/"/>">
+			<img alt="Brand" src="<c:url value="/resources/img/logo-alize.png"/>" height="40" style="position: relative; top: -7px;"/>
+		</a>
 	</div>
 
 	<ul class="nav navbar-top-links navbar-left">

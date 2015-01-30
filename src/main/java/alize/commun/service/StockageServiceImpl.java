@@ -28,14 +28,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
-import alize.commun.modele.tables.pojos.Feuilledeservice;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Periodicite;
-import alize.commun.modele.tables.pojos.Service;
 import alize.commun.modele.tables.pojos.Terminus;
-import alize.commun.modele.tables.pojos.Vacation;
-import alize.commun.modele.tables.pojos.Vehicule;
-import alize.commun.modele.tables.pojos.Zonedecroisement;
+import alize.commun.modele.tables.pojos.VoieTransition;
 import alize.commun.modele.tables.records.ActionRecord;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.AssociationconducteurserviceRecord;
@@ -56,8 +52,6 @@ import alize.commun.modele.tables.records.VehiculeRecord;
 import alize.commun.modele.tables.records.VoieTransitionRecord;
 import alize.commun.modele.tables.records.VoieRecord;
 import alize.commun.modele.tables.records.ZonedecroisementRecord;
-import alize.eole.modele.PeriodiciteM;
-
 
 public class StockageServiceImpl implements StockageService {
 
@@ -202,6 +196,24 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return voies;
+	}
+	
+	@Override
+	public List<VoieTransition> getVoiesTransitions() {
+		
+		VoieTransition vt;
+		List<VoieTransition> voiesTransitions = new ArrayList<VoieTransition>();
+		
+		Result<VoieTransitionRecord> results = dsl.fetch(VOIE_TRANSITION);
+		for (VoieTransitionRecord v : results) {
+			vt = new VoieTransition();
+			vt.setId(v.getId());
+			vt.setTransitionId(v.getTransitionId());
+			vt.setVoieId(v.getVoieId());
+			voiesTransitions.add(vt);
+		}
+		
+		return voiesTransitions;
 	}
 	
 	
@@ -450,14 +462,14 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	@Override
-	public List<Terminus> getTerminus() {
+	public List<alize.commun.modele.Terminus> getTerminus() {
 		
-		Terminus terminus;
-		List<Terminus> listeTerminus = new ArrayList<Terminus>();
+		alize.commun.modele.Terminus terminus;
+		List<alize.commun.modele.Terminus> listeTerminus = new ArrayList<alize.commun.modele.Terminus>();
 		
 		Result<TerminusRecord> results = dsl.fetch(TERMINUS);
 		for (TerminusRecord t : results) {
-			terminus = new Terminus();
+			terminus = new alize.commun.modele.Terminus();
 			terminus.setId(t.getId());
 			listeTerminus.add(terminus);
 		}
@@ -821,8 +833,8 @@ public class StockageServiceImpl implements StockageService {
 
 	@Override
 	public void supprimerTransition(int id) {
-		dsl.delete(TRANSITION)
-		.where(TRANSITION.ID.equal(id))
+		dsl.delete(LIEU)
+		.where(LIEU.ID.equal(id))
 		.execute();
 	}
 	
@@ -1019,7 +1031,6 @@ public class StockageServiceImpl implements StockageService {
 		return t;
 	}
 	
-	
 	@Override
 	public void ajouterTerminus(int idArret) {
 		TerminusRecord terminusRecord = dsl.newRecord(TERMINUS);
@@ -1087,6 +1098,22 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return fdss;
+	}
+	
+	@Override
+	public Feuilledeservice getFDS(java.sql.Date date) {
+		
+		FeuilledeserviceRecord record = dsl.fetchOne(
+				FEUILLEDESERVICE, 
+				FEUILLEDESERVICE.DEBUTSAISON.le(date)
+					.and(FEUILLEDESERVICE.FINSAISON.ge(date)));
+		
+		Feuilledeservice f = new Feuilledeservice(record);
+		if(f.getId() != null) {
+			f.setServices(getServices(f.getId(), date));
+		}
+		
+		return f;
 	}
 
 	@Override
@@ -1225,6 +1252,31 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	@Override
+	public List<Service> getServices(int idFDS, java.sql.Date date) {
+		Service service;
+		List<Service> services = new ArrayList<Service>();
+		
+		Result<Record5<Integer, Integer, Integer, String, String>> results = dsl.selectDistinct(SERVICE.ID, SERVICE.FEUILLEDESERVICE_ID, ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID, CONDUCTEUR.NOM, CONDUCTEUR.TELEPHONE)
+				.from(SERVICE)
+				.leftOuterJoin(ASSOCIATIONCONDUCTEURSERVICE).on(
+						SERVICE.ID.equal(ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID)
+						.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(date))
+				)
+				.leftOuterJoin(CONDUCTEUR).on(
+						ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID.equal(CONDUCTEUR.ID))
+				.orderBy(SERVICE.ID)
+				.fetch();
+		
+		for (Record record : results) {
+			service = new Service(record);
+			service.setVacations(getVacations(service.getId(), 0));
+			services.add(service);
+		}
+		
+		return services;
+	}
+
+	@Override
 	public Map<Service, Integer> getServices(String date) {
 		Map<Service, Integer> services = new LinkedHashMap<Service, Integer>();
 		Service service;
@@ -1237,20 +1289,20 @@ public class StockageServiceImpl implements StockageService {
 			e.printStackTrace();
 		}
 		
-		Result<Record2<Integer, Integer>> results = dsl.selectDistinct(SERVICE.ID, ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID)
+		Result<Record5<Integer, Integer, Integer, String, String>> results = dsl.selectDistinct(SERVICE.ID, SERVICE.FEUILLEDESERVICE_ID, ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID, CONDUCTEUR.NOM, CONDUCTEUR.TELEPHONE)
 				.from(SERVICE)
-				.leftOuterJoin(ASSOCIATIONCONDUCTEURSERVICE)
-				.on(
+				.leftOuterJoin(ASSOCIATIONCONDUCTEURSERVICE).on(
 						SERVICE.ID.equal(ASSOCIATIONCONDUCTEURSERVICE.SERVICE_ID)
 						.and(ASSOCIATIONCONDUCTEURSERVICE.DATE.equal(dateSQL))
 				)
+				.leftOuterJoin(CONDUCTEUR).on(
+						ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID.equal(CONDUCTEUR.ID))
 				.fetch();
 		
-		for (Record2<Integer, Integer> s : results) {
-			service = new Service();
-			service.setId(s.getValue(SERVICE.ID));
+		for (Record record : results) {
+			service = new Service(record);
 			
-			Integer conducteurId = s.getValue(ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID);
+			Integer conducteurId = record.getValue(ASSOCIATIONCONDUCTEURSERVICE.CONDUCTEUR_ID);
 			if(conducteurId == null) {
 				conducteurId = 0;
 			}
@@ -1621,6 +1673,28 @@ public class StockageServiceImpl implements StockageService {
 		record.setVehiculeId(idVehicule);
 		record.setVoieId(idVoie);
 		record.store();
+		
+	}
+	
+	@Override
+	public List<Action> getActions() {
+		Action action;
+		List<Action> actions = new ArrayList<Action>();
+		
+		Result<ActionRecord> results = dsl.fetch(ACTION);
+		
+		for (ActionRecord c : results) {
+			action = new Action();
+			action.setId(c.getValue(ACTION.ID));
+			action.setParametre(c.getParametre());
+			action.setTime(c.getTime());
+			action.setTypeaction(c.getTypeaction());
+			action.setVehiculeId(c.getVehiculeId());
+			action.setVoieId(c.getVoieId());
+			actions.add(action);
+		}
+		
+		return actions;
 	}
 	
 	@Override
@@ -1628,5 +1702,6 @@ public class StockageServiceImpl implements StockageService {
 		dsl.delete(ACTION).execute();
 	}
 	
+
 
 }

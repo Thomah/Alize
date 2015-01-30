@@ -10,6 +10,7 @@ public class Vehicule extends alize.commun.modele.tables.pojos.Vehicule {
 	private Lieu lieuActuel;
 	private boolean estEnService;
 	private int heureProchainDepart; 
+	private Voie voieActuelle;
 	
 	
 	public void changerLieu(Lieu nouveauLieu){
@@ -52,6 +53,14 @@ public class Vehicule extends alize.commun.modele.tables.pojos.Vehicule {
 
 	public void setHeureProchainDepart(int heureDeSortie) {
 		this.heureProchainDepart = heureDeSortie;
+	}
+
+	public Voie getVoieActuelle() {
+		return voieActuelle;
+	}
+
+	public void setVoieActuelle(Voie voieActuelle) {
+		this.voieActuelle = voieActuelle;
 	}	
 	
 	
