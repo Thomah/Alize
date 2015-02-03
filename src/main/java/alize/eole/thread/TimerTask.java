@@ -1,26 +1,15 @@
 package alize.eole.thread;
 
-import java.sql.Time;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
-import alize.commun.Heure;
 import alize.commun.service.StockageService;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.socket.TextMessage;
 
-import alize.commun.exception.CalculException;
-import alize.commun.modele.*;
-import alize.commun.modele.tables.pojos.Periodicite;
-import alize.commun.modele.tables.pojos.Vehicule;
 import alize.eole.websocket.handler.WebsocketEndPoint;
 
 public class TimerTask extends Thread {
@@ -30,40 +19,30 @@ public class TimerTask extends Thread {
 	private StockageService stockageService;
 	private WebsocketEndPoint websocket;
 	private LocalDateTime debutEole;
-	private LocalDateTime finEole;
+	private int nombreIterations;
 	
 	private String journal = "";
 	private boolean stop = false;
+	private JSONObject jSon = new JSONObject();
 	
 	@Override
-	public void run() {
-		ajouterLigneLog("DEBUT DES CALCULS");
-		
+	public void run() {		
 		calculTask = new CalculTask();
 		calculTask.setStockageService(stockageService);
 		calculTask.setWebsocket(websocket);
-		calculTask.setFinEole(finEole);
+		calculTask.setNombreIterations(nombreIterations);
 		calculTask.setTimerTask(this);
 		calculTask.start();
-
+		
+		ajouterLigneLog("DEBUT DES CALCULS");
 		setDebutEole(LocalDateTime.now());
 
-		while (LocalDateTime.now().isBefore(finEole)&&stop==false) {
-			ZonedDateTime zdtDebut = Tasks.getTimerTask().getDebutEole()
-					.atZone(ZoneId.systemDefault());
-			ZonedDateTime zdtFin = Tasks.getTimerTask().getFinEole()
-					.atZone(ZoneId.systemDefault());
-			double percent = (((double) (new Date()).getTime() - (double) zdtDebut
-					.toInstant().toEpochMilli()) / ((double) zdtFin.toInstant()
-					.toEpochMilli() - (double) zdtDebut.toInstant()
-					.toEpochMilli())) * 100;
-			String jSon = "{'avancement':'" + Double.toString(percent)
-					+ "','journal':'" + journal + "'}";
-			jSon = jSon.replace('\'', '\"');
-			websocket.sendMessage(new TextMessage(jSon));
+		while (calculTask.getNombreActuelIterations() < calculTask.getNombreIterations() &&stop==false) {
+			
+			websocket.sendMessage(new TextMessage(jSon.toString()));
 
 			try {
-				Thread.sleep(50);
+				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (IllegalArgumentException e) {
@@ -71,15 +50,11 @@ public class TimerTask extends Thread {
 			}
 		}
 		ajouterLigneLog("FIN DES CALCULS");
-		String jSon = "{'avancement':'" + Double.toString(100)
-				+ "','journal':'" + journal + "'}";
-		jSon = jSon.replace('\'', '\"');
-		websocket.sendMessage(new TextMessage(jSon));
+		websocket.sendMessage(new TextMessage(jSon.toString()));
 	}
 	
 	public void stopperTimer(String s){
 		stop = true;
-		ajouterLigneLog(s);
 	}
 	
 	
@@ -88,6 +63,19 @@ public class TimerTask extends Thread {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 		journal += "<p>[" + LocalDateTime.now().format(formatter) + "] "
 				+ message + "</p>";
+		
+		if(journal.length() > 10000) {
+			int end = journal.indexOf("</p>");
+			journal = journal.substring(end);
+		}
+
+		try {
+			double percent = ((double)calculTask.getNombreActuelIterations() / (double)calculTask.getNombreIterations()) * 100;
+			jSon.put("avancement", Double.toString(percent));
+			jSon.put("journal", journal);
+		} catch (JSONException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	public StockageService getStockageService() {
@@ -114,12 +102,12 @@ public class TimerTask extends Thread {
 		this.debutEole = debutEole;
 	}
 
-	public LocalDateTime getFinEole() {
-		return finEole;
+	public int getNombreIterations() {
+		return nombreIterations;
 	}
 
-	public void setFinEole(LocalDateTime finEole) {
-		this.finEole = finEole;
+	public void setNombreIterations(int nombreIterations) {
+		this.nombreIterations = nombreIterations;
 	}
 
 	public String getJournal() {

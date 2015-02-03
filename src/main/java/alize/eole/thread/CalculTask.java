@@ -43,7 +43,8 @@ public class CalculTask extends Thread {
 	private StockageService stockageService;
 	private WebsocketEndPoint websocket;
 	private LocalDateTime debutEole;
-	private LocalDateTime finEole;
+	private int nombreIterations;
+	private int nombreActuelIterations;
 	
 	private TimerTask timerTask;
 
@@ -80,17 +81,15 @@ public class CalculTask extends Thread {
 			ajouterLigneLog("Go");
 			int horloge, time;
 			int iterator = -1;
-			while (iterator < 10) {
-				System.out.println(iterator);
-				ajouterLigneLog("Nouvelle itération.");
+			while (iterator < nombreIterations) {
 				tableauActions.add(new ArrayList<Action>());
 				nettoyerLeReseau();
 				horloge = debutJourneeSec;
 				try {
 					iterator++;
+					ajouterLigneLog("Iteration : " + iterator);
+					nombreActuelIterations = iterator;
 					while (horloge < finJourneeSec) {
-						// System.out.println("Horloge :" + horloge + "/" +
-						// finJourneeSec);
 						for (Vehicule v : listeVehicules) {
 							if (v.getHeureProchainDepart() == horloge) {
 								Lieu l = trouverLieu(v.getLieuActuel().getId());
@@ -98,11 +97,7 @@ public class CalculTask extends Thread {
 
 									Arret a = trouverArret(l.getId());
 
-								
-									//System.out.println("Arret :" + a);
-
-									Terminus terminus = trouverTerminus(a
-											.getId());
+									Terminus terminus = trouverTerminus(a.getId());
 									if (terminus != null) {
 										// Choix d'une voie
 										List<Voie> voiesPossibles = new ArrayList<Voie>();
@@ -122,9 +117,7 @@ public class CalculTask extends Thread {
 												.ajouterAction(
 														toTime(v.getHeureProchainDepart()),
 														(int) v.getId(),
-														trouverVoie(
-																v.getVoieActuelle()
-																		.getId())
+														trouverVoie(v.getVoieActuelle().getId())
 																.getId(),
 														TypeAction.CHANGER_VOIE
 																.ordinal(),
@@ -226,18 +219,12 @@ public class CalculTask extends Thread {
 													.getDuree()));
 									heure.toHeure(v.getHeureProchainDepart());
 
-//									System.out.println(toTime(horloge)
-//											+ " Véhicule " + v.getId()
-//											+ " : Arret " + a.getId()
-//											+ " --> Transition "
-//											+ nouvelleTransition.getId() + " ("
-//											+ heure.toString() + ").");
-//									ajouterLigneLog(toTime(horloge)
-//											+ " Véhicule " + v.getId()
-//											+ " : Arret " + a.getId()
-//											+ " --> Transition "
-//											+ nouvelleTransition.getId() + " ("
-//											+ heure.toString() + ").");
+									ajouterLigneLog(toTime(horloge)
+											+ " Véhicule " + v.getId()
+											+ " : Arret " + a.getId()
+											+ " --> Transition "
+											+ nouvelleTransition.getId() + " ("
+											+ heure.toString() + ").");
 									stockageService.ajouterAction(toTime(v
 											.getHeureProchainDepart()), (int) v
 											.getId(), v.getVoieActuelle()
@@ -275,18 +262,12 @@ public class CalculTask extends Thread {
 									v.setHeureProchainDepart(time);
 
 									heure.toHeure(v.getHeureProchainDepart());
-//									System.out.println(toTime(horloge)
-//											+ " Véhicule " + v.getId()
-//											+ " : Transition " + t.getId()
-//											+ " --> Arret "
-//											+ nouvelArret.getId() + " ("
-//											+ heure.toString() + ").");
-//									ajouterLigneLog(toTime(horloge)
-//											+ " Véhicule " + v.getId()
-//											+ " : Transition " + t.getId()
-//											+ " --> Arret "
-//											+ nouvelArret.getId() + " ("
-//											+ heure.toString() + ").");
+									ajouterLigneLog(toTime(horloge)
+											+ " Véhicule " + v.getId()
+											+ " : Transition " + t.getId()
+											+ " --> Arret "
+											+ nouvelArret.getId() + " ("
+											+ heure.toString() + ").");
 
 									stockageService.ajouterAction(toTime(time),
 											(int) v.getId(), v
@@ -303,6 +284,7 @@ public class CalculTask extends Thread {
 				}
 			}
 
+			ajouterLigneLog("Evaluation...");
 			evaluation();
 
 			timerTask.stopperTimer("Fin des calculs");
@@ -327,12 +309,10 @@ public class CalculTask extends Thread {
 			int poids = 0;
 			for(int i = 0; i<listeActions.size(); i++){
 				Action a = listeActions.get(i);
-				System.out.println("Id de l'action : " + a.getId());
 				if(a.getTypeaction() == TypeAction.QUITTER_ARRET.ordinal()){
 					Heure heureDepart =  new Heure (a.getTime());
 					Action prochaineArrivee = trouverProchaineAction(TypeAction.ARRIVER_ARRET.ordinal(), listeActions, i, a.getParametre());
 
-					System.out.println("Prochaine arrivée quitterArret : " + prochaineArrivee.getId());
 					if(prochaineArrivee!=null){
 						Heure heureArrivee = new Heure (prochaineArrivee.getTime());
 						Heure tpsParcours = heureArrivee.soustraireHeures(heureArrivee,heureDepart);
@@ -342,7 +322,6 @@ public class CalculTask extends Thread {
 				if(a.getTypeaction() == TypeAction.ARRIVER_ARRET.ordinal()){
 					Heure heureDepart =  new Heure (a.getTime());
 					Action prochaineArrivee = trouverProchaineAction(TypeAction.QUITTER_ARRET.ordinal(), listeActions, i, a.getParametre());
-					System.out.println("Prochaine arrivée arriverArret : " + prochaineArrivee.getId());
 					if(prochaineArrivee!=null){
 						Heure heureArrivee = new Heure (prochaineArrivee.getTime());
 						Heure tpsParcours = heureArrivee.soustraireHeures(heureArrivee,heureDepart);
@@ -352,7 +331,6 @@ public class CalculTask extends Thread {
 				if(a.getTypeaction() == TypeAction.DEVENIR_COMMERCIAL.ordinal()){
 					Heure heureDepart =  new Heure (a.getTime());
 					Action prochaineArrivee = trouverProchaineAction(TypeAction.DEVENIR_NON_COMMERCIAL.ordinal(), listeActions, i, a.getParametre());
-					System.out.println("Prochaine arrivée devenir commercial : " + prochaineArrivee.getId());
 					if(prochaineArrivee!=null){
 						Heure heureArrivee = new Heure (prochaineArrivee.getTime());
 						Heure tpsParcours = heureArrivee.soustraireHeures(heureArrivee,heureDepart);
@@ -362,7 +340,6 @@ public class CalculTask extends Thread {
 				if(a.getTypeaction() == TypeAction.DEVENIR_NON_COMMERCIAL.ordinal()){
 					Heure heureDepart =  new Heure (a.getTime());
 					Action prochaineArrivee = trouverProchaineAction(TypeAction.DEVENIR_COMMERCIAL.ordinal(), listeActions, i, a.getParametre());
-					System.out.println("Prochaine arrivée devenir non commercial : " + prochaineArrivee.getId());
 					if(prochaineArrivee!=null){
 						Heure heureArrivee = new Heure (prochaineArrivee.getTime());
 						Heure tpsParcours = heureArrivee.soustraireHeures(heureArrivee,heureDepart);
@@ -370,7 +347,6 @@ public class CalculTask extends Thread {
 					}
 				}
 			}
-			System.out.println(poids);
 			if(listeActions==tableauActions.get(0)){
 				poidsMax = poids;
 			}
@@ -384,10 +360,7 @@ public class CalculTask extends Thread {
 
 	
 	private Action trouverProchaineAction(int typeAction, List<Action> listeAction, int curseur, int parametre){
-		System.out.println(typeAction  + "---" + curseur + "---"  + parametre);
 		for(int i = curseur+1; i< listeAction.size(); i++){
-			System.out.println("Type  " + listeAction.get(i).getTypeaction());
-			System.out.println("Param" + listeAction.get(i).getParametre());
 			if(listeAction.get(i).getTypeaction()==typeAction && listeAction.get(i).getParametre()==parametre){
 				return listeAction.get(i);
 			}
@@ -443,6 +416,7 @@ public class CalculTask extends Thread {
 		List<VoieTransition> listeVoieTransition = stockageService.getVoiesTransitions();
 		Transition t = new Transition();
 		for(Voie v : listeV){
+			v.setEstcommerciale((byte)1);
 			listeVoies.add(v);
 			for(VoieTransition vt : listeVoieTransition){
 				if(vt.getVoieId()==v.getId()){
@@ -483,7 +457,6 @@ public class CalculTask extends Thread {
 			ajouterLigneLog("Insertion depot : " + d.getId() + ".");
 		}
 	}
-
 	
 	private void initialisationTransitions() throws CalculException {
 		// INITIALISATION DES ARRETS :
@@ -570,8 +543,6 @@ public class CalculTask extends Thread {
 					+ ".");
 		}
 	}
-	
-
 
 	private ZoneDeCroisement trouverZoneDeCroisement(int id){
 		ZoneDeCroisement zoneDeCroisement = null;
@@ -639,21 +610,6 @@ public class CalculTask extends Thread {
 		return actions.get(actions.size()-1);
 	}
 	
-	private Periodicite trouverPremierePeriodicite() {
-		
-//			Heure heureMin = new Heure(100, 0, 0);
-//			Heure heureDebut = new Heure(0, 0, 0);
-//			Periodicite periodicite = listePeriodicites.get(0);
-//			for (Periodicite p : listePeriodicites) {
-//				heureDebut = new Heure(p.getDebut());
-//				//if (heureDebut.comparerHeure(heureMin) == -1) {
-//					heureMin = heureDebut;
-//					periodicite = p;
-//				//}
-//			}
-//			return periodicite;
-		return null;
-	}
 
 	// Calculer le temps de parcours à partir d'une liste de transitions (depuis
 	// le départ du premier arrêt jusqu'à l'arrivée du dernier arrêt)
@@ -700,16 +656,16 @@ public class CalculTask extends Thread {
 		return debutEole;
 	}
 
-	private void setDebutEole(LocalDateTime debutEole) {
-		this.debutEole = debutEole;
+	public int getNombreActuelIterations() {
+		return nombreActuelIterations;
+	}
+	
+	public int getNombreIterations() {
+		return nombreIterations;
 	}
 
-	public LocalDateTime getFinEole() {
-		return finEole;
-	}
-
-	public void setFinEole(LocalDateTime finEole) {
-		this.finEole = finEole;
+	public void setNombreIterations(int nombreIterations) {
+		this.nombreIterations = nombreIterations;
 	}
 
 	public TimerTask getTimerTask() {

@@ -11,7 +11,7 @@ public class Tasks {
 	
 	private static TimerTask timerTask;
 	
-	public static void setTimerTask(LocalDateTime l) {
+	public static void setTimerTask(int nombreIterations) {
 
 		StockageService stockageService = timerTask.getStockageService();
 		WebsocketEndPoint websocket = timerTask.getWebsocket();
@@ -19,7 +19,7 @@ public class Tasks {
 		timerTask = new TimerTask();
 		timerTask.setStockageService(stockageService);
 		timerTask.setWebsocket(websocket);
-		timerTask.setFinEole(l);
+		timerTask.setNombreIterations(nombreIterations);
 		timerTask.start();
 	}
 	

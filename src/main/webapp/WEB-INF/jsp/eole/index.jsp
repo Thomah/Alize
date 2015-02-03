@@ -4,8 +4,6 @@
 <html>
 <head>
 <%@ include file="/WEB-INF/jsp/commun/head.jsp"%>
-<link type="text/css" rel="stylesheet"
-	href="<c:url value="/resources/css/plugins/datetimepicker/bootstrap-datetimepicker.css"/>" />
 <style>
 a {
 	color: #E66D2B;
@@ -43,7 +41,7 @@ a:hover, a:focus {
 							<i class="fa fa-bell fa-fw"></i> Génération des services
 						</div>
 						<div class="panel-body">
-							<h2>Recherche multicritères</h2>
+							<h2>Calculs</h2>
 							<p>En fonction du réseau de transport Nau et des contraintes
 								Eole, vous pouvez générer les services associés grâce au menu
 								ci-après.</p>
@@ -83,51 +81,21 @@ a:hover, a:focus {
 				<div class="col-lg-4">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<i class="fa fa-bell fa-fw"></i> Temps accordé
+							<i class="fa fa-bell fa-fw"></i> Paramètre
 						</div>
 						<div class="panel-body">
 							<div class="form-group">
-								<label for="finEole">Fin des calculs</label>
-								<div class='input-group date' id='dureeEole'>
-									<input type='text' class="form-control" name="finEole" id="finEole" /> <span
-										class="input-group-addon"><span
-										class="glyphicon glyphicon-calendar"></span> </span>
+								<label for="finEole">Nombre d'itérations</label>
+								<div class='input-group' id='dureeEole'>
+									<input type='text' class="form-control" name="finEole" id="finEole" />
 								</div>
 							</div>
 							<button id="lancerEole" class="btn btn-default" onclick="lancerEole()">Calculer</button>
 						</div>
 					</div>
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<i class="fa fa-bell fa-fw"></i> Résumé des paramètres
-						</div>
-						<div class="panel-body">
-							<div class="list-group">
-								<a class="list-group-item" href="#"><i
-									class="fa fa-comment fa-fw"></i> Nombre de véhicules <span
-									class="pull-right text-muted small"> <em> 30 </em>
-								</span> </a> <a class="list-group-item" href="#"><i
-									class="fa fa-comment fa-fw"></i> Nombre de véhicules <span
-									class="pull-right text-muted small"> <em> 30 </em>
-								</span> </a> <a class="list-group-item" href="#"><i
-									class="fa fa-comment fa-fw"></i> Nombre de véhicules <span
-									class="pull-right text-muted small"> <em> 30 </em>
-								</span> </a> <a class="list-group-item" href="#"><i
-									class="fa fa-comment fa-fw"></i> Nombre de véhicules <span
-									class="pull-right text-muted small"> <em> 30 </em>
-								</span> </a> <a class="list-group-item" href="#"><i
-									class="fa fa-comment fa-fw"></i> Nombre de véhicules <span
-									class="pull-right text-muted small"> <em> 30 </em>
-								</span> </a>
-							</div>
-						</div>
-					</div>
 				</div>
-				<!-- /.col-lg-12 -->
 			</div>
-			<!-- /.row -->
 		</div>
-		<!-- /#page-wrapper -->
 
 	</div>
 	<!-- /#wrapper -->
@@ -135,17 +103,9 @@ a:hover, a:focus {
 	<%@ include file="/WEB-INF/jsp/commun/scripts.jsp"%>
 	<script
 		src="<c:url value="/resources/js/plugins/moment/moment.js"/>"></script>
-	<script
-		src="<c:url value="/resources/js/plugins/datetimepicker/bootstrap-datetimepicker.js"/>"></script>
 	<script type="text/javascript">
 		var socket;
 		connect();
-	
-		$('#dureeEole').datetimepicker({
-	        format: 'DD/MM/YYYY HH:mm',
-	        pickSeconds: false,
-	        pick12HourFormat: false            
-	    });
 		
 		function disconnect() {
 			if (socket != null) {
@@ -174,7 +134,6 @@ a:hover, a:focus {
 	    	  		document.getElementById("progress-bar-eole").setAttribute("style", "width: " + data.avancement + "%");
 	    	  		
 					// A changer pour une requete AJAX
-					$('#dureeEole').data("DateTimePicker").disable();
 					$('#lancerEole').attr("disabled", "disabled");
 				};
 

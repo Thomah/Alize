@@ -30,10 +30,8 @@ public class WebsocketEndPoint extends TextWebSocketHandler {
 		JSONObject jObject = new JSONObject(messagePayLoad);
 		
 		String finEole = jObject.getString("finEole");
-		if(finEole.matches("[0-9]{2}/[0-9]{2}/[0-9]{4} [0-9]{2}:[0-9]{2}")) {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-			Tasks.setTimerTask(LocalDateTime.parse(finEole, formatter));
-		}
+		int nombreIterations = Integer.valueOf(finEole);
+		Tasks.setTimerTask(nombreIterations);
 	}
 
 	public void sendMessage(TextMessage textMessage) {

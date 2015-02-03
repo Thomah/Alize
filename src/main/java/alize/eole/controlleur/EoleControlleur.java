@@ -823,9 +823,13 @@ public class EoleControlleur {
 		JSONArray arrayActions = new JSONArray();
 		JSONArray arrayVoies = new JSONArray();
 		for (List<Action> actionsVoie : actions) {
-
+			
 			JSONObject objectVoie = new JSONObject();
-			objectVoie.put("'id'", actionsVoie.get(0).getVoieId());
+			if(actionsVoie.size() > 0) {
+				objectVoie.put("'id'", actionsVoie.get(0).getVoieId());
+			} else {
+				objectVoie.put("'id'", "0");
+			}
 			arrayVoies.add(objectVoie);
 
 			JSONArray arrayVoie = new JSONArray();
