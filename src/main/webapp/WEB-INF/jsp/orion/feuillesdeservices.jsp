@@ -113,7 +113,12 @@ a:hover, a:focus {
 		
 		var buttonConducteur = document.createElement("button");
 		buttonConducteur.className = "btn btn-default btn-xs dropdown-toggle";
-		buttonConducteur.innerHTML = service.conducteur_nom + " (" + service.conducteur_id + ") ";
+		
+		if(typeof(service.conducteur_nom) != "undefined" && typeof(service.conducteur_id) != "undefined") {
+			buttonConducteur.innerHTML = service.conducteur_nom + " (" + service.conducteur_id + ") ";
+		} else {
+			buttonConducteur.innerHTML = "Aucun conducteur";
+		}
 		buttonConducteur.type = "button";
 		buttonConducteur.setAttribute("data-toggle", "dropdown");
 		

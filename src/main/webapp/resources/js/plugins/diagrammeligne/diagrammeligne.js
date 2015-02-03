@@ -40,7 +40,7 @@ function DiagrammeVoie () {
 					this.draw = SVG('diagramme-' + indexVoie).size(this.widthSVG, this.heightSVG);
 					
 					// Ajout du titre
-					this.draw.text("Voie " + indexVoie)
+					this.draw.text("Voie " + dataJSON[3][indexVoie].id)
 						.x(this.margin)
 						.y(0);
 					
@@ -147,8 +147,7 @@ function DiagrammeVoie () {
 								.stroke({ color: '#f06', width: 1 });
 							
 							actionPrecedente = actionActuelle;
-						}
-						if(actionPrecedente.typeAction == 0 && actionActuelle.typeAction == 1) {
+						} else if(actionPrecedente.typeAction == 0 && actionActuelle.typeAction == 1) {
 							this.draw.line(
 								this.margin + this.widthOrdonnees + this.timeStringToFloat(actionPrecedente.time) * this.widthGraduation - this.minTemps, 
 								this.margin + this.heightTitle + this.getIndexOfArret(dataJSON, indexVoie, actionPrecedente.parametre) * this.spaceGraduation, 
@@ -157,6 +156,9 @@ function DiagrammeVoie () {
 								.stroke({ color: '#f06', width: 1 });
 							
 							actionPrecedente = actionActuelle;
+						} else {
+							vehiculeId = dataJSON[0][indexVoie][indexAction].vehiculeId;
+							actionPrecedente = dataJSON[0][indexVoie][indexAction];
 						}
 					} else {
 						vehiculeId = dataJSON[0][indexVoie][indexAction].vehiculeId;
@@ -186,6 +188,12 @@ function DiagrammeVoie () {
 			  var hoursMinutes = time.split(/[.:]/);
 			  var hours = parseInt(hoursMinutes[0], 10);
 			  var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+			  
+			  var value = hours + minutes / 60;
+			  if(value < this.minTemps && 24 + value < this.maxTemps) {
+				  value = 24 + value;
+			  }
+			  
 			  return hours + minutes / 60;
 			}
 		

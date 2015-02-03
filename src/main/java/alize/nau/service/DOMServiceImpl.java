@@ -143,7 +143,13 @@ public class DOMServiceImpl implements DOMService {
 				arret.setEstsortiedepot(Byte.valueOf(courant.getAttributeValue("estSortieDepot")));
 				arret.setEstlieuechangeconducteur(Byte.valueOf(courant.getAttributeValue("estLieuEchangeConducteur")));
 				arret.setTempsimmobilisationId(Integer.valueOf(courant.getAttributeValue("tempsImmobilisation")));
-				arret.setEstenfacede(Integer.valueOf(courant.getAttributeValue("estEnFaceDe")));
+				
+				Integer intValue = Integer.valueOf(courant.getAttributeValue("estEnFaceDe"));
+				if(intValue != 0) {
+					arret.setEstenfacede(intValue);
+				} else {
+					arret.setEstenfacede(null);
+				}
 				arret.store();
 			}
 			

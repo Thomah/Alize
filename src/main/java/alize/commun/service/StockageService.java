@@ -540,7 +540,7 @@ public interface StockageService {
 	public void ajouterTerminus(int idArret);
 	
 	/**
-	 * Supprime le terminus indiqué par l'ID de son arret  en BDD
+	 * Supprime le terminus indiqué par l'ID de son arret en BDD
 	 * 
 	 * @param id L'identifiant de l'arret associer au terminus à supprimer
 	 * @author Cyril [CS]

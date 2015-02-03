@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import org.jooq.tools.json.JSONArray;
 import org.jooq.tools.json.JSONObject;
@@ -820,7 +821,13 @@ public class EoleControlleur {
 		JSONArray array = new JSONArray();
 		
 		JSONArray arrayActions = new JSONArray();
+		JSONArray arrayVoies = new JSONArray();
 		for (List<Action> actionsVoie : actions) {
+
+			JSONObject objectVoie = new JSONObject();
+			objectVoie.put("'id'", actionsVoie.get(0).getVoieId());
+			arrayVoies.add(objectVoie);
+
 			JSONArray arrayVoie = new JSONArray();
 			for (Action a : actionsVoie) {
 				JSONObject object = new JSONObject();
@@ -872,6 +879,8 @@ public class EoleControlleur {
 			e.printStackTrace();
 		}
 		array.add(object);
+		
+		array.add(arrayVoies);
 		
 		String validJSONString = array.toString().replace("'", "\"")
 				.replace("=", ":");

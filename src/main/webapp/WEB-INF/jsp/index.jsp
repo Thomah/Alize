@@ -4,7 +4,7 @@
 <head>
 <%@ include file="/WEB-INF/jsp/commun/head.jsp"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>AliZÃ©</title>
+<title>AliZé</title>
 <style>
 a {
 	color: #858585;
@@ -77,12 +77,12 @@ a:hover, a:focus {
 								<i class="fa fa-code-fork fa-5x"></i>
 							</div>
 							<div class="col-xs-9">
-								<p class="lead">ModÃ©lisation du rÃ©seau</p>
+								<p class="lead">Modélisation du réseau</p>
 								<p>Via ce module, vous pouvez, au choix :</p>
 								<ul>
-									<li>Concevoir pas Ã  pas un rÃ©seau de transport avec ses
-										diffÃ©rents composants</li>
-									<li>Importer un rÃ©seau formatÃ© selon <a
+									<li>Concevoir pas à pas un réseau de transport avec ses
+										différents composants</li>
+									<li>Importer un réseau formaté selon <a
 										href="<c:url value="/resources/grammaire.xsd" />">cette
 											grammaire</a></li>
 								</ul>
@@ -90,7 +90,7 @@ a:hover, a:focus {
 						</div>
 						<a href="<c:url value="/nau" />">
 							<div class="panel-footer">
-								<span class="pull-left">AccÃ©der au module</span> <span
+								<span class="pull-left">Accéder au module</span> <span
 									class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 								<div class="clearfix"></div>
 							</div>
@@ -105,17 +105,17 @@ a:hover, a:focus {
 								<i class="fa fa-calculator fa-5x"></i>
 							</div>
 							<div class="col-xs-9">
-								<p class="lead">GÃ©nÃ©ration du planning</p>
-								<p>A partir de la modÃ©lisation effectuÃ©e par Nau, Eole
-									calcule les diffÃ©rentes possibilitÃ©s envisageables de faÃ§on Ã 
-									fournir un planning gÃ©nÃ©ral appelÃ© Â« feuille de service Â» ainsi
+								<p class="lead">Génération du planning</p>
+								<p>A partir de la modélisation effectuée par Nau, Eole
+									calcule les différentes possibilités envisageables de façon à
+									fournir un planning général appelé « feuille de service » ainsi
 									qu'un diagramme de Ligne montrant le positionnement d'un
-									vÃ©hicule sur une voie</p>
+									véhicule sur une voie</p>
 							</div>
 						</div>
 						<a href="<c:url value="/eole" />">
 							<div class="panel-footer">
-								<span class="pull-left">AccÃ©der au module</span> <span
+								<span class="pull-left">Accéder au module</span> <span
 									class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 								<div class="clearfix"></div>
 							</div>
@@ -131,12 +131,12 @@ a:hover, a:focus {
 							</div>
 							<div class="col-xs-9">
 								<p class="lead">Attribution des ressources humaines</p>
-								<p>Vous permet d'affecter manuellement des conducteurs Ã  chacun des services gÃ©nÃ©rÃ©s par Eole.</p>
+								<p>Vous permet d'affecter manuellement des conducteurs à chacun des services générés par Eole.</p>
 							</div>
 						</div>
 						<a href="<c:url value="/orion" />">
 							<div class="panel-footer">
-								<span class="pull-left">AccÃ©der au module</span> <span
+								<span class="pull-left">Accéder au module</span> <span
 									class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
 								<div class="clearfix"></div>
 							</div>
