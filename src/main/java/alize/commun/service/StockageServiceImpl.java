@@ -30,6 +30,8 @@ import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Terminus;
+import alize.commun.modele.tables.pojos.VoieTransition;
+import alize.commun.modele.tables.records.ActionRecord;
 import alize.commun.modele.tables.records.ArretRecord;
 import alize.commun.modele.tables.records.AssociationconducteurserviceRecord;
 import alize.commun.modele.tables.records.ConducteurRecord;
@@ -193,6 +195,24 @@ public class StockageServiceImpl implements StockageService {
 		}
 		
 		return voies;
+	}
+	
+	@Override
+	public List<VoieTransition> getVoiesTransitions() {
+		
+		VoieTransition vt;
+		List<VoieTransition> voiesTransitions = new ArrayList<VoieTransition>();
+		
+		Result<VoieTransitionRecord> results = dsl.fetch(VOIE_TRANSITION);
+		for (VoieTransitionRecord v : results) {
+			vt = new VoieTransition();
+			vt.setId(v.getId());
+			vt.setTransitionId(v.getTransitionId());
+			vt.setVoieId(v.getVoieId());
+			voiesTransitions.add(vt);
+		}
+		
+		return voiesTransitions;
 	}
 	
 	
@@ -441,14 +461,14 @@ public class StockageServiceImpl implements StockageService {
 	}
 
 	@Override
-	public List<Terminus> getTerminus() {
+	public List<alize.commun.modele.Terminus> getTerminus() {
 		
-		Terminus terminus;
-		List<Terminus> listeTerminus = new ArrayList<Terminus>();
+		alize.commun.modele.Terminus terminus;
+		List<alize.commun.modele.Terminus> listeTerminus = new ArrayList<alize.commun.modele.Terminus>();
 		
 		Result<TerminusRecord> results = dsl.fetch(TERMINUS);
 		for (TerminusRecord t : results) {
-			terminus = new Terminus();
+			terminus = new alize.commun.modele.Terminus();
 			terminus.setId(t.getId());
 			listeTerminus.add(terminus);
 		}
@@ -1639,5 +1659,48 @@ public class StockageServiceImpl implements StockageService {
 		}
 		return actions;
 	}
+
+	
+	@Override
+	public void ajouterAction(Time t, int idVehicule, int idVoie, int typeAction, int parametre) {
+		ActionRecord record = dsl.newRecord(ACTION);
+	
+		record.setId(null);
+		record.setParametre(parametre);
+		record.setTime(t);
+		record.setTypeaction(typeAction);
+		record.setVehiculeId(idVehicule);
+		record.setVoieId(idVoie);
+		record.store();
+		
+	}
+	
+	@Override
+	public List<Action> getActions() {
+		Action action;
+		List<Action> actions = new ArrayList<Action>();
+		
+		Result<ActionRecord> results = dsl.fetch(ACTION);
+		
+		for (ActionRecord c : results) {
+			action = new Action();
+			action.setId(c.getValue(ACTION.ID));
+			action.setParametre(c.getParametre());
+			action.setTime(c.getTime());
+			action.setTypeaction(c.getTypeaction());
+			action.setVehiculeId(c.getVehiculeId());
+			action.setVoieId(c.getVoieId());
+			actions.add(action);
+		}
+		
+		return actions;
+	}
+	
+	@Override
+	public void supprimerToutesLesActions(){
+		dsl.delete(ACTION).execute();
+	}
+	
+
 
 }

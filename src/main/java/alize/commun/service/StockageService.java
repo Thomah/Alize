@@ -4,6 +4,7 @@ import alize.commun.modele.*;
 import alize.commun.modele.tables.pojos.Conducteur;
 import alize.commun.modele.tables.pojos.Ligne;
 import alize.commun.modele.tables.pojos.Terminus;
+import alize.commun.modele.tables.pojos.VoieTransition;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -268,7 +269,7 @@ public interface StockageService {
 	 * @author Thomas [TH]
 	 * @version 1
 	 */
-	public List<Terminus> getTerminus();
+	public List<alize.commun.modele.Terminus> getTerminus();
 	
 	/**
 	 * Récupère le terminus stocké en BDD en fonction de son ID
@@ -938,5 +939,48 @@ public interface StockageService {
 	 * @version 1
 	 */
 	public List<Action> getActionsPourLaVoie(int idVoie);
+
+	/**
+	 * Récupère les associations entre les voies et les transitions
+	 * 
+	 * @name getVoiesTransitions
+	 * @description Récupère les associations entre les voies et les transitions
+	 * @return La liste des transitions d'une voie
+	 * @author Cyril [CS]
+	 * @date 29 jan. 2015
+	 * @version 1
+	 */
+	public List<VoieTransition> getVoiesTransitions();
+	
+	/**
+	 * Ajoute une actions à la BDD
+	 * 
+	 * @name ajouterAction
+	 * @description  Ajoute une actions à la BDD
+	 * @param id l'identifiant de l'action
+	 * @param t le temps de début
+	 * @param idVehicule l'identifiant du véhicule concerné
+	 * @param idVoie l'identifiant de la voie
+	 * @param typeAction le type d'action concerné
+	 * @param parametre le parametre concerné
+	 * @author Cyril [CS]
+	 * @date 27 jan. 2015
+	 * @version 1
+	 */
+	public void ajouterAction( Time t, int idVehicule, int idVoie,
+			int typeAction, int parametre);
+	
+	/**
+	 * Supprime toutes les actions stockées en BDD
+	 * 
+	 * @name supprimerToutesLesActions
+	 * @description  Supprime toutes les actions stockées en BDD
+	 * @author Cyril [CS]
+	 * @date 28 jan. 2015
+	 * @version 1
+	 */
+	public void supprimerToutesLesActions();
+
+	List<Action> getActions();
 	
 }

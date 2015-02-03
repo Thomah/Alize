@@ -370,7 +370,7 @@ public class DOMServiceImpl implements DOMService {
 		doc.getRootElement().addContent(depots);
 		
 		// Ajout des terminus
-		List<Terminus> listeTerminus = stockageService.getTerminus();
+		List<alize.commun.modele.Terminus> listeTerminus = stockageService.getTerminus();
 		Element terminus = new Element("terminus");
 		Element term;
 		for(Terminus t : listeTerminus) {

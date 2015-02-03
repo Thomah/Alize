@@ -7,15 +7,15 @@ public class ZoneDeCroisement  extends alize.commun.modele.tables.pojos.Zonedecr
 	
 	private static final long serialVersionUID = 5987321387124889354L;
 	
-	private boolean occupee;
 	private List<Transition> listeTransitionsConcernees;
 
-	public boolean isOccupee() {
-		return occupee;
-	}
-
-	public void setOccupee(boolean occupee) {
-		this.occupee = occupee;
+	public boolean isOccupee(){
+		for(Transition t : listeTransitionsConcernees){
+			if(t.getLieu().estoccupe()){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public List<Transition> getListeTransitionsConcernees() {

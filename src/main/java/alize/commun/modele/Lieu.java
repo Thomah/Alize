@@ -12,7 +12,7 @@ public class Lieu  extends alize.commun.modele.tables.pojos.Lieu {
 	private static final long serialVersionUID = -474938177096962681L;
 	
 	//Peut être supprimer (cela revient à dire que listeVehiculesPresents est vide );
-	private boolean estoccupe;
+
 	
 	private List<Vehicule> listeVehiculesPresents = new ArrayList<Vehicule>();
 	private boolean arret;
@@ -27,12 +27,10 @@ public class Lieu  extends alize.commun.modele.tables.pojos.Lieu {
 	}
 	
 	
-	public boolean isEstoccupe() {
-		return estoccupe;
+	public boolean estoccupe() {
+		return !listeVehiculesPresents.isEmpty();
 	}
-	public void setEstoccupe(boolean estoccupe) {
-		this.estoccupe = estoccupe;
-	}
+
 	public List<Vehicule> getListeVehiculesPresents() {
 		return listeVehiculesPresents;
 	}
