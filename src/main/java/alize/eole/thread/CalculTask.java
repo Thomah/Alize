@@ -1,21 +1,10 @@
 package alize.eole.thread;
 
 import java.sql.Time;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import org.springframework.format.datetime.joda.LocalDateTimeParser;
-import org.springframework.format.datetime.joda.LocalTimeParser;
-import org.springframework.web.socket.TextMessage;
-
-import com.sun.glass.ui.CommonDialogs.Type;
 
 import alize.commun.Heure;
 import alize.commun.exception.CalculException;
@@ -33,7 +22,6 @@ import alize.commun.modele.Voie;
 import alize.commun.modele.ZoneDeCroisement;
 import alize.commun.modele.tables.Periodicite;
 import alize.commun.modele.tables.pojos.VoieTransition;
-import alize.commun.modele.tables.pojos.Zonedecroisement;
 import alize.commun.service.StockageService;
 import alize.eole.websocket.handler.WebsocketEndPoint;
 
@@ -79,17 +67,15 @@ public class CalculTask extends Thread {
 			int n = 0;
 
 			ajouterLigneLog("Go");
-			int horloge, time;
-			int iterator = -1;
-			while (iterator < nombreIterations) {
+			int time;
+			for(int iterator = 0; iterator<nombreIterations; iterator++){
 				tableauActions.add(new ArrayList<Action>());
 				nettoyerLeReseau();
-				horloge = debutJourneeSec;
 				try {
-					iterator++;
+					
 					ajouterLigneLog("Iteration : " + iterator);
 					nombreActuelIterations = iterator;
-					while (horloge < finJourneeSec) {
+					for(int horloge = debutJourneeSec; horloge<=finJourneeSec;horloge++){
 						for (Vehicule v : listeVehicules) {
 							if (v.getHeureProchainDepart() == horloge) {
 								Lieu l = trouverLieu(v.getLieuActuel().getId());
@@ -155,16 +141,10 @@ public class CalculTask extends Thread {
 																nouvelleVoie
 																		.getId());
 											}
-											stockageService.ajouterAction(toTime(v
-													.getHeureProchainDepart()), (int) v
-													.getId(), v.getVoieActuelle()
-													.getId(), TypeAction.ARRIVER_ARRET
-													.ordinal(), a.getId());
-											tableauActions.get(iterator).add(
-													trouverDerniereAction());
-											v.setEstCommercial(voieCommerciale);
 										}
 									}
+									tableauActions.get(iterator).add(
+											trouverDerniereAction());
 
 									Lieu nouveauLieu;
 									Transition nouvelleTransition = null;
@@ -219,6 +199,7 @@ public class CalculTask extends Thread {
 													.getDuree()));
 									heure.toHeure(v.getHeureProchainDepart());
 
+									
 									ajouterLigneLog(toTime(horloge)
 											+ " Véhicule " + v.getId()
 											+ " : Arret " + a.getId()
@@ -268,16 +249,17 @@ public class CalculTask extends Thread {
 											+ " --> Arret "
 											+ nouvelArret.getId() + " ("
 											+ heure.toString() + ").");
-
+									
 									stockageService.ajouterAction(toTime(time),
 											(int) v.getId(), v
 													.getVoieActuelle().getId(),
 											TypeAction.ARRIVER_ARRET.ordinal(),
 											nouvelArret.getId());
+									tableauActions.get(iterator).add(
+											trouverDerniereAction());
 								}
 							}
 						}
-						horloge++;
 					}
 				} catch (SolutionIncomptatibleException e) {
 					ajouterLigneLog("Exception : " + e.getMessage());
