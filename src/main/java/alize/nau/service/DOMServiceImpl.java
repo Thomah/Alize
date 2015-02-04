@@ -248,6 +248,7 @@ public class DOMServiceImpl implements DOMService {
 			while (i.hasNext()) {
 				courant = (Element) i.next();
 				ligne.setId(Integer.valueOf(courant.getAttributeValue("id")));
+				ligne.setTypevehicule(courant.getAttributeValue("typeVehicule"));
 				ligne.store();
 				
 				listElementsVoies = courant.getChild("voies").getChildren();
@@ -445,6 +446,7 @@ public class DOMServiceImpl implements DOMService {
 		for(Ligne l : listeLignes) {
 			ligne = new Element("Ligne");
 			ligne.setAttribute(new Attribute("id",l.getId().toString()));
+			ligne.setAttribute(new Attribute("typeVehicule",l.getTypevehicule().toString()));
 			
 			// Ajout des voies
 			List<Voie> listeVoies = stockageService.getVoiesPourLaLigne(l.getId());
