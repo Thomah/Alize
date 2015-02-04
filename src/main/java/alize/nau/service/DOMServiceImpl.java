@@ -256,25 +256,13 @@ public class DOMServiceImpl implements DOMService {
 				while (i2.hasNext()) {
 					courant = (Element) i2.next();
 					
-					terminusDepartArretId = Integer.valueOf(courant.getChild("terminusDepart").getChild("Terminus").getAttributeValue("ref"));
-					terminus = (TerminusRecord) dsl.select().from(TERMINUS).where(TERMINUS.ID.equal(terminusDepartArretId)).fetchOne();
-					if(terminus == null) {
-						terminus = dsl.newRecord(TERMINUS);
-						terminus.setId(terminusDepartArretId);
-						terminus.store();
-					}
-					
+					terminusDepartArretId = Integer.valueOf(courant.getChild("terminusDepart").getChild("Terminus").getAttributeValue("ref"));					
 					terminusArriveeArretId = Integer.valueOf(courant.getChild("terminusArrivee").getChild("Terminus").getAttributeValue("ref"));
-					terminus = (TerminusRecord) dsl.select().from(TERMINUS).where(TERMINUS.ID.equal(terminusArriveeArretId)).fetchOne();
-					if(terminus == null) {
-						terminus = dsl.newRecord(TERMINUS);
-						terminus.setId(terminusArriveeArretId);
-						terminus.store();
-					}
 
 					VoieRecord voie = dsl.newRecord(VOIE);
 					voie.setId(Integer.valueOf(courant.getAttributeValue("id")));
 					voie.setDirection(courant.getAttributeValue("direction"));
+					voie.setEstcommerciale(Byte.valueOf(courant.getAttributeValue("estCommerciale")));
 					voie.setTerminusdepartId(terminusDepartArretId);
 					voie.setTerminusarriveeId(terminusArriveeArretId);
 					voie.store();
@@ -413,10 +401,10 @@ public class DOMServiceImpl implements DOMService {
 			arretPrecedent.addContent(arretP);
 			transition.addContent(arretPrecedent);
 			
-			// Ajout du terminus de départ
+			// Ajout de l'arret suivant
 			Element arretSuivant = new Element("arretSuivant");
 			Element arretS = new Element("Arret");
-			if(t.getArretprecedentId() != null) {
+			if(t.getArretsuivantId() != null) {
 				arretS.setAttribute(new Attribute("ref", t.getArretsuivantId().toString()));
 			} else {
 				arretS.setAttribute(new Attribute("ref", "0"));
@@ -455,6 +443,7 @@ public class DOMServiceImpl implements DOMService {
 			for(Voie v : listeVoies) {
 				voie = new Element("Voie");
 				voie.setAttribute(new Attribute("id",v.getId().toString()));
+				voie.setAttribute(new Attribute("estCommerciale",v.getEstcommerciale().toString()));
 				voie.setAttribute(new Attribute("direction",v.getDirection().toString()));
 				
 				// Ajout des arrets
@@ -478,7 +467,7 @@ public class DOMServiceImpl implements DOMService {
 				// Ajout du terminus de départ
 				Element terminusArrivee = new Element("terminusArrivee");
 				Element terminusA = new Element("Terminus");
-				terminusA.setAttribute(new Attribute("ref", v.getTerminusdepartId().toString()));
+				terminusA.setAttribute(new Attribute("ref", v.getTerminusarriveeId().toString()));
 				terminusArrivee.addContent(terminusA);
 				voie.addContent(terminusArrivee);
 				
