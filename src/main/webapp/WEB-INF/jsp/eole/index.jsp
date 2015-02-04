@@ -45,8 +45,7 @@ a:hover, a:focus {
 							<p>En fonction du réseau de transport Nau et des contraintes
 								Eole, vous pouvez générer les services associés grâce au menu
 								ci-après.</p>
-							<p>Veuillez indiquer le temps maximum que vous souhaitez
-								allouer au processus.</p>
+							<p>Veuillez indiquer le nombre d'itérations que le programme doit parcourir.</p>
 							<div class="progress">
 								<div class="progress-bar progress-bar-striped active"
 									role="progressbar" aria-valuenow="0" aria-valuemin="0"
