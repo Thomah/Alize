@@ -173,16 +173,16 @@
 										<div class="form-group">
 											<div class="row">
 												<div class="col-lg-12">
-													<label>Temps de pause</label>
+													<label>Heures de la journée</label>
 												</div>
 											</div>
 											<div class="row">
 												<div class="col-lg-6">
-													<label class="labelLeft" for="<%=TEMPS_DEBUT_JOURNEE %>">Min</label>
+													<label class="labelLeft" for="<%=TEMPS_DEBUT_JOURNEE %>">Début</label>
 													<input class="inputright" type="time" name="<%=TEMPS_DEBUT_JOURNEE %>" id="<%=TEMPS_DEBUT_JOURNEE %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsDebutJournee") %>" onchange="update()" />
 												</div>
 												<div class="col-lg-6">
-													<label class="labelLeft" for="<%=TEMPS_FIN_JOURNEE %>">Max</label>
+													<label class="labelLeft" for="<%=TEMPS_FIN_JOURNEE %>">Fin</label>
 													<input class="inputright" type="time" name="<%=TEMPS_FIN_JOURNEE %>" id="<%=TEMPS_FIN_JOURNEE %>" placeholder="hh:mm" value="<%=request.getAttribute("tempsFinJournee") %>" onchange="update()" />
 												</div>
 											</div>
