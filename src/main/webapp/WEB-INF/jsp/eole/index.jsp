@@ -117,7 +117,7 @@ a:hover, a:focus {
 		function connect() {
 			
 			if ('WebSocket' in window){
-				socket = new WebSocket('ws://localhost:8080/alize/websocket');
+				socket = new WebSocket('ws://192.168.4.10:8080/alize/websocket');
 				
 				socket.onopen = function() {
 					// do something
